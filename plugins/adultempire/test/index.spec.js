@@ -14,6 +14,12 @@ describe("adultempire", () => {
     expect(result.frontCover).to.be.a("string");
     expect(result.backCover).to.be.a("string");
     expect(result.studio).to.be.a("string").equal("Tushy Raw");
+    expect(result.description)
+      .to.be.a("string")
+      .equal(
+        "TUSHY.com is proud to present its newest studio TUSHY RAW. TUSHY RAW is straight to the point - hard, hot, and intense anal sex with the most beautiful women on the planet. Everything you see here is 100% real & raw. See more at TUSHYRAW.com"
+      );
+    expect(result.releaseDate).to.be.a("number").equal(1566943200000);
   });
 
   it("Should not fetch covers etc (404)", async () => {

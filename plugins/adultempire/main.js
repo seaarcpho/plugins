@@ -40,10 +40,6 @@ module.exports = async ({
 
     const studioName = $(`.title-rating-section .item-info > a`).eq(0).text().trim();
 
-    $log("Studio = " + studioName);
-    $log("Description = " + desc);
-    $log("Release Date = " + release);
-
     const frontCover = $("#front-cover img").toArray()[0];
     const frontCoverSrc = $(frontCover).attr("src");
     const backCoverSrc = frontCoverSrc.replace("h.jpg", "bh.jpg");
