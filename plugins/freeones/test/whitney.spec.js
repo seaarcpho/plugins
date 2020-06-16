@@ -41,7 +41,7 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Caucasian");
   });
 
-  it("Search 'Whitney Wright'", async () => {
+  it("Search 'Whitney Wright, with avatar as thumbnail'", async () => {
     console.log("Fetching freeones.xxx...");
     const result = await searchWhitney({
       useAvatarAsThumbnail: true,

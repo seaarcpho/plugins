@@ -1,4 +1,13 @@
-module.exports = async ({ args, $axios, $cheerio, $throw, $log, movieName, $createImage }) => {
+module.exports = async ({
+  args,
+  $moment,
+  $axios,
+  $cheerio,
+  $throw,
+  $log,
+  movieName,
+  $createImage,
+}) => {
   if (!movieName) $throw("Uh oh. You shouldn't use the plugin for this type of event");
 
   const name = movieName
@@ -19,8 +28,17 @@ module.exports = async ({ args, $axios, $cheerio, $throw, $log, movieName, $crea
     const html = (await $axios.get(movieUrl)).data;
     const $ = $cheerio.load(html);
 
+    const desc = $(".m-b-0.text-dark.synopsis").text();
+    let release;
+
+    $(".col-sm-4.m-b-2 li").each(function (i, elm) {
+      const grabrvars = $(elm).text().split(":");
+      if (grabrvars[0].includes("Released")) {
+        release = $moment(grabrvars[1].trim().replace(" ", "-"), "MMM-DD-YYYY").valueOf();
+      }
+    });
+
     const studioName = $(`.title-rating-section .item-info > a`).eq(0).text().trim();
-    $log("Studio = " + studioName);
 
     const frontCover = $("#front-cover img").toArray()[0];
     const frontCoverSrc = $(frontCover).attr("src");
@@ -32,6 +50,8 @@ module.exports = async ({ args, $axios, $cheerio, $throw, $log, movieName, $crea
         frontCoverSrc,
         backCoverSrc,
         studioName,
+        desc,
+        release,
       });
     } else {
       const frontCoverImg = await $createImage(frontCoverSrc, `${movieName} (front cover)`);
@@ -40,6 +60,8 @@ module.exports = async ({ args, $axios, $cheerio, $throw, $log, movieName, $crea
       return {
         frontCover: frontCoverImg,
         backCover: backCoverImg,
+        description: desc,
+        releaseDate: release,
         studio: studioName,
       };
     }
