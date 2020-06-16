@@ -1,4 +1,13 @@
-module.exports = async ({ args, $moment, $axios, $cheerio, $throw, $log, movieName, $createImage }) => {
+module.exports = async ({
+  args,
+  $moment,
+  $axios,
+  $cheerio,
+  $throw,
+  $log,
+  movieName,
+  $createImage,
+}) => {
   if (!movieName) $throw("Uh oh. You shouldn't use the plugin for this type of event");
 
   const name = movieName
@@ -22,14 +31,15 @@ module.exports = async ({ args, $moment, $axios, $cheerio, $throw, $log, movieNa
     const desc = $(".m-b-0.text-dark.synopsis").text();
     let release;
 
-    $('.col-sm-4.m-b-2 li').each(function(i, elm) {
+    $(".col-sm-4.m-b-2 li").each(function (i, elm) {
       const grabrvars = $(elm).text().split(":");
-      if(grabrvars[0].includes("Released")){release = ($moment((grabrvars[1].trim().replace(" ","-")), "MMM-DD-YYYY").valueOf())}
-
+      if (grabrvars[0].includes("Released")) {
+        release = $moment(grabrvars[1].trim().replace(" ", "-"), "MMM-DD-YYYY").valueOf();
+      }
     });
 
     const studioName = $(`.title-rating-section .item-info > a`).eq(0).text().trim();
-    
+
     $log("Studio = " + studioName);
     $log("Description = " + desc);
     $log("Release Date = " + release);
@@ -45,7 +55,7 @@ module.exports = async ({ args, $moment, $axios, $cheerio, $throw, $log, movieNa
         backCoverSrc,
         studioName,
         desc,
-        release
+        release,
       });
     } else {
       const frontCoverImg = await $createImage(frontCoverSrc, `${movieName} (front cover)`);
