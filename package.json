@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "axios": "^0.19.2",
+    "chai-as-promised": "^7.1.1",
     "cheerio": "^1.0.0-rc.3",
     "inquirer": "^7.1.0",
     "moment": "^2.25.3",
@@ -30,7 +31,9 @@
     "doc": "cd md_gen && npm start",
     "check-info": "node check_info.js",
     "coverage": "nyc npm run test",
-    "test": "mocha plugins/**/*.spec.js --timeout 10000",
+    "coverage:promise": "nyc npm run promise",
+    "test": "mocha -r test/init.js plugins/**/*.spec.js --timeout 10000",
+    "promise": "mocha plugins/PromisedScene/**/*.spec.js --timeout 10000",
     "lint": "eslint \"plugins/**/*.js\"",
     "lint:fix": "eslint --quiet --fix \"plugins/**/*.js\""
   },

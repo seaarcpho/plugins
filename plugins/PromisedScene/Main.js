@@ -39,7 +39,7 @@ module.exports = async ({
 
   // Making sure that the event that triggered is the correct event
 
-  if (event !== "sceneCreated" && event !== "sceneCustom" && testmode !== true) {
+  if (event !== "sceneCreated" && event !== "sceneCustom" && testmode.status !== true) {
     $throw(" ERR: Plugin used for unsupported event");
   }
 
@@ -124,23 +124,40 @@ module.exports = async ({
         }
       });
 
-    if (GettingActor.length > 1 && Array.isArray(GettingActor)) {
-      var Actorhighscore = 5000;
+    let Actorhighscore = 5000;
+    if (GettingActor.length && Array.isArray(GettingActor)) {
+      if (GettingActor.length > 1) {
+        GettingActor.forEach((person) => {
+          $log(`    SUCCESS: Found Actor:` + person);
+          // This is a function that will see how many differences it will take to make the string match.
+          // The lowest amount of changes means that it is probably the closest match to what we need.
+          // lowest score wins :)
+          const found = levenshtein(person.toString().toLowerCase(), CleanPathname);
 
-      GettingActor.forEach((person) => {
-        // This is a function that will see how many differences it will take to make the string match.
-        // The lowest amount of changes means that it is probably the closest match to what we need.
-        // lowest score wins :)
-        const found = levenshtein(person.toString().toLowerCase(), CleanPathname);
+          if (found < Actorhighscore) {
+            Actorhighscore = found;
 
-        if (found < Actorhighscore) {
-          Actorhighscore = found;
+            Actor[0] = person;
+          }
+        });
 
-          Actor[0] = person;
-        }
-      });
+        $log(`---> Using "best match" Actor For Search:` + Actor);
+      } else {
+        GettingActor.forEach((person) => {
+          // This is a function that will see how many differences it will take to make the string match.
+          // The lowest amount of changes means that it is probably the closest match to what we need.
+          // lowest score wins :)
+          const found = levenshtein(person.toString().toLowerCase(), CleanPathname);
 
-      $log(`    SUCCESS: Found Actor:` + Actor);
+          if (found < Actorhighscore) {
+            Actorhighscore = found;
+
+            Actor[0] = person;
+          }
+        });
+
+        $log(`    SUCCESS: Found Actor:` + Actor);
+      }
     }
   }
   // -------------------STUDIO Parse
@@ -182,38 +199,55 @@ module.exports = async ({
       });
 
     // this is a debug option to se see how many studios were found by just doing a simple regex
-    // $log(GettingStudio)
+    // $log(GettingStudio);
+    let studiohighscore = 5000;
+    if (GettingStudio.length && Array.isArray(GettingStudio)) {
+      if (GettingStudio.length > 1) {
+        GettingStudio.forEach((stud) => {
+          $log(`    SUCCESS: Found Studio:` + stud);
+          // This is a function that will see how many differences it will take to make the string match.
+          // The lowest amount of changes means that it is probably the closest match to what we need.
+          // lowest score wins :)
+          const found = levenshtein(stud.toString().toLowerCase(), CleanPathname);
 
-    if (GettingStudio.length > 1 && Array.isArray(GettingStudio)) {
-      var highscore = 5000;
+          if (found < studiohighscore) {
+            studiohighscore = found;
 
-      GettingStudio.forEach((thingy) => {
-        // This is a function that will see how many differences it will take to make the string match.
-        // The lowest amount of changes means that it is probably the closest match to what we need.
-        // lowest score wins :)
-        const found = levenshtein(thingy.toString().toLowerCase(), CleanPathname);
+            Studio[0] = stud;
+          }
+        });
 
-        if (found < highscore) {
-          highscore = found;
+        $log(`---> Using "best match" Studio For Search:` + Studio);
+      } else {
+        GettingStudio.forEach((stud) => {
+          // This is a function that will see how many differences it will take to make the string match.
+          // The lowest amount of changes means that it is probably the closest match to what we need.
+          // lowest score wins :)
+          const found = levenshtein(stud.toString().toLowerCase(), CleanPathname);
 
-          Studio[0] = thingy;
-        }
-      });
+          if (found < studiohighscore) {
+            studiohighscore = found;
 
-      $log(`    SUCCESS: Found Studio:` + Studio);
+            Studio[0] = stud;
+          }
+        });
+
+        $log(`    SUCCESS: Found Studio:` + Studio);
+      }
     }
   }
   // Try to PARSE the SceneName and determine Date
 
-  const ddmmyyyy = stripStr(scenePath).match(/\d\d \d\d \d\d\d\d/);
+  const ddmmyyyy = stripStr(scenePath, 1).match(/\d\d \d\d \d\d\d\d/);
 
-  const yyyymmdd = stripStr(scenePath).match(/\d\d\d\d \d\d \d\d/);
+  const yyyymmdd = stripStr(scenePath, 1).match(/\d\d\d\d \d\d \d\d/);
 
-  const yymmdd = stripStr(scenePath).match(/\d\d \d\d \d\d/);
+  const yymmdd = stripStr(scenePath, 1).match(/\d\d \d\d \d\d/);
 
   let timestamp = {};
 
-  $log(":::::PARSE:::: Parsing Date from SceneName");
+  $log(":::::PARSE:::: Parsing Date from ScenePath");
+  // $log(stripStr(scenePath, 1));
 
   if (yyyymmdd && yyyymmdd.length) {
     const date = yyyymmdd[0].replace(" ", ".");
@@ -234,7 +268,7 @@ module.exports = async ({
 
     timestamp = $moment(date, "YY-MM-DD").valueOf();
   } else {
-    $log("   FAILED: Could not find a date in the SceneName");
+    $log("   FAILED: Could not find a date in the ScenePath");
   }
 
   // Function that is called to convert a found date into a timestamp.
@@ -247,6 +281,7 @@ module.exports = async ({
     if (date_not_formatted.getMonth() < 9) {
       formatted_string += "0";
     }
+
     formatted_string += date_not_formatted.getMonth() + 1;
 
     formatted_string += "-";
@@ -270,12 +305,15 @@ module.exports = async ({
 
   // -------------------------------------------------------------
 
-  function stripStr(str) {
+  function stripStr(str, date) {
+    date = 0 || date;
     str = str.toString();
 
     str = str.toLowerCase().replace("'", "");
     str = str.toLowerCase().replace(/P.O.V./gi, "pov");
-    str = str.toLowerCase().replace(/\b0+/g, "");
+    if (!date) {
+      str = str.toLowerCase().replace(/\b0+/g, "");
+    }
 
     str = str.replace(/[^a-zA-Z0-9'/\\,(){}]/g, " ");
 
@@ -330,8 +368,9 @@ module.exports = async ({
 	*/
 
   async function ManualImport() {
-    if (testmode) {
-      const Q1answer = "y";
+    if (testmode.status) {
+      $log(`:::::TESTMODE Question Enter MANUAL Info?:::: ${testmode.Questions.EnterManInfo}`);
+      const Q1answer = testmode.Questions.EnterManInfo;
 
       const runInteractiveSearch =
         Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
@@ -340,7 +379,8 @@ module.exports = async ({
         return {};
       }
 
-      const ManualMovieanswer = "n";
+      $log(`:::::TESTMODE Question MANUAL Movie:::: ${testmode.Questions.EnterMovie}`);
+      const ManualMovieanswer = testmode.Questions.EnterMovie;
 
       const ManualEnterMovieSearch =
         ManualMovieanswer === "y" ||
@@ -349,15 +389,18 @@ module.exports = async ({
         ManualMovieanswer === "YES";
 
       if (ManualEnterMovieSearch) {
-        const ManualMovieName = await questionAsync("What is the Title of the Movie?: ");
+        $log(`:::::TESTMODE Question MANUAL Movie Title:::: ${testmode.Questions.MovieTitle}`);
+        const ManualMovieName = testmode.Questions.MovieTitle;
 
         if (result.movie === undefined && ManualMovieName !== "") {
           result.movie = ManualMovieName;
         }
       }
+      $log(`:::::TESTMODE Question MANUAL Title:::: ${testmode.Questions.EnterSceneTitle}`);
+      result.name = testmode.Questions.EnterSceneTitle;
 
-      result.name = "So Young So Sexy P.O.V. #8";
-      result.releaseDate = "2013.10.10";
+      $log(`:::::TESTMODE Question MANUAL Date:::: ${testmode.Questions.EnterSceneDate}`);
+      result.releaseDate = testmode.Questions.EnterSceneDate;
       if (result.releaseDate !== "") {
         const questYear = result.releaseDate.match(/\d\d\d\d.\d\d.\d\d/);
 
@@ -371,10 +414,11 @@ module.exports = async ({
           result.releaseDate = new Date(date.replace(".", "-")).getTime();
         }
       }
-      result.description =
-        "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!";
 
-      const splitactors = "Mia Malkova,Mike Adriano";
+      $log(`:::::TESTMODE Question MANUAL Description:::: ${testmode.Questions.ManualDescription}`);
+      result.description = testmode.Questions.ManualDescription;
+
+      const splitactors = testmode.Questions.ManualActors;
 
       const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
 
@@ -382,7 +426,8 @@ module.exports = async ({
         result.actors = splitactors.trim().split(",");
       }
 
-      const askedStudio = "New Sensations";
+      $log(`:::::TESTMODE Question MANUAL Studio name:::: ${testmode.Questions.EnterStudioName}`);
+      const askedStudio = testmode.Questions.EnterStudioName;
 
       const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
 
@@ -511,7 +556,11 @@ module.exports = async ({
 
     // checking the status of the link or site, will escape if the site is down
 
-    if (tpdb_scene_search_response.status !== 200 || tpdb_scene_search_response.data.length === 0) {
+    if (
+      tpdb_scene_search_response.status !== 200 ||
+      tpdb_scene_search_response.data.length === 0 ||
+      testmode.TestSiteunavailable
+    ) {
       $log(" ERR: TPDB API query failed");
       const manualInfo = await ManualImport();
       return manualInfo;
@@ -586,21 +635,16 @@ module.exports = async ({
 
           if (MatchTitle !== undefined) {
             $log(
-              `     SRCH: Trying to match title: ` + MatchTitle.toString().trim()
-              /* +
+              `     SRCH: Trying to match title: ` +
+                MatchTitle.toString().trim() +
                 "--> " +
                 SearchedTitle.toString().trim()
-                */
             );
 
             MatchTitle = new RegExp(MatchTitle.toString().trim(), "i");
 
             if (SearchedTitle !== undefined) {
               if (SearchedTitle.toString().trim().match(MatchTitle)) {
-                correct_scene_idx = idx;
-
-                break;
-              } else if (element.date === timeConverter(timestamp)) {
                 correct_scene_idx = idx;
 
                 break;
@@ -634,7 +678,8 @@ module.exports = async ({
     if (tpdb_scene_search_data.title !== "") {
       // Is there a duplicate scene already in the Database with that name?
       let FoundDupScene = false;
-      let TheDupedScene = [];
+      // If i decide to do anything with duplicate scenes, this variable on the next line will come into play
+      // let TheDupedScene = [];
       if (args.SceneDuplicationCheck) {
         $fs
           .readFileSync(args.source_settings.Scenes, "utf8")
@@ -648,7 +693,7 @@ module.exports = async ({
 
                 if (foundSceneMatch !== null) {
                   FoundDupScene = true;
-                  TheDupedScene = stripStr(JSON.parse(line).name.toString());
+                  // TheDupedScene = stripStr(JSON.parse(line).name.toString());
                 } else if (stripStr(JSON.parse(line).name.toString()) !== null) {
                   MatchScene = new RegExp(
                     stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
@@ -658,7 +703,7 @@ module.exports = async ({
                   const foundSceneMatch = stripStr(tpdb_scene_search_data.title).match(MatchScene);
 
                   if (foundSceneMatch !== null) {
-                    TheDupedScene = stripStr(JSON.parse(line).name.toString());
+                    // TheDupedScene = stripStr(JSON.parse(line).name.toString());
                     FoundDupScene = true;
                   }
                 }
@@ -677,8 +722,6 @@ module.exports = async ({
       } else {
         result.name = tpdb_scene_search_data.title;
       }
-    } else {
-      result.name = tpdb_scene_search_data.title;
     }
 
     if (tpdb_scene_search_data.description !== "") {
@@ -794,17 +837,19 @@ module.exports = async ({
       const ResultTheListofSites = await $axios.get(Metadataapisiteaddress, {
         validateStatus: false,
       });
+      const allSites = [];
 
-      if (ResultTheListofSites.status !== 200 || ResultTheListofSites.data.length === 0) {
+      if (
+        ResultTheListofSites.status !== 200 ||
+        ResultTheListofSites.data.length === 0 ||
+        testmode.TestSiteunavailable
+      ) {
         $log(" ERR: TPDB site Not Available OR the API query failed");
 
-        const manualInfo = await ManualImport();
-        return manualInfo;
+        return allSites;
       }
 
       const Newtpdb_site_search_content = ResultTheListofSites.data;
-
-      const allSites = [];
 
       // loops through all of the sites and grabs the "shortname" for the Studio or website
 
@@ -816,7 +861,7 @@ module.exports = async ({
 
       return allSites;
     } catch (err) {
-      $log(err);
+      $throw(err);
     }
   }
 
@@ -907,27 +952,7 @@ module.exports = async ({
       const GrabResults = await run(tpdb_scene_search_url);
 
       // Once the results have been searched, we need to do something with them
-
-      // if nothing was found, then return nothing
-
-      if (GrabResults === undefined) {
-        const url = `https://metadataapi.net/api/scenes?parse=` + Cleanfilename;
-
-        $log(":::::MSG: Running Backup Search on: " + url);
-
-        const BackupResults = await run(url);
-
-        if (!BackupResults || BackupResults.Title0) {
-          const manualInfo = await ManualImport();
-          return manualInfo;
-        }
-
-        return BackupResults;
-
-        // if multiple titles were found, then we can list them and report them to the user for manual selection
-
-        // The Manualtouch arg will determine if this is completed.  The values will never be returned function checks
-      } else if (GrabResults.Title0 !== undefined) {
+      if (GrabResults.Title0 !== undefined) {
         // Run through the list of titles and ask if they would like to choose one.
         $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
 
@@ -950,15 +975,19 @@ module.exports = async ({
             rl.question(question, resolve);
           });
 
-        if (testmode) {
-          const MultipleSitesAnswer = 0;
+        if (testmode.status) {
+          $log(
+            `:::::TESTMODE MultipleChoiceResult EnterInfo:::: ${testmode.Questions.MultipleChoice}`
+          );
+          const MultipleSitesAnswer = testmode.Questions.MultipleChoice;
 
           if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
-            $log(" ERR: Not a valid option, we are moving on!");
+            $log(" ERR: Not a valid option...");
 
             rl.close();
 
-            return GrabResults;
+            const manualInfo = await ManualImport();
+            return manualInfo;
           } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
             const selectedtitle =
               `https://metadataapi.net/api/scenes?parse=` +
@@ -981,11 +1010,12 @@ module.exports = async ({
             "Which Title would you like to use? (number): "
           );
           if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
-            $log(" ERR: Not a valid option, we are moving on!");
+            $log(" ERR: Not a valid option....");
 
             rl.close();
 
-            return GrabResults;
+            const manualInfo = await ManualImport();
+            return manualInfo;
           } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
             const selectedtitle =
               `https://metadataapi.net/api/scenes?parse=` +
@@ -1026,8 +1056,9 @@ module.exports = async ({
 
       let QuestionDate;
 
-      if (testmode) {
-        const Q1answer = "y";
+      if (testmode.status) {
+        $log(`:::::TESTMODE Question Enter Info:::: ${testmode.Questions.EnterInfoSearch}`);
+        const Q1answer = testmode.Questions.EnterInfoSearch;
 
         const runInteractiveSearch =
           Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
@@ -1036,7 +1067,8 @@ module.exports = async ({
           const manualInfo = await ManualImport();
           return manualInfo;
         }
-        const Movieanswer = "N";
+        $log(`:::::TESTMODE Question Enter Movie?:::: ${testmode.Questions.EnterMovie}`);
+        const Movieanswer = testmode.Questions.EnterMovie;
 
         const EnterMovieSearch =
           Movieanswer === "y" ||
@@ -1045,28 +1077,31 @@ module.exports = async ({
           Movieanswer === "YES";
 
         if (EnterMovieSearch) {
-          const MovieName = "So Young So Sexy P.O.V. #8";
+          $log(`:::::TESTMODE Question Movie Title:::: ${testmode.Questions.MovieTitle}`);
+          const MovieName = testmode.Questions.MovieTitle;
 
           if (result.movie === undefined && MovieName !== "") {
             result.movie = MovieName;
           }
         }
-
-        const Q2Actor = "Mia Malkova";
+        $log(`:::::TESTMODE Question One Actor:::: ${testmode.Questions.EnterOneActorName}`);
+        const Q2Actor = testmode.Questions.EnterOneActorName;
 
         QuestionActor.push(Q2Actor);
-        if (Actor === undefined) {
+        if (!Actor.length) {
           Actor.push(Q2Actor);
         }
 
-        const Q3Studio = "New Sensations";
+        $log(`:::::TESTMODE Question Studio Name:::: ${testmode.Questions.EnterStudioName}`);
+        const Q3Studio = testmode.Questions.EnterStudioName;
 
         QuestionStudio.push(Q3Studio);
-        if (Studio === undefined) {
+        if (!Studio.length) {
           Studio.push(Q3Studio);
         }
 
-        const Q4date = "2013.10.10";
+        $log(`:::::TESTMODE Question Date:::: ${testmode.Questions.EnterSceneDate}`);
+        const Q4date = testmode.Questions.EnterSceneDate;
 
         if (Q4date !== "") {
           const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
@@ -1151,7 +1186,9 @@ module.exports = async ({
           if (Studio === undefined) {
             Studio.push(Q3Studio);
           }
-          const Q4date = await questionAsync("What is the date (YYYY.MM.DD)?: (Blanks allowed) ");
+          const Q4date = await questionAsync(
+            "What is the release date (YYYY.MM.DD)?: (Blanks allowed) "
+          );
 
           if (Q4date !== "") {
             const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
