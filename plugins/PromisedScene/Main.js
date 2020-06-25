@@ -34,7 +34,6 @@ module.exports = async ({
 
   const levenshtein = require("./levenshtein.js");
 
-  const Cleanfilename = stripStr(sceneName.toString());
   const CleanPathname = stripStr(scenePath.toString());
 
   // Making sure that the event that triggered is the correct event
