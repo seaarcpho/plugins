@@ -478,7 +478,7 @@ module.exports = async ({
 
           $log(" MSG: Found => yyyymmdd");
 
-          result.releaseDate = new Date(date.replace(".", "-")).getTime();
+          result.releaseDate = $moment(date, "YYYY-MM-DD").valueOf();
         }
       }
 
