@@ -39,7 +39,10 @@ Ask questions and make sure scene parsing is correct
     }
   },
   "PLUGIN_EVENTS": {
-    "sceneCreated, sceneCustom": [
+    "sceneCreated": [
+      "PromisedScene"
+    ],
+    "sceneCustom": [
       "PromisedScene"
     ]
   }
@@ -63,7 +66,9 @@ PLUGINS:
         Studios: ./library/studios.db
         Scenes: ./library/scenes.db
 PLUGIN_EVENTS:
-  "sceneCreated, sceneCustom":
+  sceneCreated:
+    - PromisedScene
+  sceneCustom:
     - PromisedScene
 
 ---

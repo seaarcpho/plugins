@@ -125,38 +125,20 @@ module.exports = async ({
 
     let Actorhighscore = 5000;
     if (GettingActor.length && Array.isArray(GettingActor)) {
-      if (GettingActor.length > 1) {
-        GettingActor.forEach((person) => {
-          $log(`    SUCCESS: Found Actor:` + person);
-          // This is a function that will see how many differences it will take to make the string match.
-          // The lowest amount of changes means that it is probably the closest match to what we need.
-          // lowest score wins :)
-          const found = levenshtein(person.toString().toLowerCase(), CleanPathname);
-
-          if (found < Actorhighscore) {
-            Actorhighscore = found;
-
-            Actor[0] = person;
-          }
-        });
-
-        $log(`---> Using "best match" Actor For Search:` + Actor);
-      } else {
-        GettingActor.forEach((person) => {
-          // This is a function that will see how many differences it will take to make the string match.
-          // The lowest amount of changes means that it is probably the closest match to what we need.
-          // lowest score wins :)
-          const found = levenshtein(person.toString().toLowerCase(), CleanPathname);
-
-          if (found < Actorhighscore) {
-            Actorhighscore = found;
-
-            Actor[0] = person;
-          }
-        });
-
+      GettingActor.forEach((person) => {
         $log(`    SUCCESS: Found Actor:` + Actor);
-      }
+        // This is a function that will see how many differences it will take to make the string match.
+        // The lowest amount of changes means that it is probably the closest match to what we need.
+        // lowest score wins :)
+        const found = levenshtein(person.toString().toLowerCase(), CleanPathname);
+
+        if (found < Actorhighscore) {
+          Actorhighscore = found;
+
+          Actor[0] = person;
+        }
+      });
+      $log(`---> Using "best match" Actor For Search:` + Actor);
     }
   }
   // -------------------STUDIO Parse
@@ -201,38 +183,21 @@ module.exports = async ({
     // $log(GettingStudio);
     let studiohighscore = 5000;
     if (GettingStudio.length && Array.isArray(GettingStudio)) {
-      if (GettingStudio.length > 1) {
-        GettingStudio.forEach((stud) => {
-          $log(`    SUCCESS: Found Studio:` + stud);
-          // This is a function that will see how many differences it will take to make the string match.
-          // The lowest amount of changes means that it is probably the closest match to what we need.
-          // lowest score wins :)
-          const found = levenshtein(stud.toString().toLowerCase(), CleanPathname);
+      GettingStudio.forEach((stud) => {
+        $log(`    SUCCESS: Found Studio:` + stud);
+        // This is a function that will see how many differences it will take to make the string match.
+        // The lowest amount of changes means that it is probably the closest match to what we need.
+        // lowest score wins :)
+        const found = levenshtein(stud.toString().toLowerCase(), CleanPathname);
 
-          if (found < studiohighscore) {
-            studiohighscore = found;
+        if (found < studiohighscore) {
+          studiohighscore = found;
 
-            Studio[0] = stud;
-          }
-        });
+          Studio[0] = stud;
+        }
+      });
 
-        $log(`---> Using "best match" Studio For Search:` + Studio);
-      } else {
-        GettingStudio.forEach((stud) => {
-          // This is a function that will see how many differences it will take to make the string match.
-          // The lowest amount of changes means that it is probably the closest match to what we need.
-          // lowest score wins :)
-          const found = levenshtein(stud.toString().toLowerCase(), CleanPathname);
-
-          if (found < studiohighscore) {
-            studiohighscore = found;
-
-            Studio[0] = stud;
-          }
-        });
-
-        $log(`    SUCCESS: Found Studio:` + Studio);
-      }
+      $log(`---> Using "best match" Studio For Search:` + Studio);
     }
   }
   // Try to PARSE the SceneName and determine Date
@@ -680,35 +645,36 @@ module.exports = async ({
       // If i decide to do anything with duplicate scenes, this variable on the next line will come into play
       // let TheDupedScene = [];
       if (args.SceneDuplicationCheck) {
-        $fs
-          .readFileSync(args.source_settings.Scenes, "utf8")
-          .split("\n")
-          .forEach((line) => {
-            if (line !== "") {
-              if (stripStr(JSON.parse(line).name.toString()) !== null) {
-                let MatchScene = new RegExp(stripStr(JSON.parse(line).name.toString()), "gi");
+        const lines = $fs.readFileSync(args.source_settings.Scenes, "utf8").split("\n");
+
+        let line = lines.shift();
+        while (!FoundDupScene && line) {
+          if (line !== "") {
+            if (stripStr(JSON.parse(line).name.toString()) !== null) {
+              let MatchScene = new RegExp(stripStr(JSON.parse(line).name.toString()), "gi");
+
+              const foundSceneMatch = stripStr(tpdb_scene_search_data.title).match(MatchScene);
+
+              if (foundSceneMatch !== null) {
+                FoundDupScene = true;
+                // TheDupedScene = stripStr(JSON.parse(line).name.toString());
+              } else if (stripStr(JSON.parse(line).name.toString()) !== null) {
+                MatchScene = new RegExp(
+                  stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
+                  "gi"
+                );
 
                 const foundSceneMatch = stripStr(tpdb_scene_search_data.title).match(MatchScene);
 
                 if (foundSceneMatch !== null) {
-                  FoundDupScene = true;
                   // TheDupedScene = stripStr(JSON.parse(line).name.toString());
-                } else if (stripStr(JSON.parse(line).name.toString()) !== null) {
-                  MatchScene = new RegExp(
-                    stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
-                    "gi"
-                  );
-
-                  const foundSceneMatch = stripStr(tpdb_scene_search_data.title).match(MatchScene);
-
-                  if (foundSceneMatch !== null) {
-                    // TheDupedScene = stripStr(JSON.parse(line).name.toString());
-                    FoundDupScene = true;
-                  }
+                  FoundDupScene = true;
                 }
               }
             }
-          });
+          }
+          line = lines.shift();
+        }
       }
       if (FoundDupScene) {
         // Found a possible duplicate
@@ -836,7 +802,6 @@ module.exports = async ({
       const ResultTheListofSites = await $axios.get(Metadataapisiteaddress, {
         validateStatus: false,
       });
-      const allSites = [];
 
       if (
         ResultTheListofSites.status !== 200 ||
@@ -845,18 +810,14 @@ module.exports = async ({
       ) {
         $log(" ERR: TPDB site Not Available OR the API query failed");
 
-        return allSites;
+        return [];
       }
 
       const Newtpdb_site_search_content = ResultTheListofSites.data;
 
       // loops through all of the sites and grabs the "shortname" for the Studio or website
 
-      for (let index = 0; index < Newtpdb_site_search_content.data.length; index++) {
-        const element = Newtpdb_site_search_content.data[index];
-
-        allSites.push(element.short_name);
-      }
+      const allSites = Newtpdb_site_search_content.data.map((el) => el.short_name);
 
       return allSites;
     } catch (err) {
