@@ -237,6 +237,23 @@ module.exports = async ({
 
   // Function that is called to convert a found date into a timestamp.
 
+  // After everything has completed parsing, I run a function that will perform all of the lookups against TPDB
+
+  const FinalCallResult = await DoASearch(Actor, Studio, timestamp);
+  return FinalCallResult;
+
+  // -------------------------------------------------------------
+
+  // -------------------Fucntions & Async functions---------------
+
+  // -------------------------------------------------------------
+
+  /**
+   * The (Backbone) main Search function for the plugin
+   *
+   * @param {string} The_timestamp - Time string to be converted to timestamp
+   * @returns {date} return the proper scene information (either through manual questions or automatically)
+   */
   function timeConverter(The_timestamp) {
     const date_not_formatted = new Date(The_timestamp);
 
@@ -258,17 +275,13 @@ module.exports = async ({
     return formatted_string;
   }
 
-  // After everything has completed parsing, I run a function that will perform all of the lookups against TPDB
-
-  const FinalCallResult = await DoASearch(Actor, Studio, timestamp);
-  return FinalCallResult;
-
-  // -------------------------------------------------------------
-
-  // -------------------Fucntions & Async functions---------------
-
-  // -------------------------------------------------------------
-
+  /**
+   * The (Backbone) main Search function for the plugin
+   *
+   * @param {string} str - String to be cleaned of: "P.O.V." "/[^a-zA-Z0-9'/\\,(){}]/" (i should make this a file of customizable strings to clean? maybe?)
+   * @param {boolean} date - Boolean that identifies if it should clean a string with dates or not | True = does not remove zeros in front of a number from 1 - 9
+   * @returns {string} return the string with all of the unwanted characters removed from the string
+   */
   function stripStr(str, date) {
     date = 0 || date;
     str = str.toString();
@@ -329,8 +342,11 @@ module.exports = async ({
     
       }
     
-      */
-
+  */
+  /**
+   * Standard block of manual questions that prompt the user for input
+   * @returns {Promise<string[]|object>} either an array of all questions that need to be import manually
+   */
   async function ManualImport() {
     if (testmode.status) {
       $log(`:::::TESTMODE Question Enter MANUAL Info?:::: ${testmode.Questions.EnterManInfo}`);
@@ -508,12 +524,14 @@ module.exports = async ({
     }
   }
 
-  // This function is used when we are trying to find the proper scene
-  async function run(Value, AgressiveSearch) {
-    AgressiveSearch = AgressiveSearch || 0;
-
-    // Fetches a response from the link that was provided
-
+  /**
+   * Retrieves the scene titles or details from TPDB
+   *
+   * @param {string} Value - a TPDB url to a scene
+   * @param {boolean} AgressiveSearch - if the search does not only have 1 result, if this should run a manual import instead of trying to get titles
+   * @returns {Promise<string[]|object>} either an array of all the possible Porn Database search results, or a data object for the proper "found" scene
+   */
+  async function run(Value, AgressiveSearch = false) {
     const tpdb_scene_search_response = await $axios.get(Value, {
       validateStatus: false,
     });
@@ -795,8 +813,12 @@ module.exports = async ({
     return result;
   }
 
-  // Grabs a list of all the searchable Studios or websites available in TPDB
-
+  /**
+   * Grabs a list of all the searchable Studios or websites available in TPDB
+   *
+   * @param {string} Metadataapisiteaddress - The URL API that has the sites hosted on TPD
+   * @returns {Promise<object>} either an array of all the Porn Database hosted sites, or no data
+   */
   async function Grabsites(Metadataapisiteaddress) {
     try {
       const ResultTheListofSites = await $axios.get(Metadataapisiteaddress, {
@@ -825,8 +847,14 @@ module.exports = async ({
     }
   }
 
-  // The main Search function for the plugin
-
+  /**
+   * The (Backbone) main Search function for the plugin
+   *
+   * @param {string} SearchActor - The URL API that has the sites hosted on TPD
+   * @param {string} SearchStudio - The URL API that has the sites hosted on TPD
+   * @param {string} SearchFuncTimestamp - The URL API that has the sites hosted on TPD
+   * @returns {Promise<object>} return the proper scene information (either through manual questions or automatically)
+   */
   async function DoASearch(SearchActor, SearchStudio, SearchFuncTimestamp) {
     // check to see if the Studio and Actor are available for searching.
 
@@ -845,7 +873,7 @@ module.exports = async ({
 
       const resultsOffoundStudioInAPI = await Grabsites("https://metadataapi.net/api/sites");
 
-      const DoesSiteExist = [];
+      let DoesSiteExist;
 
       let Comparehighscore = 5000;
 
@@ -861,22 +889,21 @@ module.exports = async ({
             const Levenfound = levenshtein(foundStudioInAPI.toString(), SearchStudio.toString());
 
             if (Levenfound < Comparehighscore) {
+              $log(foundStudioInAPI);
               Comparehighscore = Levenfound;
-              DoesSiteExist[0] = foundStudioInAPI;
+              DoesSiteExist = foundStudioInAPI;
             }
           }
         }
       }
 
-      if (DoesSiteExist.length !== 1) {
-        if (DoesSiteExist.length === 0) {
-          $log(
-            " ERR: This Studio does not exist in ThePornDatabase.  No searches are possible with this Studio / Network"
-          );
+      if (!DoesSiteExist) {
+        $log(
+          " ERR: This Studio does not exist in ThePornDatabase.  No searches are possible with this Studio / Network"
+        );
 
-          const manualInfo = await ManualImport();
-          return manualInfo;
-        }
+        const manualInfo = await ManualImport();
+        return manualInfo;
       }
 
       $log(":::::MSG: Checking TPDB for Data Extraction");
@@ -912,7 +939,7 @@ module.exports = async ({
       const GrabResults = await run(tpdb_scene_search_url);
 
       // Once the results have been searched, we need to do something with them
-      if (GrabResults.Title0 !== undefined) {
+      if (GrabResults && Array.isArray(GrabResults)) {
         // Run through the list of titles and ask if they would like to choose one.
         $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
 
@@ -994,7 +1021,7 @@ module.exports = async ({
             return Gogetit;
           }
         }
-      } else {
+      } else if (GrabResults && typeof GrabResults === "object") {
         // Will return any of the values found
 
         $log("====  Final Entry =====");
