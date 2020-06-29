@@ -1,5 +1,5 @@
 module.exports = async (ctx) => {
-  const { args, $moment, $axios, $cheerio, $log, actorName, $createImage } = ctx;
+  const { args, $axios, $cheerio, $log, actorName, $createImage } = ctx;
 
   const name = actorName
     .replace(/#/g, "")
