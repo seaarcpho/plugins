@@ -1,4 +1,4 @@
-## adultempire 0.2.0
+## adultempire 0.3.0
 
 by boi123212321
 
@@ -27,6 +27,9 @@ Scrape data from adultempire
   "PLUGIN_EVENTS": {
     "movieCreated": [
       "adultempire"
+    ],
+    "actorCreated": [
+      "adultempire"
     ]
   }
 }
@@ -43,6 +46,8 @@ PLUGINS:
       dry: false
 PLUGIN_EVENTS:
   movieCreated:
+    - adultempire
+  actorCreated:
     - adultempire
 
 ---
