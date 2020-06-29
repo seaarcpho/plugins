@@ -1,9 +1,9 @@
 {
   "name": "adultempire",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "authors": ["boi123212321"],
   "description": "Scrape data from adultempire",
-  "pluginEvents": ["movieCreated"],
+  "pluginEvents": ["movieCreated", "actorCreated"],
   "arguments": [
     {
       "name": "dry",
