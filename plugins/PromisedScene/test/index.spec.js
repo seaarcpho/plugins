@@ -40,11 +40,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Should grab an alias for an actor Madison Swan = Mia Malkova", async () => {
       const result = await plugin({
@@ -68,13 +70,12 @@ describe("PromisedScene", () => {
             EnterInfoSearch: "n",
             EnterManInfo: "n",
             EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "2013.10.10",
-            EnterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova, Mike Adriano",
-            ManualDescription:
-              "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
+            EnterOneActorName: "",
+            EnterSceneDate: "",
+            EnterSceneTitle: "",
+            EnterStudioName: "",
+            ManualActors: "",
+            ManualDescription: "",
             MovieTitle: "",
             MultipleChoice: "",
           },
@@ -83,11 +84,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Should grab an alias with no spaces for an actor Madison Swan = Mia Malkova", async () => {
       const result = await plugin({
@@ -126,11 +129,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Search and Grab a scene with multiple parsed Actors, run a search and match based on title of scene - testing YY-MM-DD", async () => {
       const result = await plugin({
@@ -170,11 +175,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia could not stop thinking of Riley, her tutor, and wondered if she would ever have the courage to expose her true feelings towards her. When Riley asked Mia to pose nude for her art final, Mia jumped at the chance. Nervously as she posed, Riley expressed that, out of fear, she never told Mia how she felt. That gave Mia the opening she had desired for so long."
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Search and Grab a Scene that has multiple parsed Studios - testing ddmmyyyy", async () => {
       const result = await plugin({
@@ -213,11 +220,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia Malkova is one sexy all natural a babe. Sweet pair of tits, a tight pussy and a perfect round ass. She's fucking hot! Hands down! Mia shows off her cock sucking skills and then shows us how flexible she is. Ramon Nomar was fucking her good. Pounding that tight pussy good."
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("BANGBROS CLIPS");
     });
     it("Search and Grab a Scene that has multiple parsed Studios with no spaces - testing ddmmyyyy", async () => {
       const result = await plugin({
@@ -256,11 +265,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia Malkova is one sexy all natural a babe. Sweet pair of tits, a tight pussy and a perfect round ass. She's fucking hot! Hands down! Mia shows off her cock sucking skills and then shows us how flexible she is. Ramon Nomar was fucking her good. Pounding that tight pussy good."
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("BANGBROS CLIPS");
     });
     it("Select a scene from a list of returned searches", async () => {
       const result = await plugin({
@@ -301,7 +312,7 @@ describe("PromisedScene", () => {
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Select a wrong option a list of returned searches, no results returned because no manual input", async () => {
       const result = await plugin({
@@ -378,7 +389,7 @@ describe("PromisedScene", () => {
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Select a scene from a list of returned searches, error out because too many results after agressive search, chose not to enter manual info", async () => {
       const result = await plugin({
@@ -563,10 +574,12 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("New Sensations");
     });
     it("Should allow manual input, with movie, no search -- Unpopulated databases", async () => {
       const result = await plugin({
@@ -605,11 +618,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
-      expect(result.movie).to.be.a("string");
+      expect(result.description).to.equal(
+        "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("New Sensations");
+      expect(result.movie).to.equal("So Young So Sexy P.O.V. #8");
     });
   });
   describe("When Mixed Databases exist...", () => {
@@ -649,11 +664,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Should have DB files with Scene already -- No Studio or Actor -- ManualTouch True -- Should find with correct answers", async () => {
       const result = await plugin({
@@ -691,11 +708,13 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Should have DB files with Scene already but return nothing, no questions -- No Studio or Actor parsed", async () => {
       const result = await plugin({
@@ -796,7 +815,7 @@ describe("PromisedScene", () => {
             EnterOneActorName: "Mi Malkova",
             EnterSceneDate: "2016.01.04",
             EnterSceneTitle: "Flexible while getting pounded",
-            EnterStudioName: "Bangbros clips",
+            EnterStudioName: "BANGBROS CLIPS",
             ManualActors: "Mia Malkova",
             ManualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
@@ -808,10 +827,185 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.be.a("string");
+      expect(result.studio).to.equal("BANGBROS CLIPS");
+    });
+  });
+  describe("Handle all of the errors properly.", () => {
+    it("Should fail with error:  Plugin used for unsupported event", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          args: {
+            ManualTouch: true,
+            SceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testmode: {
+            TestSiteunavailable: false,
+            status: false,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.equal(" ERR: Plugin used for unsupported event");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing source_settings in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          args: {
+            ManualTouch: true,
+            SceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testmode: {
+            TestSiteunavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.equal(" ERR: Missing source_settings in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing ParseActor in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          args: {
+            ManualTouch: true,
+            SceneDuplicationCheck: true,
+            parseStudio: true,
+            source_settings: {
+              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testmode: {
+            TestSiteunavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.equal(" ERR: Missing ParseActor in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing parseStudio in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          args: {
+            ManualTouch: true,
+            SceneDuplicationCheck: true,
+            parseActor: true,
+            source_settings: {
+              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testmode: {
+            TestSiteunavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.equal(" ERR: Missing parseStudio in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing ManualTouch in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          args: {
+            SceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testmode: {
+            TestSiteunavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.equal(" ERR: Missing ManualTouch in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing SceneDuplicationCheck in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          args: {
+            ManualTouch: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testmode: {
+            TestSiteunavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.equal(" ERR: Missing SceneDuplicationCheck in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
     });
   });
 });

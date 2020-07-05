@@ -26,8 +26,18 @@ module.exports = async ({
 
   $createImage,
 }) => {
-  // Array Variable that will be returned
+  let TestingStatus;
+  let TestingTheSiteStatus;
 
+  if (testmode && !testmode.status) {
+    TestingStatus = false;
+    TestingTheSiteStatus = false;
+  } else {
+    TestingStatus = testmode.status;
+    TestingTheSiteStatus = testmode.TestSiteunavailable;
+  }
+
+  // Array Variable that will be returned
   const result = {};
 
   // Variable that is used for all the "manualTouch" questions
@@ -38,7 +48,7 @@ module.exports = async ({
 
   // Making sure that the event that triggered is the correct event
 
-  if (event !== "sceneCreated" && event !== "sceneCustom" && testmode.status !== true) {
+  if (event !== "sceneCreated" && event !== "sceneCustom" && TestingStatus !== true) {
     $throw(" ERR: Plugin used for unsupported event");
   }
 
@@ -348,7 +358,7 @@ module.exports = async ({
    * @returns {Promise<string[]|object>} either an array of all questions that need to be import manually
    */
   async function ManualImport() {
-    if (testmode.status) {
+    if (TestingStatus) {
       $log(`:::::TESTMODE Question Enter MANUAL Info?:::: ${testmode.Questions.EnterManInfo}`);
       const Q1answer = testmode.Questions.EnterManInfo;
 
@@ -541,7 +551,7 @@ module.exports = async ({
     if (
       tpdb_scene_search_response.status !== 200 ||
       tpdb_scene_search_response.data.length === 0 ||
-      testmode.TestSiteunavailable
+      (TestingTheSiteStatus !== undefined && TestingTheSiteStatus)
     ) {
       $log(" ERR: TPDB API query failed");
       const manualInfo = await ManualImport();
@@ -805,7 +815,11 @@ module.exports = async ({
     }
 
     if (tpdb_scene_search_data.site.name !== "") {
-      result.studio = tpdb_scene_search_data.site.name;
+      if (Studio) {
+        result.studio = Studio.toString().trim();
+      } else {
+        result.studio = tpdb_scene_search_data.site.name;
+      }
     }
 
     $log(" Returning the results");
@@ -828,7 +842,7 @@ module.exports = async ({
       if (
         ResultTheListofSites.status !== 200 ||
         ResultTheListofSites.data.length === 0 ||
-        testmode.TestSiteunavailable
+        (TestingTheSiteStatus !== undefined && TestingTheSiteStatus)
       ) {
         $log(" ERR: TPDB site Not Available OR the API query failed");
 
@@ -889,7 +903,6 @@ module.exports = async ({
             const Levenfound = levenshtein(foundStudioInAPI.toString(), SearchStudio.toString());
 
             if (Levenfound < Comparehighscore) {
-              $log(foundStudioInAPI);
               Comparehighscore = Levenfound;
               DoesSiteExist = foundStudioInAPI;
             }
@@ -962,7 +975,7 @@ module.exports = async ({
             rl.question(question, resolve);
           });
 
-        if (testmode.status) {
+        if (TestingStatus) {
           $log(
             `:::::TESTMODE MultipleChoiceResult EnterInfo:::: ${testmode.Questions.MultipleChoice}`
           );
@@ -1043,7 +1056,7 @@ module.exports = async ({
 
       let QuestionDate;
 
-      if (testmode.status) {
+      if (TestingStatus) {
         $log(`:::::TESTMODE Question Enter Info:::: ${testmode.Questions.EnterInfoSearch}`);
         const Q1answer = testmode.Questions.EnterInfoSearch;
 
