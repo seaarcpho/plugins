@@ -29,7 +29,7 @@ module.exports = async ({
   let TestingStatus;
   let TestingTheSiteStatus;
 
-  if (testmode && !testmode.status) {
+  if (testmode === undefined) {
     TestingStatus = false;
     TestingTheSiteStatus = false;
   } else {
