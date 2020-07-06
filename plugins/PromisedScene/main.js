@@ -1,50 +1,33 @@
 /* eslint-disable linebreak-style */
 /* eslint-disable dot-location */
 /* eslint-disable linebreak-style, camelcase */
+
+const levenshtein = require("./levenshtein.js");
+const util = require("./util");
+
 module.exports = async ({
   event,
-
   $throw,
-
   $fs,
-
   $moment,
-
   $log,
-
   $axios,
-
   testmode,
-
   sceneName,
-
   scenePath,
-
   args,
-
   $readline,
-
   $createImage,
 }) => {
-  let TestingStatus;
-  let TestingTheSiteStatus;
-
-  if (testmode === undefined) {
-    TestingStatus = false;
-    TestingTheSiteStatus = false;
-  } else {
-    TestingStatus = testmode.status;
-    TestingTheSiteStatus = testmode.TestSiteunavailable;
-  }
+  const TestingStatus = testmode ? testmode.status : false;
+  const TestingTheSiteStatus = testmode ? testmode.TestSiteunavailable : false;
 
   // Array Variable that will be returned
   const result = {};
 
   // Variable that is used for all the "manualTouch" questions
 
-  const levenshtein = require("./levenshtein.js");
-
-  const CleanPathname = stripStr(scenePath.toString());
+  const CleanPathname = util.stripStr(scenePath.toString());
 
   // Making sure that the event that triggered is the correct event
 
@@ -89,48 +72,55 @@ module.exports = async ({
       .readFileSync(args.source_settings.Actors, "utf8")
       .split("\n")
       .forEach((line) => {
-        if (line !== "") {
-          const MatchActor = new RegExp(JSON.parse(line).name, "i");
+        if (!line) {
+          return;
+        }
 
-          const ActorLength = MatchActor.toString().split(" ");
+        const MatchActor = new RegExp(JSON.parse(line).name, "i");
 
-          if (ActorLength.length >= 2) {
-            // $log(((JSON.parse(line)).name))
-            const foundActorMatch = stripStr(scenePath).match(MatchActor);
+        const ActorLength = MatchActor.toString().split(" ");
 
-            // $log(stripStr(sceneName))
+        if (ActorLength.length < 2) {
+          return;
+        }
 
-            if (foundActorMatch !== null) {
+        // $log(((JSON.parse(line)).name))
+        const foundActorMatch = util.stripStr(scenePath).match(MatchActor);
+
+        // $log(util.stripStr(sceneName))
+
+        if (foundActorMatch !== null) {
+          GettingActor.push(JSON.parse(line).name);
+          return;
+        }
+
+        const AllAliases = JSON.parse(line).aliases.toString().split(",");
+
+        AllAliases.forEach((PersonAlias) => {
+          const AliasLength = PersonAlias.toString().split(" ");
+
+          if (AliasLength.length < 2) {
+            return;
+          }
+
+          let MatchAliasActor = new RegExp(PersonAlias, "i");
+
+          let foundAliasActorMatch = util.stripStr(scenePath).match(MatchAliasActor);
+
+          if (foundAliasActorMatch !== null) {
+            GettingActor.push(JSON.parse(line).name);
+          } else {
+            const Aliasnospaces = PersonAlias.toString().replace(" ", "");
+
+            MatchAliasActor = new RegExp(Aliasnospaces, "i");
+
+            foundAliasActorMatch = util.stripStr(scenePath).match(MatchAliasActor);
+
+            if (foundAliasActorMatch !== null) {
               GettingActor.push(JSON.parse(line).name);
-            } else {
-              const AllAliases = JSON.parse(line).aliases.toString().split(",");
-
-              AllAliases.forEach((PersonAlias) => {
-                const AliasLength = PersonAlias.toString().split(" ");
-
-                if (AliasLength.length >= 2) {
-                  let MatchAliasActor = new RegExp(PersonAlias, "i");
-
-                  let foundAliasActorMatch = stripStr(scenePath).match(MatchAliasActor);
-
-                  if (foundAliasActorMatch !== null) {
-                    GettingActor.push(JSON.parse(line).name);
-                  } else {
-                    const Aliasnospaces = PersonAlias.toString().replace(" ", "");
-
-                    MatchAliasActor = new RegExp(Aliasnospaces, "i");
-
-                    foundAliasActorMatch = stripStr(scenePath).match(MatchAliasActor);
-
-                    if (foundAliasActorMatch !== null) {
-                      GettingActor.push(JSON.parse(line).name);
-                    }
-                  }
-                }
-              });
             }
           }
-        }
+        });
       });
 
     let Actorhighscore = 5000;
@@ -168,23 +158,27 @@ module.exports = async ({
       .readFileSync(args.source_settings.Studios, "utf8")
       .split("\n")
       .forEach((line) => {
-        if (line !== "") {
-          if (JSON.parse(line).name !== null) {
-            let MatchStudio = new RegExp(JSON.parse(line).name, "i");
+        if (!line) {
+          return;
+        }
 
-            const foundStudioMatch = stripStr(scenePath).match(MatchStudio);
+        if (!JSON.parse(line).name) {
+          return;
+        }
 
-            if (foundStudioMatch !== null) {
-              GettingStudio.push(JSON.parse(line).name);
-            } else if (JSON.parse(line).name !== null) {
-              MatchStudio = new RegExp(JSON.parse(line).name.replace(/ /g, ""), "i");
+        let MatchStudio = new RegExp(JSON.parse(line).name, "i");
 
-              const foundStudioMatch = stripStr(scenePath).match(MatchStudio);
+        const foundStudioMatch = util.stripStr(scenePath).match(MatchStudio);
 
-              if (foundStudioMatch !== null) {
-                GettingStudio.push(JSON.parse(line).name);
-              }
-            }
+        if (foundStudioMatch !== null) {
+          GettingStudio.push(JSON.parse(line).name);
+        } else if (JSON.parse(line).name !== null) {
+          MatchStudio = new RegExp(JSON.parse(line).name.replace(/ /g, ""), "i");
+
+          const foundStudioMatch = util.stripStr(scenePath).match(MatchStudio);
+
+          if (foundStudioMatch !== null) {
+            GettingStudio.push(JSON.parse(line).name);
           }
         }
       });
@@ -212,16 +206,16 @@ module.exports = async ({
   }
   // Try to PARSE the SceneName and determine Date
 
-  const ddmmyyyy = stripStr(scenePath, 1).match(/\d\d \d\d \d\d\d\d/);
+  const ddmmyyyy = util.stripStr(scenePath, 1).match(/\d\d \d\d \d\d\d\d/);
 
-  const yyyymmdd = stripStr(scenePath, 1).match(/\d\d\d\d \d\d \d\d/);
+  const yyyymmdd = util.stripStr(scenePath, 1).match(/\d\d\d\d \d\d \d\d/);
 
-  const yymmdd = stripStr(scenePath, 1).match(/\d\d \d\d \d\d/);
+  const yymmdd = util.stripStr(scenePath, 1).match(/\d\d \d\d \d\d/);
 
   let timestamp = {};
 
   $log(":::::PARSE:::: Parsing Date from ScenePath");
-  // $log(stripStr(scenePath, 1));
+  // $log(util.stripStr(scenePath, 1));
 
   if (yyyymmdd && yyyymmdd.length) {
     const date = yyyymmdd[0].replace(" ", ".");
@@ -257,56 +251,6 @@ module.exports = async ({
   // -------------------Fucntions & Async functions---------------
 
   // -------------------------------------------------------------
-
-  /**
-   * The (Backbone) main Search function for the plugin
-   *
-   * @param {string} The_timestamp - Time string to be converted to timestamp
-   * @returns {date} return the proper scene information (either through manual questions or automatically)
-   */
-  function timeConverter(The_timestamp) {
-    const date_not_formatted = new Date(The_timestamp);
-
-    let formatted_string = date_not_formatted.getFullYear() + "-";
-
-    if (date_not_formatted.getMonth() < 9) {
-      formatted_string += "0";
-    }
-
-    formatted_string += date_not_formatted.getMonth() + 1;
-
-    formatted_string += "-";
-
-    if (date_not_formatted.getDate() < 10) {
-      formatted_string += "0";
-    }
-    formatted_string += date_not_formatted.getDate();
-
-    return formatted_string;
-  }
-
-  /**
-   * The (Backbone) main Search function for the plugin
-   *
-   * @param {string} str - String to be cleaned of: "P.O.V." "/[^a-zA-Z0-9'/\\,(){}]/" (i should make this a file of customizable strings to clean? maybe?)
-   * @param {boolean} date - Boolean that identifies if it should clean a string with dates or not | True = does not remove zeros in front of a number from 1 - 9
-   * @returns {string} return the string with all of the unwanted characters removed from the string
-   */
-  function stripStr(str, date) {
-    date = 0 || date;
-    str = str.toString();
-
-    str = str.toLowerCase().replace("'", "");
-    str = str.toLowerCase().replace(/P.O.V./gi, "pov");
-    if (!date) {
-      str = str.toLowerCase().replace(/\b0+/g, "");
-    }
-
-    str = str.replace(/[^a-zA-Z0-9'/\\,(){}]/g, " ");
-
-    str = str.replace(/  +/g, " ");
-    return str;
-  }
 
   /*  FemaleOnly  Freeones function
      
@@ -358,180 +302,109 @@ module.exports = async ({
    * @returns {Promise<string[]|object>} either an array of all questions that need to be import manually
    */
   async function ManualImport() {
-    if (TestingStatus) {
-      $log(`:::::TESTMODE Question Enter MANUAL Info?:::: ${testmode.Questions.EnterManInfo}`);
-      const Q1answer = testmode.Questions.EnterManInfo;
+    const rl = $readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
 
-      const runInteractiveSearch =
-        Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
+    const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
 
-      if (!runInteractiveSearch) {
-        return {};
-      }
+    $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
 
-      $log(`:::::TESTMODE Question MANUAL Movie:::: ${testmode.Questions.EnterMovie}`);
-      const ManualMovieanswer = testmode.Questions.EnterMovie;
+    const Q1answer = await questionAsync(
+      "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) ",
+      "TESTMODE Question Enter MANUAL Info?",
+      testmode.Questions.EnterManInfo
+    );
 
-      const ManualEnterMovieSearch =
-        ManualMovieanswer === "y" ||
-        ManualMovieanswer === "Y" ||
-        ManualMovieanswer === "Yes" ||
-        ManualMovieanswer === "YES";
+    const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
 
-      if (ManualEnterMovieSearch) {
-        $log(`:::::TESTMODE Question MANUAL Movie Title:::: ${testmode.Questions.MovieTitle}`);
-        const ManualMovieName = testmode.Questions.MovieTitle;
-
-        if (result.movie === undefined && ManualMovieName !== "") {
-          result.movie = ManualMovieName;
-        }
-      }
-      $log(`:::::TESTMODE Question MANUAL Title:::: ${testmode.Questions.EnterSceneTitle}`);
-      result.name = testmode.Questions.EnterSceneTitle;
-
-      $log(`:::::TESTMODE Question MANUAL Date:::: ${testmode.Questions.EnterSceneDate}`);
-      result.releaseDate = testmode.Questions.EnterSceneDate;
-      if (result.releaseDate !== "") {
-        const questYear = result.releaseDate.match(/\d\d\d\d.\d\d.\d\d/);
-
-        $log(" MSG: Checking Date");
-
-        if (questYear && questYear.length) {
-          const date = questYear[0];
-
-          $log(" MSG: Found => yyyymmdd");
-
-          result.releaseDate = new Date(date.replace(".", "-")).getTime();
-        }
-      }
-
-      $log(`:::::TESTMODE Question MANUAL Description:::: ${testmode.Questions.ManualDescription}`);
-      result.description = testmode.Questions.ManualDescription;
-
-      const splitactors = testmode.Questions.ManualActors;
-
-      const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
-
-      if (!AreActorsBlank) {
-        result.actors = splitactors.trim().split(",");
-      }
-
-      $log(`:::::TESTMODE Question MANUAL Studio name:::: ${testmode.Questions.EnterStudioName}`);
-      const askedStudio = testmode.Questions.EnterStudioName;
-
-      const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
-
-      if (!IsStudiosBlank) {
-        result.studio = askedStudio;
-      }
-
-      return result;
-    } else {
-      const rl = $readline.createInterface({
-        input: process.stdin,
-
-        output: process.stdout,
-      });
-
-      const questionAsync = (question) =>
-        new Promise((resolve) => {
-          rl.question(question, resolve);
-          if (
-            question === "What are the Actors NAMES in the scene?: (seperated by Comma) " &&
-            Actor !== undefined
-          ) {
-            for (let numofpeople = 0; numofpeople < Actor.length; numofpeople++) {
-              if (numofpeople === 0) {
-                rl.write(" " + Actor[numofpeople]);
-              } else {
-                rl.write(", " + Actor[numofpeople]);
-              }
-            }
-          }
-          if (
-            question === "What Studio NAME is responsible for the scene?: " &&
-            Studio[0] !== undefined
-          ) {
-            rl.write(" " + Studio[0]);
-          }
-        });
-
-      $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
-
-      const Q1answer = await questionAsync(
-        "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) "
-      );
-
-      const runInteractiveSearch =
-        Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
-
-      if (!runInteractiveSearch) {
-        rl.close();
-        return {};
-      }
-
-      const ManualMovieanswer = await questionAsync(
-        "Is this a Scene from a Movie / Set / Collection?: (Y/N) "
-      );
-
-      const ManualEnterMovieSearch =
-        ManualMovieanswer === "y" ||
-        ManualMovieanswer === "Y" ||
-        ManualMovieanswer === "Yes" ||
-        ManualMovieanswer === "YES";
-
-      if (ManualEnterMovieSearch) {
-        const ManualMovieName = await questionAsync("What is the Title of the Movie?: ");
-
-        if (result.movie === undefined && ManualMovieName !== "") {
-          result.movie = ManualMovieName;
-        }
-      }
-
-      result.name = await questionAsync("What is the TITLE of the scene?: ");
-
-      result.releaseDate = await questionAsync(
-        "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: "
-      );
-
-      if (result.releaseDate !== "") {
-        const questYear = result.releaseDate.match(/\d\d\d\d.\d\d.\d\d/);
-
-        $log(" MSG: Checking Date");
-
-        if (questYear && questYear.length) {
-          const date = questYear[0];
-
-          $log(" MSG: Found => yyyymmdd");
-
-          result.releaseDate = $moment(date, "YYYY-MM-DD").valueOf();
-        }
-      }
-
-      result.description = await questionAsync("What is the DESCRIPTION for the scene?: ");
-
-      const splitactors = await questionAsync(
-        "What are the Actors NAMES in the scene?: (seperated by Comma) "
-      );
-
-      const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
-
-      if (!AreActorsBlank) {
-        result.actors = splitactors.trim().split(",");
-      }
-
-      const askedStudio = await questionAsync("What Studio NAME is responsible for the scene?: ");
-
-      const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
-
-      if (!IsStudiosBlank) {
-        result.studio = askedStudio;
-      }
-
+    if (!runInteractiveSearch) {
       rl.close();
-
-      return result;
+      return {};
     }
+
+    const ManualMovieanswer = await questionAsync(
+      "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
+      "TESTMODE Question MANUAL Movie",
+      testmode.Questions.EnterMovie
+    );
+
+    const ManualEnterMovieSearch = util.isPositiveAnswer(ManualMovieanswer);
+
+    if (ManualEnterMovieSearch) {
+      const ManualMovieName = await questionAsync(
+        "What is the Title of the Movie?: ",
+        "TESTMODE Question MANUAL Movie Title",
+        testmode.Questions.MovieTitle
+      );
+
+      if (result.movie === undefined && ManualMovieName !== "") {
+        result.movie = ManualMovieName;
+      }
+    }
+
+    result.name = await questionAsync(
+      "What is the TITLE of the scene?: ",
+      "TESTMODE Question MANUAL Title",
+      testmode.Questions.EnterSceneTitle
+    );
+
+    result.releaseDate = await questionAsync(
+      "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
+      "TESTMODE Question MANUAL Date",
+      testmode.Questions.EnterSceneDate
+    );
+
+    if (result.releaseDate !== "") {
+      const questYear = result.releaseDate.match(/\d\d\d\d.\d\d.\d\d/);
+
+      $log(" MSG: Checking Date");
+
+      if (questYear && questYear.length) {
+        const date = questYear[0];
+
+        $log(" MSG: Found => yyyymmdd");
+
+        result.releaseDate = $moment(date, "YYYY-MM-DD").valueOf();
+      }
+    }
+
+    result.description = await questionAsync(
+      "What is the DESCRIPTION for the scene?: ",
+      "TESTMODE Question MANUAL Description",
+      testmode.Questions.ManualDescription
+    );
+
+    const splitactors = await questionAsync(
+      `What are the Actors NAMES in the scene?: (seperated by Comma) ${
+        Actor.length ? ` ${Actor.join(", ")}` : ""
+      }`,
+      "TESTMODE Question MANUAL actor names",
+      testmode.Questions.ManualActors
+    );
+
+    const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
+
+    if (!AreActorsBlank) {
+      result.actors = splitactors.trim().split(",");
+    }
+
+    const askedStudio = await questionAsync(
+      `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`,
+      "TESTMODE Question MANUAL Studio name",
+      testmode.Questions.EnterStudioName
+    );
+
+    const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
+
+    if (!IsStudiosBlank) {
+      result.studio = askedStudio;
+    }
+
+    rl.close();
+
+    return result;
   }
 
   /**
@@ -554,6 +427,11 @@ module.exports = async ({
       (TestingTheSiteStatus !== undefined && TestingTheSiteStatus)
     ) {
       $log(" ERR: TPDB API query failed");
+
+      if (TestingStatus && !TestingTheSiteStatus) {
+        $log("!! This will impact the test if it was not expecting a failure !!");
+      }
+
       const manualInfo = await ManualImport();
       return manualInfo;
     }
@@ -572,14 +450,12 @@ module.exports = async ({
     // making a variable to store all of the titles of the found results (in case we need the user to select a scene)
     const alltitles = [];
 
-    if (AgressiveSearch) {
-      // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
-      if (correct_scene_idx === -1) {
-        $log(" ERR: TPDB Could NOT find correct scene info");
+    // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
+    if (AgressiveSearch && correct_scene_idx === -1) {
+      $log(" ERR: TPDB Could NOT find correct scene info");
 
-        const manualInfo = await ManualImport();
-        return manualInfo;
-      }
+      const manualInfo = await ManualImport();
+      return manualInfo;
     } else {
       // list the found results and tries to match the SCENENAME to the found results.
       // all while gathering all of the titles, in case no match is found
@@ -596,9 +472,10 @@ module.exports = async ({
 
           // It is better to search just the title.  We already have the actor and studio.
 
-          let SearchedTitle = stripStr(sceneName).toString().toLowerCase();
+          let SearchedTitle = util.stripStr(sceneName).toString().toLowerCase();
 
-          let MatchTitle = stripStr(alltitles["Title" + idx])
+          let MatchTitle = util
+            .stripStr(alltitles["Title" + idx])
             .toString()
             .toLowerCase();
 
@@ -677,30 +554,32 @@ module.exports = async ({
 
         let line = lines.shift();
         while (!FoundDupScene && line) {
-          if (line !== "") {
-            if (stripStr(JSON.parse(line).name.toString()) !== null) {
-              let MatchScene = new RegExp(stripStr(JSON.parse(line).name.toString()), "gi");
+          if (!line || !util.stripStr(JSON.parse(line).name.toString())) {
+            line = lines.shift();
+            continue;
+          }
 
-              const foundSceneMatch = stripStr(tpdb_scene_search_data.title).match(MatchScene);
+          let MatchScene = new RegExp(util.stripStr(JSON.parse(line).name.toString()), "gi");
 
-              if (foundSceneMatch !== null) {
-                FoundDupScene = true;
-                // TheDupedScene = stripStr(JSON.parse(line).name.toString());
-              } else if (stripStr(JSON.parse(line).name.toString()) !== null) {
-                MatchScene = new RegExp(
-                  stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
-                  "gi"
-                );
+          const foundSceneMatch = util.stripStr(tpdb_scene_search_data.title).match(MatchScene);
 
-                const foundSceneMatch = stripStr(tpdb_scene_search_data.title).match(MatchScene);
+          if (foundSceneMatch !== null) {
+            FoundDupScene = true;
+            // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
+          } else if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
+            MatchScene = new RegExp(
+              util.stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
+              "gi"
+            );
 
-                if (foundSceneMatch !== null) {
-                  // TheDupedScene = stripStr(JSON.parse(line).name.toString());
-                  FoundDupScene = true;
-                }
-              }
+            const foundSceneMatch = util.stripStr(tpdb_scene_search_data.title).match(MatchScene);
+
+            if (foundSceneMatch !== null) {
+              // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
+              FoundDupScene = true;
             }
           }
+
           line = lines.shift();
         }
       }
@@ -846,6 +725,10 @@ module.exports = async ({
       ) {
         $log(" ERR: TPDB site Not Available OR the API query failed");
 
+        if (TestingStatus && !TestingTheSiteStatus) {
+          $log("!! This will impact the test if it was not expecting a failure !!");
+        }
+
         return [];
       }
 
@@ -942,7 +825,7 @@ module.exports = async ({
           "%20" +
           encodeURIComponent(SearchActor[0]) +
           "%20" +
-          timeConverter(SearchFuncTimestamp);
+          util.timeConverter(SearchFuncTimestamp);
       }
 
       // Grabbing the results using the "Normal" Search methods (comparing against scenename)
@@ -966,73 +849,39 @@ module.exports = async ({
 
         const rl = $readline.createInterface({
           input: process.stdin,
-
           output: process.stdout,
         });
 
-        const questionAsync = (question) =>
-          new Promise((resolve) => {
-            rl.question(question, resolve);
-          });
+        const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
 
-        if (TestingStatus) {
-          $log(
-            `:::::TESTMODE MultipleChoiceResult EnterInfo:::: ${testmode.Questions.MultipleChoice}`
-          );
-          const MultipleSitesAnswer = testmode.Questions.MultipleChoice;
+        const MultipleSitesAnswer = await questionAsync(
+          "Which Title would you like to use? (number): ",
+          "TESTMODE MultipleChoiceResult EnterInfo",
+          testmode.Questions.MultipleChoice
+        );
+        if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
+          $log(" ERR: Not a valid option....");
 
-          if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
-            $log(" ERR: Not a valid option...");
+          rl.close();
 
-            rl.close();
+          const manualInfo = await ManualImport();
+          return manualInfo;
+        } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
+          const selectedtitle =
+            `https://metadataapi.net/api/scenes?parse=` +
+            GrabResults["Title" + MultipleSitesAnswer];
 
-            const manualInfo = await ManualImport();
-            return manualInfo;
-          } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
-            const selectedtitle =
-              `https://metadataapi.net/api/scenes?parse=` +
-              GrabResults["Title" + MultipleSitesAnswer];
+          rl.close();
+          $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
+          const Gogetit = await run(selectedtitle, 1);
 
-            rl.close();
-            $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
-            const Gogetit = await run(selectedtitle, 1);
+          $log("====  Final Entry =====");
 
-            $log("====  Final Entry =====");
-
-            for (const property in Gogetit) {
-              $log(`${property}: ${Gogetit[property]}`);
-            }
-
-            return Gogetit;
+          for (const property in Gogetit) {
+            $log(`${property}: ${Gogetit[property]}`);
           }
-        } else {
-          const MultipleSitesAnswer = await questionAsync(
-            "Which Title would you like to use? (number): "
-          );
-          if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
-            $log(" ERR: Not a valid option....");
 
-            rl.close();
-
-            const manualInfo = await ManualImport();
-            return manualInfo;
-          } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
-            const selectedtitle =
-              `https://metadataapi.net/api/scenes?parse=` +
-              GrabResults["Title" + MultipleSitesAnswer];
-
-            rl.close();
-            $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
-            const Gogetit = await run(selectedtitle, 1);
-
-            $log("====  Final Entry =====");
-
-            for (const property in Gogetit) {
-              $log(`${property}: ${Gogetit[property]}`);
-            }
-
-            return Gogetit;
-          }
+          return Gogetit;
         }
       } else if (GrabResults && typeof GrabResults === "object") {
         // Will return any of the values found
@@ -1056,52 +905,73 @@ module.exports = async ({
 
       let QuestionDate;
 
-      if (TestingStatus) {
-        $log(`:::::TESTMODE Question Enter Info:::: ${testmode.Questions.EnterInfoSearch}`);
-        const Q1answer = testmode.Questions.EnterInfoSearch;
+      const rl = $readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
 
-        const runInteractiveSearch =
-          Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
+      try {
+        const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
+
+        $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
+        const Q1answer = await questionAsync(
+          "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) ",
+          `TESTMODE Question Enter Info`,
+          testmode.Questions.EnterInfoSearch
+        );
+
+        const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
 
         if (!runInteractiveSearch) {
+          rl.close();
           const manualInfo = await ManualImport();
           return manualInfo;
         }
-        $log(`:::::TESTMODE Question Enter Movie?:::: ${testmode.Questions.EnterMovie}`);
-        const Movieanswer = testmode.Questions.EnterMovie;
 
-        const EnterMovieSearch =
-          Movieanswer === "y" ||
-          Movieanswer === "Y" ||
-          Movieanswer === "Yes" ||
-          Movieanswer === "YES";
+        const Movieanswer = await questionAsync(
+          "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
+          "TESTMODE Question Enter Movie?",
+          testmode.Questions.EnterMovie
+        );
+        const EnterMovieSearch = util.isPositiveAnswer(Movieanswer);
 
         if (EnterMovieSearch) {
-          $log(`:::::TESTMODE Question Movie Title:::: ${testmode.Questions.MovieTitle}`);
-          const MovieName = testmode.Questions.MovieTitle;
+          const MovieName = await questionAsync(
+            "What is the Title of the Movie?: ",
+            "TESTMODE Question Movie Title",
+            testmode.Questions.MovieTitle
+          );
 
           if (result.movie === undefined && MovieName !== "") {
             result.movie = MovieName;
           }
         }
-        $log(`:::::TESTMODE Question One Actor:::: ${testmode.Questions.EnterOneActorName}`);
-        const Q2Actor = testmode.Questions.EnterOneActorName;
+        const Q2Actor = await questionAsync(
+          `What is ONE of the Actors NAME in the scene?: ${Actor[0] ? ` ${Actor[0]}` : ""}`,
+          "TESTMODE Question One Actor",
+          testmode.Questions.EnterOneActorName
+        );
 
         QuestionActor.push(Q2Actor);
-        if (!Actor.length) {
+        if (Actor === undefined) {
           Actor.push(Q2Actor);
         }
 
-        $log(`:::::TESTMODE Question Studio Name:::: ${testmode.Questions.EnterStudioName}`);
-        const Q3Studio = testmode.Questions.EnterStudioName;
+        const Q3Studio = await questionAsync(
+          `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`,
+          "TESTMODE Question Studio Name",
+          testmode.Questions.EnterStudioName
+        );
 
         QuestionStudio.push(Q3Studio);
-        if (!Studio.length) {
+        if (Studio === undefined) {
           Studio.push(Q3Studio);
         }
-
-        $log(`:::::TESTMODE Question Date:::: ${testmode.Questions.EnterSceneDate}`);
-        const Q4date = testmode.Questions.EnterSceneDate;
+        const Q4date = await questionAsync(
+          "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
+          "TESTMODE Question Date",
+          testmode.Questions.EnterSceneDate
+        );
 
         if (Q4date !== "") {
           const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
@@ -1117,102 +987,14 @@ module.exports = async ({
           }
         }
 
+        rl.close();
+
         // Re run the search with user's input
         const res = await DoASearch(QuestionActor, QuestionStudio, QuestionDate);
 
         return res;
-      } else {
-        const rl = $readline.createInterface({
-          input: process.stdin,
-
-          output: process.stdout,
-        });
-        try {
-          const questionAsync = (question) =>
-            new Promise((resolve) => {
-              rl.question(question, resolve);
-              if (
-                question === "What is ONE of the Actors NAME in the scene?: " &&
-                Actor[0] !== undefined
-              ) {
-                rl.write(" " + Actor[0]);
-              }
-              if (
-                question === "What Studio NAME is responsible for the scene?: " &&
-                Studio[0] !== undefined
-              ) {
-                rl.write(" " + Studio[0]);
-              }
-            });
-          $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
-          const Q1answer = await questionAsync(
-            "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) "
-          );
-
-          const runInteractiveSearch =
-            Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
-
-          if (!runInteractiveSearch) {
-            rl.close();
-            const manualInfo = await ManualImport();
-            return manualInfo;
-          }
-          const Movieanswer = await questionAsync(
-            "Is this a Scene from a Movie / Set / Collection?: (Y/N) "
-          );
-          const EnterMovieSearch =
-            Movieanswer === "y" ||
-            Movieanswer === "Y" ||
-            Movieanswer === "Yes" ||
-            Movieanswer === "YES";
-
-          if (EnterMovieSearch) {
-            const MovieName = await questionAsync("What is the Title of the Movie?: ");
-
-            if (result.movie === undefined && MovieName !== "") {
-              result.movie = MovieName;
-            }
-          }
-          const Q2Actor = await questionAsync("What is ONE of the Actors NAME in the scene?: ");
-
-          QuestionActor.push(Q2Actor);
-          if (Actor === undefined) {
-            Actor.push(Q2Actor);
-          }
-
-          const Q3Studio = await questionAsync("What Studio NAME is responsible for the scene?: ");
-
-          QuestionStudio.push(Q3Studio);
-          if (Studio === undefined) {
-            Studio.push(Q3Studio);
-          }
-          const Q4date = await questionAsync(
-            "What is the release date (YYYY.MM.DD)?: (Blanks allowed) "
-          );
-
-          if (Q4date !== "") {
-            const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
-
-            $log(" MSG: Checking Date");
-
-            if (questYear && questYear.length) {
-              const date = questYear[0];
-
-              $log(" MSG: Found => yyyymmdd");
-
-              QuestionDate = $moment(date, "YYYY-MM-DD").valueOf();
-            }
-          }
-
-          rl.close();
-
-          // Re run the search with user's input
-          const res = await DoASearch(QuestionActor, QuestionStudio, QuestionDate);
-
-          return res;
-        } catch (error) {
-          rl.close();
-        }
+      } catch (error) {
+        rl.close();
       }
     } else {
       return {};
