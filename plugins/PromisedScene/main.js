@@ -19,16 +19,8 @@ module.exports = async ({
   $readline,
   $createImage,
 }) => {
-  let TestingStatus;
-  let TestingTheSiteStatus;
-
-  if (testmode === undefined) {
-    TestingStatus = false;
-    TestingTheSiteStatus = false;
-  } else {
-    TestingStatus = testmode.status;
-    TestingTheSiteStatus = testmode.TestSiteunavailable;
-  }
+  const TestingStatus = testmode ? testmode.status : false;
+  const TestingTheSiteStatus = testmode ? testmode.TestSiteunavailable : false;
 
   // Array Variable that will be returned
   const result = {};
