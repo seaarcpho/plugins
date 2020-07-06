@@ -95,48 +95,55 @@ module.exports = async ({
       .readFileSync(args.source_settings.Actors, "utf8")
       .split("\n")
       .forEach((line) => {
-        if (line !== "") {
-          const MatchActor = new RegExp(JSON.parse(line).name, "i");
+        if (!line) {
+          return;
+        }
 
-          const ActorLength = MatchActor.toString().split(" ");
+        const MatchActor = new RegExp(JSON.parse(line).name, "i");
 
-          if (ActorLength.length >= 2) {
-            // $log(((JSON.parse(line)).name))
-            const foundActorMatch = stripStr(scenePath).match(MatchActor);
+        const ActorLength = MatchActor.toString().split(" ");
 
-            // $log(stripStr(sceneName))
+        if (ActorLength.length < 2) {
+          return;
+        }
 
-            if (foundActorMatch !== null) {
+        // $log(((JSON.parse(line)).name))
+        const foundActorMatch = stripStr(scenePath).match(MatchActor);
+
+        // $log(stripStr(sceneName))
+
+        if (foundActorMatch !== null) {
+          GettingActor.push(JSON.parse(line).name);
+          return;
+        }
+
+        const AllAliases = JSON.parse(line).aliases.toString().split(",");
+
+        AllAliases.forEach((PersonAlias) => {
+          const AliasLength = PersonAlias.toString().split(" ");
+
+          if (AliasLength.length < 2) {
+            return;
+          }
+
+          let MatchAliasActor = new RegExp(PersonAlias, "i");
+
+          let foundAliasActorMatch = stripStr(scenePath).match(MatchAliasActor);
+
+          if (foundAliasActorMatch !== null) {
+            GettingActor.push(JSON.parse(line).name);
+          } else {
+            const Aliasnospaces = PersonAlias.toString().replace(" ", "");
+
+            MatchAliasActor = new RegExp(Aliasnospaces, "i");
+
+            foundAliasActorMatch = stripStr(scenePath).match(MatchAliasActor);
+
+            if (foundAliasActorMatch !== null) {
               GettingActor.push(JSON.parse(line).name);
-            } else {
-              const AllAliases = JSON.parse(line).aliases.toString().split(",");
-
-              AllAliases.forEach((PersonAlias) => {
-                const AliasLength = PersonAlias.toString().split(" ");
-
-                if (AliasLength.length >= 2) {
-                  let MatchAliasActor = new RegExp(PersonAlias, "i");
-
-                  let foundAliasActorMatch = stripStr(scenePath).match(MatchAliasActor);
-
-                  if (foundAliasActorMatch !== null) {
-                    GettingActor.push(JSON.parse(line).name);
-                  } else {
-                    const Aliasnospaces = PersonAlias.toString().replace(" ", "");
-
-                    MatchAliasActor = new RegExp(Aliasnospaces, "i");
-
-                    foundAliasActorMatch = stripStr(scenePath).match(MatchAliasActor);
-
-                    if (foundAliasActorMatch !== null) {
-                      GettingActor.push(JSON.parse(line).name);
-                    }
-                  }
-                }
-              });
             }
           }
-        }
+        });
       });
 
     let Actorhighscore = 5000;
@@ -174,23 +181,27 @@ module.exports = async ({
       .readFileSync(args.source_settings.Studios, "utf8")
       .split("\n")
       .forEach((line) => {
-        if (line !== "") {
-          if (JSON.parse(line).name !== null) {
-            let MatchStudio = new RegExp(JSON.parse(line).name, "i");
+        if (!line) {
+          return;
+        }
 
-            const foundStudioMatch = stripStr(scenePath).match(MatchStudio);
+        if (!JSON.parse(line).name) {
+          return;
+        }
 
-            if (foundStudioMatch !== null) {
-              GettingStudio.push(JSON.parse(line).name);
-            } else if (JSON.parse(line).name !== null) {
-              MatchStudio = new RegExp(JSON.parse(line).name.replace(/ /g, ""), "i");
+        let MatchStudio = new RegExp(JSON.parse(line).name, "i");
 
-              const foundStudioMatch = stripStr(scenePath).match(MatchStudio);
+        const foundStudioMatch = stripStr(scenePath).match(MatchStudio);
 
-              if (foundStudioMatch !== null) {
-                GettingStudio.push(JSON.parse(line).name);
-              }
-            }
+        if (foundStudioMatch !== null) {
+          GettingStudio.push(JSON.parse(line).name);
+        } else if (JSON.parse(line).name !== null) {
+          MatchStudio = new RegExp(JSON.parse(line).name.replace(/ /g, ""), "i");
+
+          const foundStudioMatch = stripStr(scenePath).match(MatchStudio);
+
+          if (foundStudioMatch !== null) {
+            GettingStudio.push(JSON.parse(line).name);
           }
         }
       });
@@ -554,14 +565,12 @@ module.exports = async ({
     // making a variable to store all of the titles of the found results (in case we need the user to select a scene)
     const alltitles = [];
 
-    if (AgressiveSearch) {
-      // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
-      if (correct_scene_idx === -1) {
-        $log(" ERR: TPDB Could NOT find correct scene info");
+    // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
+    if (AgressiveSearch && correct_scene_idx === -1) {
+      $log(" ERR: TPDB Could NOT find correct scene info");
 
-        const manualInfo = await ManualImport();
-        return manualInfo;
-      }
+      const manualInfo = await ManualImport();
+      return manualInfo;
     } else {
       // list the found results and tries to match the SCENENAME to the found results.
       // all while gathering all of the titles, in case no match is found
