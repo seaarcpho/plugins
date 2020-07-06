@@ -314,7 +314,7 @@ module.exports = async ({
     const Q1answer = await questionAsync(
       "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) ",
       "TESTMODE Question Enter MANUAL Info?",
-      testmode && testmode.Questions ? testmode.Questions.EnterManInfo : null
+      testmode && testmode.Questions ? testmode.Questions.EnterManInfo : ""
     );
 
     const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
@@ -327,7 +327,7 @@ module.exports = async ({
     const ManualMovieanswer = await questionAsync(
       "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
       "TESTMODE Question MANUAL Movie",
-      testmode && testmode.Questions ? testmode.Questions.EnterMovie : null
+      testmode && testmode.Questions ? testmode.Questions.EnterMovie : ""
     );
 
     const ManualEnterMovieSearch = util.isPositiveAnswer(ManualMovieanswer);
@@ -336,7 +336,7 @@ module.exports = async ({
       const ManualMovieName = await questionAsync(
         "What is the Title of the Movie?: ",
         "TESTMODE Question MANUAL Movie Title",
-        testmode && testmode.Questions ? testmode.Questions.MovieTitle : null
+        testmode && testmode.Questions ? testmode.Questions.MovieTitle : ""
       );
 
       if (result.movie === undefined && ManualMovieName !== "") {
@@ -347,13 +347,13 @@ module.exports = async ({
     result.name = await questionAsync(
       "What is the TITLE of the scene?: ",
       "TESTMODE Question MANUAL Title",
-      testmode && testmode.Questions ? testmode.Questions.EnterSceneTitle : null
+      testmode && testmode.Questions ? testmode.Questions.EnterSceneTitle : ""
     );
 
     result.releaseDate = await questionAsync(
       "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
       "TESTMODE Question MANUAL Date",
-      testmode && testmode.Questions ? testmode.Questions.EnterSceneDate : null
+      testmode && testmode.Questions ? testmode.Questions.EnterSceneDate : ""
     );
 
     if (result.releaseDate !== "") {
@@ -373,7 +373,7 @@ module.exports = async ({
     result.description = await questionAsync(
       "What is the DESCRIPTION for the scene?: ",
       "TESTMODE Question MANUAL Description",
-      testmode && testmode.Questions ? testmode.Questions.ManualDescription : null
+      testmode && testmode.Questions ? testmode.Questions.ManualDescription : ""
     );
 
     const splitactors = await questionAsync(
@@ -381,7 +381,7 @@ module.exports = async ({
         Actor.length ? ` ${Actor.join(", ")}` : ""
       }`,
       "TESTMODE Question MANUAL actor names",
-      testmode && testmode.Questions ? testmode.Questions.ManualActors : null
+      testmode && testmode.Questions ? testmode.Questions.ManualActors : ""
     );
 
     const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
@@ -393,7 +393,7 @@ module.exports = async ({
     const askedStudio = await questionAsync(
       `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`,
       "TESTMODE Question MANUAL Studio name",
-      testmode && testmode.Questions ? testmode.Questions.EnterStudioName : null
+      testmode && testmode.Questions ? testmode.Questions.EnterStudioName : ""
     );
 
     const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
@@ -857,7 +857,7 @@ module.exports = async ({
         const MultipleSitesAnswer = await questionAsync(
           "Which Title would you like to use? (number): ",
           "TESTMODE MultipleChoiceResult EnterInfo",
-          testmode && testmode.Questions ? testmode.Questions.MultipleChoice : null
+          testmode && testmode.Questions ? testmode.Questions.MultipleChoice : ""
         );
         if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
           $log(" ERR: Not a valid option....");
@@ -917,7 +917,7 @@ module.exports = async ({
         const Q1answer = await questionAsync(
           "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) ",
           `TESTMODE Question Enter Info`,
-          testmode && testmode.Questions ? testmode.Questions.EnterInfoSearch : null
+          testmode && testmode.Questions ? testmode.Questions.EnterInfoSearch : ""
         );
 
         const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
@@ -931,7 +931,7 @@ module.exports = async ({
         const Movieanswer = await questionAsync(
           "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
           "TESTMODE Question Enter Movie?",
-          testmode && testmode.Questions ? testmode.Questions.EnterMovie : null
+          testmode && testmode.Questions ? testmode.Questions.EnterMovie : ""
         );
         const EnterMovieSearch = util.isPositiveAnswer(Movieanswer);
 
@@ -939,7 +939,7 @@ module.exports = async ({
           const MovieName = await questionAsync(
             "What is the Title of the Movie?: ",
             "TESTMODE Question Movie Title",
-            testmode && testmode.Questions ? testmode.Questions.MovieTitle : null
+            testmode && testmode.Questions ? testmode.Questions.MovieTitle : ""
           );
 
           if (result.movie === undefined && MovieName !== "") {
@@ -949,7 +949,7 @@ module.exports = async ({
         const Q2Actor = await questionAsync(
           `What is ONE of the Actors NAME in the scene?: ${Actor[0] ? ` ${Actor[0]}` : ""}`,
           "TESTMODE Question One Actor",
-          testmode && testmode.Questions ? testmode.Questions.EnterOneActorName : null
+          testmode && testmode.Questions ? testmode.Questions.EnterOneActorName : ""
         );
 
         QuestionActor.push(Q2Actor);
@@ -960,7 +960,7 @@ module.exports = async ({
         const Q3Studio = await questionAsync(
           `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`,
           "TESTMODE Question Studio Name",
-          testmode && testmode.Questions ? testmode.Questions.EnterStudioName : null
+          testmode && testmode.Questions ? testmode.Questions.EnterStudioName : ""
         );
 
         QuestionStudio.push(Q3Studio);
@@ -970,7 +970,7 @@ module.exports = async ({
         const Q4date = await questionAsync(
           "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
           "TESTMODE Question Date",
-          testmode && testmode.Questions ? testmode.Questions.EnterSceneDate : null
+          testmode && testmode.Questions ? testmode.Questions.EnterSceneDate : ""
         );
 
         if (Q4date !== "") {
