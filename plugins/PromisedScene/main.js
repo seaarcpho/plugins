@@ -1,35 +1,22 @@
-/**
- * @param {string} answer - string to compare
- * @returns {boolean} if the answer is a positive confirmation (i.e. "yes")
- */
-const isPositiveAnswer = (answer = "") => ["y", "yes"].includes(answer.toLowerCase());
-
 /* eslint-disable linebreak-style */
 /* eslint-disable dot-location */
 /* eslint-disable linebreak-style, camelcase */
+
+const levenshtein = require("./levenshtein.js");
+const util = require("./util");
+
 module.exports = async ({
   event,
-
   $throw,
-
   $fs,
-
   $moment,
-
   $log,
-
   $axios,
-
   testmode,
-
   sceneName,
-
   scenePath,
-
   args,
-
   $readline,
-
   $createImage,
 }) => {
   let TestingStatus;
@@ -48,9 +35,7 @@ module.exports = async ({
 
   // Variable that is used for all the "manualTouch" questions
 
-  const levenshtein = require("./levenshtein.js");
-
-  const CleanPathname = stripStr(scenePath.toString());
+  const CleanPathname = util.stripStr(scenePath.toString());
 
   // Making sure that the event that triggered is the correct event
 
@@ -108,9 +93,9 @@ module.exports = async ({
         }
 
         // $log(((JSON.parse(line)).name))
-        const foundActorMatch = stripStr(scenePath).match(MatchActor);
+        const foundActorMatch = util.stripStr(scenePath).match(MatchActor);
 
-        // $log(stripStr(sceneName))
+        // $log(util.stripStr(sceneName))
 
         if (foundActorMatch !== null) {
           GettingActor.push(JSON.parse(line).name);
@@ -128,7 +113,7 @@ module.exports = async ({
 
           let MatchAliasActor = new RegExp(PersonAlias, "i");
 
-          let foundAliasActorMatch = stripStr(scenePath).match(MatchAliasActor);
+          let foundAliasActorMatch = util.stripStr(scenePath).match(MatchAliasActor);
 
           if (foundAliasActorMatch !== null) {
             GettingActor.push(JSON.parse(line).name);
@@ -137,7 +122,7 @@ module.exports = async ({
 
             MatchAliasActor = new RegExp(Aliasnospaces, "i");
 
-            foundAliasActorMatch = stripStr(scenePath).match(MatchAliasActor);
+            foundAliasActorMatch = util.stripStr(scenePath).match(MatchAliasActor);
 
             if (foundAliasActorMatch !== null) {
               GettingActor.push(JSON.parse(line).name);
@@ -191,14 +176,14 @@ module.exports = async ({
 
         let MatchStudio = new RegExp(JSON.parse(line).name, "i");
 
-        const foundStudioMatch = stripStr(scenePath).match(MatchStudio);
+        const foundStudioMatch = util.stripStr(scenePath).match(MatchStudio);
 
         if (foundStudioMatch !== null) {
           GettingStudio.push(JSON.parse(line).name);
         } else if (JSON.parse(line).name !== null) {
           MatchStudio = new RegExp(JSON.parse(line).name.replace(/ /g, ""), "i");
 
-          const foundStudioMatch = stripStr(scenePath).match(MatchStudio);
+          const foundStudioMatch = util.stripStr(scenePath).match(MatchStudio);
 
           if (foundStudioMatch !== null) {
             GettingStudio.push(JSON.parse(line).name);
@@ -229,16 +214,16 @@ module.exports = async ({
   }
   // Try to PARSE the SceneName and determine Date
 
-  const ddmmyyyy = stripStr(scenePath, 1).match(/\d\d \d\d \d\d\d\d/);
+  const ddmmyyyy = util.stripStr(scenePath, 1).match(/\d\d \d\d \d\d\d\d/);
 
-  const yyyymmdd = stripStr(scenePath, 1).match(/\d\d\d\d \d\d \d\d/);
+  const yyyymmdd = util.stripStr(scenePath, 1).match(/\d\d\d\d \d\d \d\d/);
 
-  const yymmdd = stripStr(scenePath, 1).match(/\d\d \d\d \d\d/);
+  const yymmdd = util.stripStr(scenePath, 1).match(/\d\d \d\d \d\d/);
 
   let timestamp = {};
 
   $log(":::::PARSE:::: Parsing Date from ScenePath");
-  // $log(stripStr(scenePath, 1));
+  // $log(util.stripStr(scenePath, 1));
 
   if (yyyymmdd && yyyymmdd.length) {
     const date = yyyymmdd[0].replace(" ", ".");
@@ -274,56 +259,6 @@ module.exports = async ({
   // -------------------Fucntions & Async functions---------------
 
   // -------------------------------------------------------------
-
-  /**
-   * The (Backbone) main Search function for the plugin
-   *
-   * @param {string} The_timestamp - Time string to be converted to timestamp
-   * @returns {date} return the proper scene information (either through manual questions or automatically)
-   */
-  function timeConverter(The_timestamp) {
-    const date_not_formatted = new Date(The_timestamp);
-
-    let formatted_string = date_not_formatted.getFullYear() + "-";
-
-    if (date_not_formatted.getMonth() < 9) {
-      formatted_string += "0";
-    }
-
-    formatted_string += date_not_formatted.getMonth() + 1;
-
-    formatted_string += "-";
-
-    if (date_not_formatted.getDate() < 10) {
-      formatted_string += "0";
-    }
-    formatted_string += date_not_formatted.getDate();
-
-    return formatted_string;
-  }
-
-  /**
-   * The (Backbone) main Search function for the plugin
-   *
-   * @param {string} str - String to be cleaned of: "P.O.V." "/[^a-zA-Z0-9'/\\,(){}]/" (i should make this a file of customizable strings to clean? maybe?)
-   * @param {boolean} date - Boolean that identifies if it should clean a string with dates or not | True = does not remove zeros in front of a number from 1 - 9
-   * @returns {string} return the string with all of the unwanted characters removed from the string
-   */
-  function stripStr(str, date) {
-    date = 0 || date;
-    str = str.toString();
-
-    str = str.toLowerCase().replace("'", "");
-    str = str.toLowerCase().replace(/P.O.V./gi, "pov");
-    if (!date) {
-      str = str.toLowerCase().replace(/\b0+/g, "");
-    }
-
-    str = str.replace(/[^a-zA-Z0-9'/\\,(){}]/g, " ");
-
-    str = str.replace(/  +/g, " ");
-    return str;
-  }
 
   /*  FemaleOnly  Freeones function
      
@@ -379,7 +314,7 @@ module.exports = async ({
       $log(`:::::TESTMODE Question Enter MANUAL Info?:::: ${testmode.Questions.EnterManInfo}`);
       const Q1answer = testmode.Questions.EnterManInfo;
 
-      const runInteractiveSearch = isPositiveAnswer(Q1answer);
+      const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
 
       if (!runInteractiveSearch) {
         return {};
@@ -388,7 +323,7 @@ module.exports = async ({
       $log(`:::::TESTMODE Question MANUAL Movie:::: ${testmode.Questions.EnterMovie}`);
       const ManualMovieanswer = testmode.Questions.EnterMovie;
 
-      const ManualEnterMovieSearch = isPositiveAnswer(ManualMovieanswer);
+      const ManualEnterMovieSearch = util.isPositiveAnswer(ManualMovieanswer);
 
       if (ManualEnterMovieSearch) {
         $log(`:::::TESTMODE Question MANUAL Movie Title:::: ${testmode.Questions.MovieTitle}`);
@@ -456,7 +391,7 @@ module.exports = async ({
         "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) "
       );
 
-      const runInteractiveSearch = isPositiveAnswer(Q1answer);
+      const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
 
       if (!runInteractiveSearch) {
         rl.close();
@@ -467,7 +402,7 @@ module.exports = async ({
         "Is this a Scene from a Movie / Set / Collection?: (Y/N) "
       );
 
-      const ManualEnterMovieSearch = isPositiveAnswer(ManualMovieanswer);
+      const ManualEnterMovieSearch = util.isPositiveAnswer(ManualMovieanswer);
 
       if (ManualEnterMovieSearch) {
         const ManualMovieName = await questionAsync("What is the Title of the Movie?: ");
@@ -587,9 +522,10 @@ module.exports = async ({
 
           // It is better to search just the title.  We already have the actor and studio.
 
-          let SearchedTitle = stripStr(sceneName).toString().toLowerCase();
+          let SearchedTitle = util.stripStr(sceneName).toString().toLowerCase();
 
-          let MatchTitle = stripStr(alltitles["Title" + idx])
+          let MatchTitle = util
+            .stripStr(alltitles["Title" + idx])
             .toString()
             .toLowerCase();
 
@@ -669,24 +605,26 @@ module.exports = async ({
         let line = lines.shift();
         while (!FoundDupScene && line) {
           if (line !== "") {
-            if (stripStr(JSON.parse(line).name.toString()) !== null) {
-              let MatchScene = new RegExp(stripStr(JSON.parse(line).name.toString()), "gi");
+            if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
+              let MatchScene = new RegExp(util.stripStr(JSON.parse(line).name.toString()), "gi");
 
-              const foundSceneMatch = stripStr(tpdb_scene_search_data.title).match(MatchScene);
+              const foundSceneMatch = util.stripStr(tpdb_scene_search_data.title).match(MatchScene);
 
               if (foundSceneMatch !== null) {
                 FoundDupScene = true;
-                // TheDupedScene = stripStr(JSON.parse(line).name.toString());
-              } else if (stripStr(JSON.parse(line).name.toString()) !== null) {
+                // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
+              } else if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
                 MatchScene = new RegExp(
-                  stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
+                  util.stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
                   "gi"
                 );
 
-                const foundSceneMatch = stripStr(tpdb_scene_search_data.title).match(MatchScene);
+                const foundSceneMatch = util
+                  .stripStr(tpdb_scene_search_data.title)
+                  .match(MatchScene);
 
                 if (foundSceneMatch !== null) {
-                  // TheDupedScene = stripStr(JSON.parse(line).name.toString());
+                  // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
                   FoundDupScene = true;
                 }
               }
@@ -933,7 +871,7 @@ module.exports = async ({
           "%20" +
           encodeURIComponent(SearchActor[0]) +
           "%20" +
-          timeConverter(SearchFuncTimestamp);
+          util.timeConverter(SearchFuncTimestamp);
       }
 
       // Grabbing the results using the "Normal" Search methods (comparing against scenename)
@@ -1051,7 +989,7 @@ module.exports = async ({
         $log(`:::::TESTMODE Question Enter Info:::: ${testmode.Questions.EnterInfoSearch}`);
         const Q1answer = testmode.Questions.EnterInfoSearch;
 
-        const runInteractiveSearch = isPositiveAnswer(Q1answer);
+        const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
 
         if (!runInteractiveSearch) {
           const manualInfo = await ManualImport();
@@ -1060,7 +998,7 @@ module.exports = async ({
         $log(`:::::TESTMODE Question Enter Movie?:::: ${testmode.Questions.EnterMovie}`);
         const Movieanswer = testmode.Questions.EnterMovie;
 
-        const EnterMovieSearch = isPositiveAnswer(Movieanswer);
+        const EnterMovieSearch = util.isPositiveAnswer(Movieanswer);
 
         if (EnterMovieSearch) {
           $log(`:::::TESTMODE Question Movie Title:::: ${testmode.Questions.MovieTitle}`);
@@ -1124,7 +1062,7 @@ module.exports = async ({
             "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) "
           );
 
-          const runInteractiveSearch = isPositiveAnswer(Q1answer);
+          const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
 
           if (!runInteractiveSearch) {
             rl.close();
@@ -1134,7 +1072,7 @@ module.exports = async ({
           const Movieanswer = await questionAsync(
             "Is this a Scene from a Movie / Set / Collection?: (Y/N) "
           );
-          const EnterMovieSearch = isPositiveAnswer(Movieanswer);
+          const EnterMovieSearch = util.isPositiveAnswer(Movieanswer);
 
           if (EnterMovieSearch) {
             const MovieName = await questionAsync("What is the Title of the Movie?: ");
