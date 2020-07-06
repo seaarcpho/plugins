@@ -5,34 +5,6 @@
 const levenshtein = require("./levenshtein.js");
 const util = require("./util");
 
-/**
- * @param {*} rl - the readline interface to use
- * @param {boolean} TestingStatus - if should just print test questions and use the param answer
- * @param {*} $log - logger function
- * @returns {(question: string, testQuestion: string, testAnswer: string) => Promise<string>} the question prompt function
- */
-const createQuestionPrompter = (rl, TestingStatus, $log) => {
-  /**
-   * @param {string} question - the question to ask
-   * @param {string} testQuestion - the name of the question (for test mode)
-   * @param {string} testAnswer - the answer that will be returned (for test mode)
-   * @returns {string} the result of the question, or the inputted answer for test mode
-   * @async
-   */
-  const questionAsync = async (question, testQuestion, testAnswer) => {
-    if (TestingStatus) {
-      $log(`:::::${testQuestion}:::: ${testAnswer}`);
-      return testAnswer;
-    }
-
-    return new Promise((resolve) => {
-      rl.question(question, resolve);
-    });
-  };
-
-  return questionAsync;
-};
-
 module.exports = async ({
   event,
   $throw,
@@ -332,11 +304,10 @@ module.exports = async ({
   async function ManualImport() {
     const rl = $readline.createInterface({
       input: process.stdin,
-
       output: process.stdout,
     });
 
-    const questionAsync = createQuestionPrompter(rl, TestingStatus, $log);
+    const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
 
     $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
 
@@ -869,11 +840,10 @@ module.exports = async ({
 
         const rl = $readline.createInterface({
           input: process.stdin,
-
           output: process.stdout,
         });
 
-        const questionAsync = createQuestionPrompter(rl, TestingStatus, $log);
+        const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
 
         const MultipleSitesAnswer = await questionAsync(
           "Which Title would you like to use? (number): ",
@@ -932,7 +902,7 @@ module.exports = async ({
       });
 
       try {
-        const questionAsync = createQuestionPrompter(rl, TestingStatus, $log);
+        const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
 
         $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
         const Q1answer = await questionAsync(
