@@ -596,32 +596,32 @@ module.exports = async ({
 
         let line = lines.shift();
         while (!FoundDupScene && line) {
-          if (line !== "") {
-            if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
-              let MatchScene = new RegExp(util.stripStr(JSON.parse(line).name.toString()), "gi");
+          if (!line || !util.stripStr(JSON.parse(line).name.toString())) {
+            line = lines.shift();
+            continue;
+          }
 
-              const foundSceneMatch = util.stripStr(tpdb_scene_search_data.title).match(MatchScene);
+          let MatchScene = new RegExp(util.stripStr(JSON.parse(line).name.toString()), "gi");
 
-              if (foundSceneMatch !== null) {
-                FoundDupScene = true;
-                // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
-              } else if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
-                MatchScene = new RegExp(
-                  util.stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
-                  "gi"
-                );
+          const foundSceneMatch = util.stripStr(tpdb_scene_search_data.title).match(MatchScene);
 
-                const foundSceneMatch = util
-                  .stripStr(tpdb_scene_search_data.title)
-                  .match(MatchScene);
+          if (foundSceneMatch !== null) {
+            FoundDupScene = true;
+            // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
+          } else if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
+            MatchScene = new RegExp(
+              util.stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
+              "gi"
+            );
 
-                if (foundSceneMatch !== null) {
-                  // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
-                  FoundDupScene = true;
-                }
-              }
+            const foundSceneMatch = util.stripStr(tpdb_scene_search_data.title).match(MatchScene);
+
+            if (foundSceneMatch !== null) {
+              // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
+              FoundDupScene = true;
             }
           }
+
           line = lines.shift();
         }
       }
