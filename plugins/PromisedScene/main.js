@@ -1,3 +1,9 @@
+/**
+ * @param {string} answer - string to compare
+ * @returns {boolean} if the answer is a positive confirmation (i.e. "yes")
+ */
+const isPositiveAnswer = (answer = "") => ["y", "yes"].includes(answer.toLowerCase());
+
 /* eslint-disable linebreak-style */
 /* eslint-disable dot-location */
 /* eslint-disable linebreak-style, camelcase */
@@ -362,8 +368,7 @@ module.exports = async ({
       $log(`:::::TESTMODE Question Enter MANUAL Info?:::: ${testmode.Questions.EnterManInfo}`);
       const Q1answer = testmode.Questions.EnterManInfo;
 
-      const runInteractiveSearch =
-        Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
+      const runInteractiveSearch = isPositiveAnswer(Q1answer);
 
       if (!runInteractiveSearch) {
         return {};
@@ -372,11 +377,7 @@ module.exports = async ({
       $log(`:::::TESTMODE Question MANUAL Movie:::: ${testmode.Questions.EnterMovie}`);
       const ManualMovieanswer = testmode.Questions.EnterMovie;
 
-      const ManualEnterMovieSearch =
-        ManualMovieanswer === "y" ||
-        ManualMovieanswer === "Y" ||
-        ManualMovieanswer === "Yes" ||
-        ManualMovieanswer === "YES";
+      const ManualEnterMovieSearch = isPositiveAnswer(ManualMovieanswer);
 
       if (ManualEnterMovieSearch) {
         $log(`:::::TESTMODE Question MANUAL Movie Title:::: ${testmode.Questions.MovieTitle}`);
@@ -462,8 +463,7 @@ module.exports = async ({
         "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) "
       );
 
-      const runInteractiveSearch =
-        Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
+      const runInteractiveSearch = isPositiveAnswer(Q1answer);
 
       if (!runInteractiveSearch) {
         rl.close();
@@ -474,11 +474,7 @@ module.exports = async ({
         "Is this a Scene from a Movie / Set / Collection?: (Y/N) "
       );
 
-      const ManualEnterMovieSearch =
-        ManualMovieanswer === "y" ||
-        ManualMovieanswer === "Y" ||
-        ManualMovieanswer === "Yes" ||
-        ManualMovieanswer === "YES";
+      const ManualEnterMovieSearch = isPositiveAnswer(ManualMovieanswer);
 
       if (ManualEnterMovieSearch) {
         const ManualMovieName = await questionAsync("What is the Title of the Movie?: ");
@@ -1060,8 +1056,7 @@ module.exports = async ({
         $log(`:::::TESTMODE Question Enter Info:::: ${testmode.Questions.EnterInfoSearch}`);
         const Q1answer = testmode.Questions.EnterInfoSearch;
 
-        const runInteractiveSearch =
-          Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
+        const runInteractiveSearch = isPositiveAnswer(Q1answer);
 
         if (!runInteractiveSearch) {
           const manualInfo = await ManualImport();
@@ -1070,11 +1065,7 @@ module.exports = async ({
         $log(`:::::TESTMODE Question Enter Movie?:::: ${testmode.Questions.EnterMovie}`);
         const Movieanswer = testmode.Questions.EnterMovie;
 
-        const EnterMovieSearch =
-          Movieanswer === "y" ||
-          Movieanswer === "Y" ||
-          Movieanswer === "Yes" ||
-          Movieanswer === "YES";
+        const EnterMovieSearch = isPositiveAnswer(Movieanswer);
 
         if (EnterMovieSearch) {
           $log(`:::::TESTMODE Question Movie Title:::: ${testmode.Questions.MovieTitle}`);
@@ -1149,8 +1140,7 @@ module.exports = async ({
             "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) "
           );
 
-          const runInteractiveSearch =
-            Q1answer === "y" || Q1answer === "Y" || Q1answer === "Yes" || Q1answer === "YES";
+          const runInteractiveSearch = isPositiveAnswer(Q1answer);
 
           if (!runInteractiveSearch) {
             rl.close();
@@ -1160,11 +1150,7 @@ module.exports = async ({
           const Movieanswer = await questionAsync(
             "Is this a Scene from a Movie / Set / Collection?: (Y/N) "
           );
-          const EnterMovieSearch =
-            Movieanswer === "y" ||
-            Movieanswer === "Y" ||
-            Movieanswer === "Yes" ||
-            Movieanswer === "YES";
+          const EnterMovieSearch = isPositiveAnswer(Movieanswer);
 
           if (EnterMovieSearch) {
             const MovieName = await questionAsync("What is the Title of the Movie?: ");
