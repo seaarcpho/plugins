@@ -5,6 +5,34 @@
 const levenshtein = require("./levenshtein.js");
 const util = require("./util");
 
+/**
+ * @param {*} rl - the readline interface to use
+ * @param {boolean} TestingStatus - if should just print test questions and use the param answer
+ * @param {*} $log - logger function
+ * @returns {() => Promise} the question prompt function
+ */
+const createQuestionPrompter = (rl, TestingStatus, $log) => {
+  /**
+   * @param {string} question - the question to ask
+   * @param {string} testQuestion - the name of the question (for test mode)
+   * @param {string} testAnswer - the answer that will be returned (for test mode)
+   * @returns {string} the result of the question, or the inputted answer for test mode
+   * @async
+   */
+  const questionAsync = async (question, testQuestion, testAnswer) => {
+    if (TestingStatus) {
+      $log(`:::::${testQuestion}:::: ${testAnswer}`);
+      return testAnswer;
+    }
+
+    return new Promise((resolve) => {
+      rl.question(question, resolve);
+    });
+  };
+
+  return questionAsync;
+};
+
 module.exports = async ({
   event,
   $throw,
@@ -302,156 +330,110 @@ module.exports = async ({
    * @returns {Promise<string[]|object>} either an array of all questions that need to be import manually
    */
   async function ManualImport() {
-    if (TestingStatus) {
-      $log(`:::::TESTMODE Question Enter MANUAL Info?:::: ${testmode.Questions.EnterManInfo}`);
-      const Q1answer = testmode.Questions.EnterManInfo;
+    const rl = $readline.createInterface({
+      input: process.stdin,
 
-      const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
+      output: process.stdout,
+    });
 
-      if (!runInteractiveSearch) {
-        return {};
-      }
+    const questionAsync = createQuestionPrompter(rl, TestingStatus, $log);
 
-      $log(`:::::TESTMODE Question MANUAL Movie:::: ${testmode.Questions.EnterMovie}`);
-      const ManualMovieanswer = testmode.Questions.EnterMovie;
+    $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
 
-      const ManualEnterMovieSearch = util.isPositiveAnswer(ManualMovieanswer);
+    const Q1answer = await questionAsync(
+      "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) ",
+      "TESTMODE Question Enter MANUAL Info?",
+      testmode.Questions.EnterManInfo
+    );
 
-      if (ManualEnterMovieSearch) {
-        $log(`:::::TESTMODE Question MANUAL Movie Title:::: ${testmode.Questions.MovieTitle}`);
-        const ManualMovieName = testmode.Questions.MovieTitle;
+    const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
 
-        if (result.movie === undefined && ManualMovieName !== "") {
-          result.movie = ManualMovieName;
-        }
-      }
-      $log(`:::::TESTMODE Question MANUAL Title:::: ${testmode.Questions.EnterSceneTitle}`);
-      result.name = testmode.Questions.EnterSceneTitle;
-
-      $log(`:::::TESTMODE Question MANUAL Date:::: ${testmode.Questions.EnterSceneDate}`);
-      result.releaseDate = testmode.Questions.EnterSceneDate;
-      if (result.releaseDate !== "") {
-        const questYear = result.releaseDate.match(/\d\d\d\d.\d\d.\d\d/);
-
-        $log(" MSG: Checking Date");
-
-        if (questYear && questYear.length) {
-          const date = questYear[0];
-
-          $log(" MSG: Found => yyyymmdd");
-
-          result.releaseDate = new Date(date.replace(".", "-")).getTime();
-        }
-      }
-
-      $log(`:::::TESTMODE Question MANUAL Description:::: ${testmode.Questions.ManualDescription}`);
-      result.description = testmode.Questions.ManualDescription;
-
-      const splitactors = testmode.Questions.ManualActors;
-
-      const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
-
-      if (!AreActorsBlank) {
-        result.actors = splitactors.trim().split(",");
-      }
-
-      $log(`:::::TESTMODE Question MANUAL Studio name:::: ${testmode.Questions.EnterStudioName}`);
-      const askedStudio = testmode.Questions.EnterStudioName;
-
-      const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
-
-      if (!IsStudiosBlank) {
-        result.studio = askedStudio;
-      }
-
-      return result;
-    } else {
-      const rl = $readline.createInterface({
-        input: process.stdin,
-
-        output: process.stdout,
-      });
-
-      const questionAsync = (question) =>
-        new Promise((resolve) => {
-          rl.question(question, resolve);
-        });
-
-      $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
-
-      const Q1answer = await questionAsync(
-        "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) "
-      );
-
-      const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
-
-      if (!runInteractiveSearch) {
-        rl.close();
-        return {};
-      }
-
-      const ManualMovieanswer = await questionAsync(
-        "Is this a Scene from a Movie / Set / Collection?: (Y/N) "
-      );
-
-      const ManualEnterMovieSearch = util.isPositiveAnswer(ManualMovieanswer);
-
-      if (ManualEnterMovieSearch) {
-        const ManualMovieName = await questionAsync("What is the Title of the Movie?: ");
-
-        if (result.movie === undefined && ManualMovieName !== "") {
-          result.movie = ManualMovieName;
-        }
-      }
-
-      result.name = await questionAsync("What is the TITLE of the scene?: ");
-
-      result.releaseDate = await questionAsync(
-        "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: "
-      );
-
-      if (result.releaseDate !== "") {
-        const questYear = result.releaseDate.match(/\d\d\d\d.\d\d.\d\d/);
-
-        $log(" MSG: Checking Date");
-
-        if (questYear && questYear.length) {
-          const date = questYear[0];
-
-          $log(" MSG: Found => yyyymmdd");
-
-          result.releaseDate = $moment(date, "YYYY-MM-DD").valueOf();
-        }
-      }
-
-      result.description = await questionAsync("What is the DESCRIPTION for the scene?: ");
-
-      const splitactors = await questionAsync(
-        `What are the Actors NAMES in the scene?: (seperated by Comma) ${
-          Actor.length ? ` ${Actor.join(", ")}` : ""
-        }`
-      );
-
-      const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
-
-      if (!AreActorsBlank) {
-        result.actors = splitactors.trim().split(",");
-      }
-
-      const askedStudio = await questionAsync(
-        `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`
-      );
-
-      const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
-
-      if (!IsStudiosBlank) {
-        result.studio = askedStudio;
-      }
-
+    if (!runInteractiveSearch) {
       rl.close();
-
-      return result;
+      return {};
     }
+
+    const ManualMovieanswer = await questionAsync(
+      "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
+      "TESTMODE Question MANUAL Movie",
+      testmode.Questions.EnterMovie
+    );
+
+    const ManualEnterMovieSearch = util.isPositiveAnswer(ManualMovieanswer);
+
+    if (ManualEnterMovieSearch) {
+      const ManualMovieName = await questionAsync(
+        "What is the Title of the Movie?: ",
+        "TESTMODE Question MANUAL Movie Title",
+        testmode.Questions.MovieTitle
+      );
+
+      if (result.movie === undefined && ManualMovieName !== "") {
+        result.movie = ManualMovieName;
+      }
+    }
+
+    result.name = await questionAsync(
+      "What is the TITLE of the scene?: ",
+      "TESTMODE Question MANUAL Title",
+      testmode.Questions.EnterSceneTitle
+    );
+
+    result.releaseDate = await questionAsync(
+      "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
+      "TESTMODE Question MANUAL Date",
+      testmode.Questions.EnterSceneDate
+    );
+
+    if (result.releaseDate !== "") {
+      const questYear = result.releaseDate.match(/\d\d\d\d.\d\d.\d\d/);
+
+      $log(" MSG: Checking Date");
+
+      if (questYear && questYear.length) {
+        const date = questYear[0];
+
+        $log(" MSG: Found => yyyymmdd");
+
+        result.releaseDate = $moment(date, "YYYY-MM-DD").valueOf();
+      }
+    }
+
+    result.description = await questionAsync(
+      "What is the DESCRIPTION for the scene?: ",
+      "TESTMODE Question MANUAL Description",
+      testmode.Questions.ManualDescription
+    );
+
+    const splitactors = await questionAsync(
+      `What are the Actors NAMES in the scene?: (seperated by Comma) ${
+        Actor.length ? ` ${Actor.join(", ")}` : ""
+      }`,
+      "TESTMODE Question MANUAL actor names",
+      testmode.Questions.ManualActors
+    );
+
+    const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
+
+    if (!AreActorsBlank) {
+      result.actors = splitactors.trim().split(",");
+    }
+
+    const askedStudio = await questionAsync(
+      `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`,
+      "TESTMODE Question MANUAL Studio name",
+      testmode.Questions.EnterStudioName
+    );
+
+    const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
+
+    if (!IsStudiosBlank) {
+      result.studio = askedStudio;
+    }
+
+    rl.close();
+
+    return result;
   }
 
   /**
@@ -891,10 +873,7 @@ module.exports = async ({
           output: process.stdout,
         });
 
-        const questionAsync = (question) =>
-          new Promise((resolve) => {
-            rl.question(question, resolve);
-          });
+        const questionAsync = createQuestionPrompter(rl, TestingStatus, $log);
 
         if (TestingStatus) {
           $log(
@@ -983,22 +962,7 @@ module.exports = async ({
       });
 
       try {
-        /**
-         * @param {string} question - the question to ask
-         * @param {string} testQuestion - the name of the question (for test mode)
-         * @param {string} testAnswer - the answer that will be returned (for test mode)
-         * @returns {string} the result of the question, or the inputted answer for test mode
-         */
-        const questionAsync = async (question, testQuestion, testAnswer) => {
-          if (TestingStatus) {
-            $log(`:::::${testQuestion}:::: ${testAnswer}`);
-            return testAnswer;
-          }
-
-          return new Promise((resolve) => {
-            rl.question(question, resolve);
-          });
-        };
+        const questionAsync = createQuestionPrompter(rl, TestingStatus, $log);
 
         $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
         const Q1answer = await questionAsync(
