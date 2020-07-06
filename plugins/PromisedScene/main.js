@@ -977,47 +977,88 @@ module.exports = async ({
 
       let QuestionDate;
 
-      if (TestingStatus) {
-        $log(`:::::TESTMODE Question Enter Info:::: ${testmode.Questions.EnterInfoSearch}`);
-        const Q1answer = testmode.Questions.EnterInfoSearch;
+      const rl = $readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      try {
+        /**
+         * @param {string} question - the question to ask
+         * @param {string} testQuestion - the name of the question (for test mode)
+         * @param {string} testAnswer - the answer that will be returned (for test mode)
+         * @returns {string} the result of the question, or the inputted answer for test mode
+         */
+        const questionAsync = async (question, testQuestion, testAnswer) => {
+          if (TestingStatus) {
+            $log(`:::::${testQuestion}:::: ${testAnswer}`);
+            return testAnswer;
+          }
+
+          return new Promise((resolve) => {
+            rl.question(question, resolve);
+          });
+        };
+
+        $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
+        const Q1answer = await questionAsync(
+          "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) ",
+          `TESTMODE Question Enter Info`,
+          testmode.Questions.EnterInfoSearch
+        );
 
         const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
 
         if (!runInteractiveSearch) {
+          rl.close();
           const manualInfo = await ManualImport();
           return manualInfo;
         }
-        $log(`:::::TESTMODE Question Enter Movie?:::: ${testmode.Questions.EnterMovie}`);
-        const Movieanswer = testmode.Questions.EnterMovie;
 
+        const Movieanswer = await questionAsync(
+          "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
+          "TESTMODE Question Enter Movie?",
+          testmode.Questions.EnterMovie
+        );
         const EnterMovieSearch = util.isPositiveAnswer(Movieanswer);
 
         if (EnterMovieSearch) {
-          $log(`:::::TESTMODE Question Movie Title:::: ${testmode.Questions.MovieTitle}`);
-          const MovieName = testmode.Questions.MovieTitle;
+          const MovieName = await questionAsync(
+            "What is the Title of the Movie?: ",
+            "TESTMODE Question Movie Title",
+            testmode.Questions.MovieTitle
+          );
 
           if (result.movie === undefined && MovieName !== "") {
             result.movie = MovieName;
           }
         }
-        $log(`:::::TESTMODE Question One Actor:::: ${testmode.Questions.EnterOneActorName}`);
-        const Q2Actor = testmode.Questions.EnterOneActorName;
+        const Q2Actor = await questionAsync(
+          `What is ONE of the Actors NAME in the scene?: ${Actor[0] ? ` ${Actor[0]}` : ""}`,
+          "TESTMODE Question One Actor",
+          testmode.Questions.EnterOneActorName
+        );
 
         QuestionActor.push(Q2Actor);
-        if (!Actor.length) {
+        if (Actor === undefined) {
           Actor.push(Q2Actor);
         }
 
-        $log(`:::::TESTMODE Question Studio Name:::: ${testmode.Questions.EnterStudioName}`);
-        const Q3Studio = testmode.Questions.EnterStudioName;
+        const Q3Studio = await questionAsync(
+          `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`,
+          "TESTMODE Question Studio Name",
+          testmode.Questions.EnterStudioName
+        );
 
         QuestionStudio.push(Q3Studio);
-        if (!Studio.length) {
+        if (Studio === undefined) {
           Studio.push(Q3Studio);
         }
-
-        $log(`:::::TESTMODE Question Date:::: ${testmode.Questions.EnterSceneDate}`);
-        const Q4date = testmode.Questions.EnterSceneDate;
+        const Q4date = await questionAsync(
+          "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
+          "TESTMODE Question Date",
+          testmode.Questions.EnterSceneDate
+        );
 
         if (Q4date !== "") {
           const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
@@ -1033,90 +1074,14 @@ module.exports = async ({
           }
         }
 
+        rl.close();
+
         // Re run the search with user's input
         const res = await DoASearch(QuestionActor, QuestionStudio, QuestionDate);
 
         return res;
-      } else {
-        const rl = $readline.createInterface({
-          input: process.stdin,
-
-          output: process.stdout,
-        });
-        try {
-          const questionAsync = (question) =>
-            new Promise((resolve) => {
-              rl.question(question, resolve);
-            });
-
-          $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
-          const Q1answer = await questionAsync(
-            "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) "
-          );
-
-          const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
-
-          if (!runInteractiveSearch) {
-            rl.close();
-            const manualInfo = await ManualImport();
-            return manualInfo;
-          }
-          const Movieanswer = await questionAsync(
-            "Is this a Scene from a Movie / Set / Collection?: (Y/N) "
-          );
-          const EnterMovieSearch = util.isPositiveAnswer(Movieanswer);
-
-          if (EnterMovieSearch) {
-            const MovieName = await questionAsync("What is the Title of the Movie?: ");
-
-            if (result.movie === undefined && MovieName !== "") {
-              result.movie = MovieName;
-            }
-          }
-          const Q2Actor = await questionAsync(
-            `What is ONE of the Actors NAME in the scene?: ${Actor[0] ? ` ${Actor[0]}` : ""}`
-          );
-
-          QuestionActor.push(Q2Actor);
-          if (Actor === undefined) {
-            Actor.push(Q2Actor);
-          }
-
-          const Q3Studio = await questionAsync(
-            `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`
-          );
-
-          QuestionStudio.push(Q3Studio);
-          if (Studio === undefined) {
-            Studio.push(Q3Studio);
-          }
-          const Q4date = await questionAsync(
-            "What is the release date (YYYY.MM.DD)?: (Blanks allowed) "
-          );
-
-          if (Q4date !== "") {
-            const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
-
-            $log(" MSG: Checking Date");
-
-            if (questYear && questYear.length) {
-              const date = questYear[0];
-
-              $log(" MSG: Found => yyyymmdd");
-
-              QuestionDate = $moment(date, "YYYY-MM-DD").valueOf();
-            }
-          }
-
-          rl.close();
-
-          // Re run the search with user's input
-          const res = await DoASearch(QuestionActor, QuestionStudio, QuestionDate);
-
-          return res;
-        } catch (error) {
-          rl.close();
-        }
+      } catch (error) {
+        rl.close();
       }
     } else {
       return {};
