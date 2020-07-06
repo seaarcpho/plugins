@@ -9,7 +9,7 @@ const util = require("./util");
  * @param {*} rl - the readline interface to use
  * @param {boolean} TestingStatus - if should just print test questions and use the param answer
  * @param {*} $log - logger function
- * @returns {() => Promise} the question prompt function
+ * @returns {(question: string, testQuestion: string, testAnswer: string) => Promise<string>} the question prompt function
  */
 const createQuestionPrompter = (rl, TestingStatus, $log) => {
   /**
@@ -875,64 +875,34 @@ module.exports = async ({
 
         const questionAsync = createQuestionPrompter(rl, TestingStatus, $log);
 
-        if (TestingStatus) {
-          $log(
-            `:::::TESTMODE MultipleChoiceResult EnterInfo:::: ${testmode.Questions.MultipleChoice}`
-          );
-          const MultipleSitesAnswer = testmode.Questions.MultipleChoice;
+        const MultipleSitesAnswer = await questionAsync(
+          "Which Title would you like to use? (number): ",
+          "TESTMODE MultipleChoiceResult EnterInfo",
+          testmode.Questions.MultipleChoice
+        );
+        if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
+          $log(" ERR: Not a valid option....");
 
-          if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
-            $log(" ERR: Not a valid option...");
+          rl.close();
 
-            rl.close();
+          const manualInfo = await ManualImport();
+          return manualInfo;
+        } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
+          const selectedtitle =
+            `https://metadataapi.net/api/scenes?parse=` +
+            GrabResults["Title" + MultipleSitesAnswer];
 
-            const manualInfo = await ManualImport();
-            return manualInfo;
-          } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
-            const selectedtitle =
-              `https://metadataapi.net/api/scenes?parse=` +
-              GrabResults["Title" + MultipleSitesAnswer];
+          rl.close();
+          $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
+          const Gogetit = await run(selectedtitle, 1);
 
-            rl.close();
-            $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
-            const Gogetit = await run(selectedtitle, 1);
+          $log("====  Final Entry =====");
 
-            $log("====  Final Entry =====");
-
-            for (const property in Gogetit) {
-              $log(`${property}: ${Gogetit[property]}`);
-            }
-
-            return Gogetit;
+          for (const property in Gogetit) {
+            $log(`${property}: ${Gogetit[property]}`);
           }
-        } else {
-          const MultipleSitesAnswer = await questionAsync(
-            "Which Title would you like to use? (number): "
-          );
-          if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
-            $log(" ERR: Not a valid option....");
 
-            rl.close();
-
-            const manualInfo = await ManualImport();
-            return manualInfo;
-          } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
-            const selectedtitle =
-              `https://metadataapi.net/api/scenes?parse=` +
-              GrabResults["Title" + MultipleSitesAnswer];
-
-            rl.close();
-            $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
-            const Gogetit = await run(selectedtitle, 1);
-
-            $log("====  Final Entry =====");
-
-            for (const property in Gogetit) {
-              $log(`${property}: ${Gogetit[property]}`);
-            }
-
-            return Gogetit;
-          }
+          return Gogetit;
         }
       } else if (GrabResults && typeof GrabResults === "object") {
         // Will return any of the values found
