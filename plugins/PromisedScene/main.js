@@ -427,6 +427,11 @@ module.exports = async ({
       (TestingTheSiteStatus !== undefined && TestingTheSiteStatus)
     ) {
       $log(" ERR: TPDB API query failed");
+
+      if (TestingStatus && !TestingTheSiteStatus) {
+        $log("!! This will impact the test if it was not expecting a failure !!");
+      }
+
       const manualInfo = await ManualImport();
       return manualInfo;
     }
@@ -719,6 +724,10 @@ module.exports = async ({
         (TestingTheSiteStatus !== undefined && TestingTheSiteStatus)
       ) {
         $log(" ERR: TPDB site Not Available OR the API query failed");
+
+        if (TestingStatus && !TestingTheSiteStatus) {
+          $log("!! This will impact the test if it was not expecting a failure !!");
+        }
 
         return [];
       }
