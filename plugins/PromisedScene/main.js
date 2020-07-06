@@ -437,24 +437,6 @@ module.exports = async ({
       const questionAsync = (question) =>
         new Promise((resolve) => {
           rl.question(question, resolve);
-          if (
-            question === "What are the Actors NAMES in the scene?: (seperated by Comma) " &&
-            Actor !== undefined
-          ) {
-            for (let numofpeople = 0; numofpeople < Actor.length; numofpeople++) {
-              if (numofpeople === 0) {
-                rl.write(" " + Actor[numofpeople]);
-              } else {
-                rl.write(", " + Actor[numofpeople]);
-              }
-            }
-          }
-          if (
-            question === "What Studio NAME is responsible for the scene?: " &&
-            Studio[0] !== undefined
-          ) {
-            rl.write(" " + Studio[0]);
-          }
         });
 
       $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
@@ -507,7 +489,9 @@ module.exports = async ({
       result.description = await questionAsync("What is the DESCRIPTION for the scene?: ");
 
       const splitactors = await questionAsync(
-        "What are the Actors NAMES in the scene?: (seperated by Comma) "
+        `What are the Actors NAMES in the scene?: (seperated by Comma) ${
+          Actor.length ? ` ${Actor.join(", ")}` : ""
+        }`
       );
 
       const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
@@ -516,7 +500,9 @@ module.exports = async ({
         result.actors = splitactors.trim().split(",");
       }
 
-      const askedStudio = await questionAsync("What Studio NAME is responsible for the scene?: ");
+      const askedStudio = await questionAsync(
+        `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`
+      );
 
       const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
 
@@ -1122,19 +1108,8 @@ module.exports = async ({
           const questionAsync = (question) =>
             new Promise((resolve) => {
               rl.question(question, resolve);
-              if (
-                question === "What is ONE of the Actors NAME in the scene?: " &&
-                Actor[0] !== undefined
-              ) {
-                rl.write(" " + Actor[0]);
-              }
-              if (
-                question === "What Studio NAME is responsible for the scene?: " &&
-                Studio[0] !== undefined
-              ) {
-                rl.write(" " + Studio[0]);
-              }
             });
+
           $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
           const Q1answer = await questionAsync(
             "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) "
@@ -1159,14 +1134,18 @@ module.exports = async ({
               result.movie = MovieName;
             }
           }
-          const Q2Actor = await questionAsync("What is ONE of the Actors NAME in the scene?: ");
+          const Q2Actor = await questionAsync(
+            `What is ONE of the Actors NAME in the scene?: ${Actor[0] ? ` ${Actor[0]}` : ""}`
+          );
 
           QuestionActor.push(Q2Actor);
           if (Actor === undefined) {
             Actor.push(Q2Actor);
           }
 
-          const Q3Studio = await questionAsync("What Studio NAME is responsible for the scene?: ");
+          const Q3Studio = await questionAsync(
+            `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`
+          );
 
           QuestionStudio.push(Q3Studio);
           if (Studio === undefined) {
