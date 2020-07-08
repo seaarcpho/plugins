@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
 /* eslint-disable dot-location */
-/* eslint-disable linebreak-style, camelcase */
+/* eslint-disable linebreak-style */
 
 const levenshtein = require("./levenshtein.js");
 const util = require("./util");
@@ -369,15 +369,15 @@ module.exports = async ({
    * @returns {Promise<string[]|object>} either an array of all the possible Porn Database search results, or a data object for the proper "found" scene
    */
   async function run(Value, AgressiveSearch = false) {
-    const tpdb_scene_search_response = await $axios.get(Value, {
+    const tpdbSceneSearchResponse = await $axios.get(Value, {
       validateStatus: false,
     });
 
     // checking the status of the link or site, will escape if the site is down
 
     if (
-      tpdb_scene_search_response.status !== 200 ||
-      tpdb_scene_search_response.data.length === 0 ||
+      tpdbSceneSearchResponse.status !== 200 ||
+      tpdbSceneSearchResponse.data.length === 0 ||
       (TestingTheSiteStatus !== undefined && TestingTheSiteStatus)
     ) {
       $log(" ERR: TPDB API query failed");
@@ -391,21 +391,21 @@ module.exports = async ({
     }
 
     // Grab the content data of the fed link
-    const tpdb_scene_search_content = tpdb_scene_search_response.data;
+    const tpdbSceneSearchContent = tpdbSceneSearchResponse.data;
 
     // setting the scene index to an invalid value by default
-    let correct_scene_idx = -1;
+    let correctSceneIdx = -1;
 
     // If a result was returned, it sets it to the first entry
-    if (tpdb_scene_search_content.data.length === 1) {
-      correct_scene_idx = 0;
+    if (tpdbSceneSearchContent.data.length === 1) {
+      correctSceneIdx = 0;
     }
 
     // making a variable to store all of the titles of the found results (in case we need the user to select a scene)
     const alltitles = [];
 
     // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
-    if (AgressiveSearch && correct_scene_idx === -1) {
+    if (AgressiveSearch && correctSceneIdx === -1) {
       $log(" ERR: TPDB Could NOT find correct scene info");
 
       const manualInfo = await ManualImport();
@@ -414,11 +414,11 @@ module.exports = async ({
       // list the found results and tries to match the SCENENAME to the found results.
       // all while gathering all of the titles, in case no match is found
 
-      if (tpdb_scene_search_content.data.length > 1) {
-        $log(`     SRCH: ${tpdb_scene_search_content.data.length} results found`);
+      if (tpdbSceneSearchContent.data.length > 1) {
+        $log(`     SRCH: ${tpdbSceneSearchContent.data.length} results found`);
 
-        for (let idx = 0; idx < tpdb_scene_search_content.data.length; idx++) {
-          const element = tpdb_scene_search_content.data[idx];
+        for (let idx = 0; idx < tpdbSceneSearchContent.data.length; idx++) {
+          const element = tpdbSceneSearchContent.data[idx];
 
           alltitles["Title" + idx] = { Title: element.title, id: element.id };
 
@@ -468,7 +468,7 @@ module.exports = async ({
 
             if (SearchedTitle !== undefined) {
               if (SearchedTitle.toString().trim().match(MatchTitle)) {
-                correct_scene_idx = idx;
+                correctSceneIdx = idx;
 
                 break;
               }
@@ -478,10 +478,10 @@ module.exports = async ({
       }
 
       // making sure the scene was found (-1 is not a proper scene value)
-      if (correct_scene_idx === -1) {
+      if (correctSceneIdx === -1) {
         // Will provide a list back the user if no Scene was found
 
-        if (tpdb_scene_search_content.data.length > 1 && args.ManualTouch === true) {
+        if (tpdbSceneSearchContent.data.length > 1 && args.ManualTouch === true) {
           $log(" ERR: TPDB Could NOT find correct scene info, here were the results");
 
           return alltitles;
@@ -494,11 +494,11 @@ module.exports = async ({
       }
     }
 
-    const tpdb_scene_search_data = tpdb_scene_search_content.data[correct_scene_idx];
+    const tpdbSceneSearchData = tpdbSceneSearchContent.data[correctSceneIdx];
 
     // return all of the information to TPM
 
-    if (tpdb_scene_search_data.title !== "") {
+    if (tpdbSceneSearchData.title !== "") {
       // Is there a duplicate scene already in the Database with that name?
       let FoundDupScene = false;
       // If i decide to do anything with duplicate scenes, this variable on the next line will come into play
@@ -515,7 +515,7 @@ module.exports = async ({
 
           let MatchScene = new RegExp(util.stripStr(JSON.parse(line).name.toString()), "gi");
 
-          const foundSceneMatch = util.stripStr(tpdb_scene_search_data.title).match(MatchScene);
+          const foundSceneMatch = util.stripStr(tpdbSceneSearchData.title).match(MatchScene);
 
           if (foundSceneMatch !== null) {
             FoundDupScene = true;
@@ -526,7 +526,7 @@ module.exports = async ({
               "gi"
             );
 
-            const foundSceneMatch = util.stripStr(tpdb_scene_search_data.title).match(MatchScene);
+            const foundSceneMatch = util.stripStr(tpdbSceneSearchData.title).match(MatchScene);
 
             if (foundSceneMatch !== null) {
               // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
@@ -544,29 +544,29 @@ module.exports = async ({
 
         // Exit? Break? Return?
 
-        result.name = tpdb_scene_search_data.title;
+        result.name = tpdbSceneSearchData.title;
       } else {
-        result.name = tpdb_scene_search_data.title;
+        result.name = tpdbSceneSearchData.title;
       }
     }
 
-    if (tpdb_scene_search_data.description !== "") {
-      result.description = tpdb_scene_search_data.description;
+    if (tpdbSceneSearchData.description !== "") {
+      result.description = tpdbSceneSearchData.description;
     }
 
-    if (tpdb_scene_search_data.date !== "") {
-      result.releaseDate = new Date(tpdb_scene_search_data.date).getTime();
+    if (tpdbSceneSearchData.date !== "") {
+      result.releaseDate = new Date(tpdbSceneSearchData.date).getTime();
     }
 
     if (
-      tpdb_scene_search_data.background.large !== "" &&
-      tpdb_scene_search_data.background.large !== "https://cdn.metadataapi.net/default.png"
+      tpdbSceneSearchData.background.large !== "" &&
+      tpdbSceneSearchData.background.large !== "https://cdn.metadataapi.net/default.png"
     ) {
       try {
         const thumbnailFile = await $createImage(
-          tpdb_scene_search_data.background.large,
+          tpdbSceneSearchData.background.large,
 
-          tpdb_scene_search_data.title,
+          tpdbSceneSearchData.title,
 
           true
         );
@@ -577,15 +577,15 @@ module.exports = async ({
       }
     }
 
-    if (tpdb_scene_search_data.performers !== "") {
-      result.actors = tpdb_scene_search_data.performers.map((p) => p.name);
+    if (tpdbSceneSearchData.performers !== "") {
+      result.actors = tpdbSceneSearchData.performers.map((p) => p.name);
     }
 
-    if (tpdb_scene_search_data.site.name !== "") {
+    if (tpdbSceneSearchData.site.name !== "") {
       if (Studio) {
         result.studio = Studio.toString().trim();
       } else {
-        result.studio = tpdb_scene_search_data.site.name;
+        result.studio = tpdbSceneSearchData.site.name;
       }
     }
 
@@ -620,11 +620,11 @@ module.exports = async ({
         return [];
       }
 
-      const Newtpdb_site_search_content = ResultTheListofSites.data;
+      const newTpdbSiteSearchContent = ResultTheListofSites.data;
 
       // loops through all of the sites and grabs the "shortname" for the Studio or website
 
-      const allSites = Newtpdb_site_search_content.data.map((el) => el.short_name);
+      const allSites = newTpdbSiteSearchContent.data.map((el) => el.short_name);
 
       return allSites;
     } catch (err) {
@@ -692,14 +692,14 @@ module.exports = async ({
 
       $log(":::::MSG: Checking TPDB for Data Extraction");
 
-      let tpdb_scene_search_url = "";
+      let tpdbSceneSearchUrl = "";
 
       // making the search string based on the timespamp or not
 
       if (isNaN(SearchFuncTimestamp)) {
         $log(":::::MSG: Placing TPDB Search string without timestamp...");
 
-        tpdb_scene_search_url =
+        tpdbSceneSearchUrl =
           `https://metadataapi.net/api/scenes?parse=` +
           encodeURIComponent(SearchStudio) +
           "%20" +
@@ -707,7 +707,7 @@ module.exports = async ({
       } else {
         $log(":::::MSG: Placing TPDB Search string");
 
-        tpdb_scene_search_url =
+        tpdbSceneSearchUrl =
           `https://metadataapi.net/api/scenes?parse=` +
           encodeURIComponent(SearchStudio) +
           "%20" +
@@ -718,9 +718,9 @@ module.exports = async ({
 
       // Grabbing the results using the "Normal" Search methods (comparing against scenename)
 
-      $log(":::::MSG: Running TPDB Primary Search on: " + tpdb_scene_search_url);
+      $log(":::::MSG: Running TPDB Primary Search on: " + tpdbSceneSearchUrl);
 
-      const GrabResults = await run(tpdb_scene_search_url);
+      const GrabResults = await run(tpdbSceneSearchUrl);
       // Once the results have been searched, we need to do something with them
       if (GrabResults && Array.isArray(GrabResults)) {
         // Run through the list of titles and ask if they would like to choose one.

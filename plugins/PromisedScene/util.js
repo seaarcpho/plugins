@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
 /* eslint-disable dot-location */
-/* eslint-disable linebreak-style, camelcase */
+/* eslint-disable linebreak-style */
 
 /**
  * @param {string} answer - string to compare
@@ -9,28 +9,28 @@
 const isPositiveAnswer = (answer = "") => ["y", "yes"].includes(answer.toLowerCase());
 
 /**
- * @param {number} The_timestamp - Time string to be converted to timestamp
+ * @param {number} timestamp - Time string to be converted to timestamp
  * @returns TODO:
  */
-function timeConverter(The_timestamp) {
-  const date_not_formatted = new Date(The_timestamp);
+function timeConverter(timestamp) {
+  const dateNotFormatted = new Date(timestamp);
 
-  let formatted_string = date_not_formatted.getFullYear() + "-";
+  let formattedString = dateNotFormatted.getFullYear() + "-";
 
-  if (date_not_formatted.getMonth() < 9) {
-    formatted_string += "0";
+  if (dateNotFormatted.getMonth() < 9) {
+    formattedString += "0";
   }
 
-  formatted_string += date_not_formatted.getMonth() + 1;
+  formattedString += dateNotFormatted.getMonth() + 1;
 
-  formatted_string += "-";
+  formattedString += "-";
 
-  if (date_not_formatted.getDate() < 10) {
-    formatted_string += "0";
+  if (dateNotFormatted.getDate() < 10) {
+    formattedString += "0";
   }
-  formatted_string += date_not_formatted.getDate();
+  formattedString += dateNotFormatted.getDate();
 
-  return formatted_string;
+  return formattedString;
 }
 
 /**
