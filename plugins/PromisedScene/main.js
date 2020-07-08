@@ -1,7 +1,3 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable dot-location */
-/* eslint-disable linebreak-style */
-
 const levenshtein = require("./levenshtein.js");
 const util = require("./util");
 

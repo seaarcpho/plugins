@@ -1,7 +1,3 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable dot-location */
-/* eslint-disable linebreak-style */
-
 /**
  * @param {string} answer - string to compare
  * @returns {boolean} if the answer is a positive confirmation (i.e. "yes")
