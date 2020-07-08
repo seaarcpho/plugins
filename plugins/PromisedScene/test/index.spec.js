@@ -21,21 +21,21 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "",
-            EnterManInfo: "",
-            EnterMovie: "",
-            EnterOneActorName: "",
-            EnterSceneDate: "",
-            EnterSceneTitle: "",
-            EnterStudioName: "",
-            ManualActors: "",
-            ManualDescription: "",
-            MovieTitle: "",
-            MultipleChoice: "",
+        testMode: {
+          questions: {
+            enterInfoSearch: "",
+            enterManInfo: "",
+            enterMovie: "",
+            enterOneActorName: "",
+            enterSceneDate: "",
+            enterSceneTitle: "",
+            enterStudioName: "",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -65,21 +65,21 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Madison Swan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Madison Swan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "n",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "",
-            EnterSceneDate: "",
-            EnterSceneTitle: "",
-            EnterStudioName: "",
-            ManualActors: "",
-            ManualDescription: "",
-            MovieTitle: "",
-            MultipleChoice: "",
+        testMode: {
+          questions: {
+            enterInfoSearch: "n",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "",
+            enterSceneDate: "",
+            enterSceneTitle: "",
+            enterStudioName: "",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -109,22 +109,22 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] MadisonSwan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] MadisonSwan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "n",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "2013.10.10",
-            EnterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova, Mike Adriano",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "n",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "2013.10.10",
+            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova, Mike Adriano",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "",
-            MultipleChoice: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -155,22 +155,22 @@ describe("PromisedScene", () => {
           "[New Sensations] Riley Nixon, Mia Malkova 16.04.08 - Makes the Heart Skip a Beat.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Riley Nixon, Mia Malkova 16.04.08 - Makes the Heart Skip a Beat.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "16.04.08",
-            EnterSceneTitle: "Makes the Heart Skip a Beat",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova, Riley Nixon",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "16.04.08",
+            enterSceneTitle: "Makes the Heart Skip a Beat",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova, Riley Nixon",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "",
-            MultipleChoice: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -200,22 +200,22 @@ describe("PromisedScene", () => {
         sceneName: "[Bangbros clips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         scenePath:
           "Z:\\Keep\\test\\[Bangbros clips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "04.01.2016",
-            EnterSceneTitle: "Flexible while getting pounded",
-            EnterStudioName: "Banbros clips",
-            ManualActors: "Mia Malkova",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "04.01.2016",
+            enterSceneTitle: "Flexible while getting pounded",
+            enterStudioName: "Banbros clips",
+            manualActors: "Mia Malkova",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "",
-            MultipleChoice: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -245,22 +245,22 @@ describe("PromisedScene", () => {
         sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         scenePath:
           "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "04.01.2016",
-            EnterSceneTitle: "Flexible while getting pounded",
-            EnterStudioName: "Bangbrosclips",
-            ManualActors: "Mia Malkova",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "04.01.2016",
+            enterSceneTitle: "Flexible while getting pounded",
+            enterStudioName: "Bangbrosclips",
+            manualActors: "Mia Malkova",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "",
-            MultipleChoice: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -289,21 +289,21 @@ describe("PromisedScene", () => {
         },
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "",
-            EnterSceneTitle: "New Sensations Mia Malkova",
-            EnterStudioName: "New Sensations",
-            ManualActors: "",
-            ManualDescription: "",
-            MovieTitle: "",
-            MultipleChoice: "3",
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "",
+            enterSceneTitle: "New Sensations Mia Malkova",
+            enterStudioName: "New Sensations",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "3",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -330,21 +330,21 @@ describe("PromisedScene", () => {
         },
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "",
-            EnterSceneTitle: "New Sensations Mia Malkova",
-            EnterStudioName: "New Sensations",
-            ManualActors: "",
-            ManualDescription: "",
-            MovieTitle: "",
-            MultipleChoice: "34",
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "",
+            enterSceneTitle: "New Sensations Mia Malkova",
+            enterStudioName: "New Sensations",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "34",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -366,21 +366,21 @@ describe("PromisedScene", () => {
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #08.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova So Young So Sexy P.O.V. #08.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "",
-            EnterSceneTitle: "",
-            EnterStudioName: "New Sensations",
-            ManualActors: "",
-            ManualDescription: "",
-            MovieTitle: "",
-            MultipleChoice: "",
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "",
+            enterSceneTitle: "",
+            enterStudioName: "New Sensations",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -407,21 +407,21 @@ describe("PromisedScene", () => {
         },
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "",
-            EnterSceneTitle: "New Sensations Mia Malkova",
-            EnterStudioName: "New Sensations",
-            ManualActors: "",
-            ManualDescription: "",
-            MovieTitle: "",
-            MultipleChoice: "3",
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "",
+            enterSceneTitle: "New Sensations Mia Malkova",
+            enterStudioName: "New Sensations",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "3",
           },
-          TestSiteunavailable: true,
+          testSiteUnavailable: true,
           status: true,
         },
       });
@@ -443,21 +443,21 @@ describe("PromisedScene", () => {
         },
         sceneName: "[Colette] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[Colette] Mia Malkova.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "",
-            EnterSceneTitle: "Colette Mia Malkova",
-            EnterStudioName: "Colette",
-            ManualActors: "",
-            ManualDescription: "",
-            MovieTitle: "",
-            MultipleChoice: "3",
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "",
+            enterSceneTitle: "Colette Mia Malkova",
+            enterStudioName: "Colette",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "3",
           },
-          TestSiteunavailable: true,
+          testSiteUnavailable: true,
           status: true,
         },
       });
@@ -482,20 +482,20 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
+        testMode: {
+          questions: {
             EnterInfo: "Should not ask",
-            EnterMovie: "Should not ask",
-            EnterOneActorName: "Should not ask",
-            EnterSceneDate: "Should not ask",
-            EnterSceneTitle: "Should not ask",
-            EnterStudioName: "Should not ask",
-            ManualActors: "Should not ask",
-            ManualDescription: "Should not ask",
-            MovieTitle: "Should not ask",
-            MultipleChoice: "Should not ask",
+            enterMovie: "Should not ask",
+            enterOneActorName: "Should not ask",
+            enterSceneDate: "Should not ask",
+            enterSceneTitle: "Should not ask",
+            enterStudioName: "Should not ask",
+            manualActors: "Should not ask",
+            manualDescription: "Should not ask",
+            movieTitle: "Should not ask",
+            multipleChoice: "Should not ask",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -518,22 +518,22 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "n",
-            EnterManInfo: "y",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "2013.10.10",
-            EnterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova, Mike Adriano",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "n",
+            enterManInfo: "y",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "2013.10.10",
+            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova, Mike Adriano",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "",
-            MultipleChoice: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -562,22 +562,22 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "n",
-            EnterManInfo: "y",
-            EnterMovie: "y",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "2013.10.10",
-            EnterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova, Mike Adriano",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "n",
+            enterManInfo: "y",
+            enterMovie: "y",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "2013.10.10",
+            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova, Mike Adriano",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "So Young So Sexy P.O.V. #8",
-            MultipleChoice: "",
+            movieTitle: "So Young So Sexy P.O.V. #8",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -608,22 +608,22 @@ describe("PromisedScene", () => {
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "2013.10.10",
-            EnterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova, Mike Adriano",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "2013.10.10",
+            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova, Mike Adriano",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "So Young So Sexy P.O.V. #8",
-            MultipleChoice: "0",
+            movieTitle: "So Young So Sexy P.O.V. #8",
+            multipleChoice: "0",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -652,22 +652,22 @@ describe("PromisedScene", () => {
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "y",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "2013.10.10",
-            EnterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova,Mike Adriano",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "y",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "2013.10.10",
+            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova,Mike Adriano",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "So Young So Sexy P.O.V. #8",
-            MultipleChoice: "0",
+            movieTitle: "So Young So Sexy P.O.V. #8",
+            multipleChoice: "0",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -696,22 +696,22 @@ describe("PromisedScene", () => {
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "y",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "2013.10.10",
-            EnterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova,Mike Adriano",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "y",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "2013.10.10",
+            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova,Mike Adriano",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "So Young So Sexy P.O.V. #8",
-            MultipleChoice: "0",
+            movieTitle: "So Young So Sexy P.O.V. #8",
+            multipleChoice: "0",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -733,22 +733,22 @@ describe("PromisedScene", () => {
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova -SoYoungSoSexyP.O.V.#8.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "y",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "2013.10.10",
-            EnterSceneTitle: "SoYoungSoSexyP.O.V.#8-Scene2",
-            EnterStudioName: "New Sensations",
-            ManualActors: "Mia Malkova,Mike Adriano",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
+            enterMovie: "y",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "2013.10.10",
+            enterSceneTitle: "SoYoungSoSexyP.O.V.#8-Scene2",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova,Mike Adriano",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "So Young So Sexy P.O.V. #8",
-            MultipleChoice: "0",
+            movieTitle: "So Young So Sexy P.O.V. #8",
+            multipleChoice: "0",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -771,22 +771,22 @@ describe("PromisedScene", () => {
         sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         scenePath:
           "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "y",
-            EnterMovie: "n",
-            EnterOneActorName: "Mi Malkova",
-            EnterSceneDate: "2016.01.04",
-            EnterSceneTitle: "Flexible while getting pounded",
-            EnterStudioName: "BANGBROS CLIPS",
-            ManualActors: "Mia Malkova",
-            ManualDescription:
+        testMode: {
+          questions: {
+            enterInfoSearch: "y",
+            enterManInfo: "y",
+            enterMovie: "n",
+            enterOneActorName: "Mi Malkova",
+            enterSceneDate: "2016.01.04",
+            enterSceneTitle: "Flexible while getting pounded",
+            enterStudioName: "BANGBROS CLIPS",
+            manualActors: "Mia Malkova",
+            manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            MovieTitle: "",
-            MultipleChoice: "",
+            movieTitle: "",
+            multipleChoice: "",
           },
-          TestSiteunavailable: false,
+          testSiteUnavailable: false,
           status: true,
         },
       });
@@ -819,8 +819,8 @@ describe("PromisedScene", () => {
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
           scenePath:
             "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testmode: {
-            TestSiteunavailable: false,
+          testMode: {
+            testSiteUnavailable: false,
             status: false,
           },
         });
@@ -844,8 +844,8 @@ describe("PromisedScene", () => {
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
           scenePath:
             "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testmode: {
-            TestSiteunavailable: false,
+          testMode: {
+            testSiteUnavailable: false,
             status: true,
           },
         });
@@ -873,8 +873,8 @@ describe("PromisedScene", () => {
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
           scenePath:
             "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testmode: {
-            TestSiteunavailable: false,
+          testMode: {
+            testSiteUnavailable: false,
             status: true,
           },
         });
@@ -902,8 +902,8 @@ describe("PromisedScene", () => {
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
           scenePath:
             "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testmode: {
-            TestSiteunavailable: false,
+          testMode: {
+            testSiteUnavailable: false,
             status: true,
           },
         });
@@ -931,8 +931,8 @@ describe("PromisedScene", () => {
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
           scenePath:
             "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testmode: {
-            TestSiteunavailable: false,
+          testMode: {
+            testSiteUnavailable: false,
             status: true,
           },
         });
@@ -960,8 +960,8 @@ describe("PromisedScene", () => {
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
           scenePath:
             "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testmode: {
-            TestSiteunavailable: false,
+          testMode: {
+            testSiteUnavailable: false,
             status: true,
           },
         });
