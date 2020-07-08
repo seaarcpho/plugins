@@ -126,7 +126,6 @@ module.exports = async ({
     let Actorhighscore = 5000;
     if (GettingActor.length && Array.isArray(GettingActor)) {
       GettingActor.forEach((person) => {
-        $log(`    SUCCESS: Found Actor:` + Actor);
         // This is a function that will see how many differences it will take to make the string match.
         // The lowest amount of changes means that it is probably the closest match to what we need.
         // lowest score wins :)
@@ -137,6 +136,7 @@ module.exports = async ({
 
           Actor[0] = person;
         }
+        $log(`    SUCCESS: Found Actor:` + Actor);
       });
       $log(`---> Using "best match" Actor For Search:` + Actor);
     }
@@ -188,7 +188,6 @@ module.exports = async ({
     let studiohighscore = 5000;
     if (GettingStudio.length && Array.isArray(GettingStudio)) {
       GettingStudio.forEach((stud) => {
-        $log(`    SUCCESS: Found Studio:` + stud);
         // This is a function that will see how many differences it will take to make the string match.
         // The lowest amount of changes means that it is probably the closest match to what we need.
         // lowest score wins :)
@@ -199,6 +198,7 @@ module.exports = async ({
 
           Studio[0] = stud;
         }
+        $log(`    SUCCESS: Found Studio:` + stud);
       });
 
       $log(`---> Using "best match" Studio For Search:` + Studio);
@@ -251,52 +251,6 @@ module.exports = async ({
   // -------------------Fucntions & Async functions---------------
 
   // -------------------------------------------------------------
-
-  /*  FemaleOnly  Freeones function
-     
-      async function Freeones(person) {
-    
-        
-    
-        //defining FreeOnes URL for scraping
-    
-        $log('[Freeones] : Searching FreeOnes for ' + person.name)
-    
-        let freeurl = `http://freeones.xxx/${(person.name).replace(/ /g, "-")}/profile`;
-    
-        
-    
-        
-    
-        $log("[Freeones] : Getting " + freeurl);
-    
-        //getting raw HTML of the URL defined above
-    
-        
-    
-        let freehtml = (await $axios.get(freeurl, { validateStatus: false}))
-    
-        //getting DOM (Document Object Model) of the HTML
-    
-        
-    
-        if (freehtml.status !== 200 || freehtml.data.length === 0) {
-    
-              
-    
-        } else {
-    
-          return person.name
-    
-        }
-    
-              
-    
-            
-    
-      }
-    
-  */
   /**
    * Standard block of manual questions that prompt the user for input
    * @returns {Promise<string[]|object>} either an array of all questions that need to be import manually
@@ -466,7 +420,7 @@ module.exports = async ({
         for (let idx = 0; idx < tpdb_scene_search_content.data.length; idx++) {
           const element = tpdb_scene_search_content.data[idx];
 
-          alltitles["Title" + idx] = element.title;
+          alltitles["Title" + idx] = { Title: element.title, id: element.id };
 
           // making variables to use to elimate Actors and scenes from the search results.
 
@@ -475,7 +429,7 @@ module.exports = async ({
           let SearchedTitle = util.stripStr(sceneName).toString().toLowerCase();
 
           let MatchTitle = util
-            .stripStr(alltitles["Title" + idx])
+            .stripStr(alltitles["Title" + idx].Title)
             .toString()
             .toLowerCase();
 
@@ -504,9 +458,9 @@ module.exports = async ({
 
           if (MatchTitle !== undefined) {
             $log(
-              `     SRCH: Trying to match title: ` +
+              `     SRCH: Trying to match TPD title: ` +
                 MatchTitle.toString().trim() +
-                "--> " +
+                " --with--> " +
                 SearchedTitle.toString().trim()
             );
 
@@ -624,72 +578,6 @@ module.exports = async ({
     }
 
     if (tpdb_scene_search_data.performers !== "") {
-      /* if (args.FemaleOnly) {
-    
-            let Perf =[]
-    
-            tpdb_scene_search_data.performers.forEach((Theperson) => {
-    
-              
-    
-              let placeholdername = Freeones(Theperson).then((resultingActor) => {
-    
-                
-    
-                if(resultingActor) {
-    
-                  return resultingActor
-    
-                }
-    
-                          
-    
-              });
-    
-              
-    
-              if (placeholdername !== undefined) {
-    
-                Perf.push(placeholdername)
-    
-              }
-    
-                      
-    
-            });
-    
-                  
-    
-            const resolvedFinalArray = await Promise.all(Perf);
-    
-                        
-    
-            let ResultsActor =[];
-    
-            resolvedFinalArray.forEach((found) => {
-    
-              if (found !== undefined){
-    
-                ResultsActor.push(found)
-    
-              }
-    
-            });
-    
-            
-    
-            
-    
-            
-    
-          } else {
-    
-            
-    
-          }
-    
-            */
-
       result.actors = tpdb_scene_search_data.performers.map((p) => p.name);
     }
 
@@ -833,14 +721,13 @@ module.exports = async ({
       $log(":::::MSG: Running TPDB Primary Search on: " + tpdb_scene_search_url);
 
       const GrabResults = await run(tpdb_scene_search_url);
-
       // Once the results have been searched, we need to do something with them
       if (GrabResults && Array.isArray(GrabResults)) {
         // Run through the list of titles and ask if they would like to choose one.
         $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
 
         for (let loopspot = 0; loopspot < Object.keys(GrabResults).length; loopspot++) {
-          $log(":::::|> " + loopspot + ": [" + GrabResults["Title" + loopspot] + "]");
+          $log(":::::|> " + loopspot + ": [" + GrabResults["Title" + loopspot].Title + "]");
         }
 
         $log(":::::|> " + Object.keys(GrabResults).length + ": ====== None of the above =====");
@@ -869,7 +756,7 @@ module.exports = async ({
         } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
           const selectedtitle =
             `https://metadataapi.net/api/scenes?parse=` +
-            GrabResults["Title" + MultipleSitesAnswer];
+            GrabResults["Title" + MultipleSitesAnswer].id;
 
           rl.close();
           $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);

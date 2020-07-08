@@ -391,42 +391,6 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
-    it("Select a scene from a list of returned searches, error out because too many results after agressive search, chose not to enter manual info", async () => {
-      const result = await plugin({
-        ...context,
-        args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
-          parseActor: true,
-          parseStudio: true,
-          source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-          },
-        },
-        sceneName: "[New Sensations] Mia Malkova",
-        scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
-        testmode: {
-          Questions: {
-            EnterInfoSearch: "y",
-            EnterManInfo: "n",
-            EnterMovie: "n",
-            EnterOneActorName: "Mia Malkova",
-            EnterSceneDate: "",
-            EnterSceneTitle: "New Sensations Mia Malkova",
-            EnterStudioName: "New Sensations",
-            ManualActors: "",
-            ManualDescription: "",
-            MovieTitle: "",
-            MultipleChoice: "2",
-          },
-          TestSiteunavailable: false,
-          status: true,
-        },
-      });
-      expect(result).to.deep.equal({});
-    });
     it("TPD not available and should not return anything because Manualinfo is = n", async () => {
       const result = await plugin({
         ...context,
