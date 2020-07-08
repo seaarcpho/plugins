@@ -206,16 +206,16 @@ module.exports = async ({
   }
   // Try to PARSE the SceneName and determine Date
 
-  const ddmmyyyy = util.stripStr(scenePath, 1).match(/\d\d \d\d \d\d\d\d/);
+  const ddmmyyyy = util.stripStr(scenePath, true).match(/\d\d \d\d \d\d\d\d/);
 
-  const yyyymmdd = util.stripStr(scenePath, 1).match(/\d\d\d\d \d\d \d\d/);
+  const yyyymmdd = util.stripStr(scenePath, true).match(/\d\d\d\d \d\d \d\d/);
 
-  const yymmdd = util.stripStr(scenePath, 1).match(/\d\d \d\d \d\d/);
+  const yymmdd = util.stripStr(scenePath, true).match(/\d\d \d\d \d\d/);
 
   let timestamp = {};
 
   $log(":::::PARSE:::: Parsing Date from ScenePath");
-  // $log(util.stripStr(scenePath, 1));
+  // $log(util.stripStr(scenePath, true));
 
   if (yyyymmdd && yyyymmdd.length) {
     const date = yyyymmdd[0].replace(" ", ".");

@@ -35,16 +35,15 @@ function timeConverter(The_timestamp) {
 
 /**
  * @param {string} str - String to be cleaned of: "P.O.V." "/[^a-zA-Z0-9'/\\,(){}]/" (i should make this a file of customizable strings to clean? maybe?)
- * @param {boolean} date - Boolean that identifies if it should clean a string with dates or not | True = does not remove zeros in front of a number from 1 - 9
+ * @param {boolean} [keepDate=false] - Boolean that identifies if it should clean a string with dates or not | True = does not remove zeros in front of a number from 1 - 9
  * @returns {string} return the string with all of the unwanted characters removed from the string
  */
-function stripStr(str, date) {
-  date = 0 || date;
+function stripStr(str, keepDate = false) {
   str = str.toString();
 
   str = str.toLowerCase().replace("'", "");
   str = str.toLowerCase().replace(/P.O.V./gi, "pov");
-  if (!date) {
+  if (!keepDate) {
     str = str.toLowerCase().replace(/\b0+/g, "");
   }
 
@@ -65,7 +64,7 @@ const createQuestionPrompter = (rl, TestingStatus, $log) => {
    * @param {string} question - the question to ask
    * @param {string} testQuestion - the name of the question (for test mode)
    * @param {string} testAnswer - the answer that will be returned (for test mode)
-   * @returns {string} the result of the question, or the inputted answer for test mode
+   * @returns {Promise<string>} the result of the question, or the inputted answer for test mode
    * @async
    */
   const questionAsync = async (question, testQuestion, testAnswer) => {
