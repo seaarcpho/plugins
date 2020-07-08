@@ -51,11 +51,11 @@ function stripStr(str, keepDate = false) {
 
 /**
  * @param {*} rl - the readline interface to use
- * @param {boolean} TestingStatus - if should just print test questions and use the param answer
+ * @param {boolean} testingStatus - if should just print test questions and use the param answer
  * @param {*} $log - logger function
  * @returns {(question: string, testQuestion: string, testAnswer: string) => Promise<string>} the question prompt function
  */
-const createQuestionPrompter = (rl, TestingStatus, $log) => {
+const createQuestionPrompter = (rl, testingStatus, $log) => {
   /**
    * @param {string} question - the question to ask
    * @param {string} testQuestion - the name of the question (for test mode)
@@ -64,7 +64,7 @@ const createQuestionPrompter = (rl, TestingStatus, $log) => {
    * @async
    */
   const questionAsync = async (question, testQuestion, testAnswer) => {
-    if (TestingStatus) {
+    if (testingStatus) {
       $log(`:::::${testQuestion}:::: ${testAnswer}`);
       return testAnswer;
     }

@@ -15,19 +15,19 @@ module.exports = async ({
   $readline,
   $createImage,
 }) => {
-  const TestingStatus = testmode ? testmode.status : false;
-  const TestingTheSiteStatus = testmode ? testmode.TestSiteunavailable : false;
+  const testingStatus = testmode ? testmode.status : false;
+  const testingTheSiteStatus = testmode ? testmode.TestSiteunavailable : false;
 
   // Array Variable that will be returned
   const result = {};
 
   // Variable that is used for all the "manualTouch" questions
 
-  const CleanPathname = util.stripStr(scenePath.toString());
+  const cleanPathname = util.stripStr(scenePath.toString());
 
   // Making sure that the event that triggered is the correct event
 
-  if (event !== "sceneCreated" && event !== "sceneCustom" && TestingStatus !== true) {
+  if (event !== "sceneCreated" && event !== "sceneCustom" && testingStatus !== true) {
     $throw(" ERR: Plugin used for unsupported event");
   }
 
@@ -59,8 +59,8 @@ module.exports = async ({
   // This is where the plugin attempts to check for Actors using the Actors.db
 
   // creating a array to use for other functions
-  const GettingActor = [];
-  const Actor = [];
+  const gettingActor = [];
+  const actor = [];
 
   if (args.parseActor) {
     $log(`:::::PARSE:::: Parsing Actors DB ==> ${args.source_settings.Actors}`);
@@ -72,69 +72,69 @@ module.exports = async ({
           return;
         }
 
-        const MatchActor = new RegExp(JSON.parse(line).name, "i");
+        const matchActor = new RegExp(JSON.parse(line).name, "i");
 
-        const ActorLength = MatchActor.toString().split(" ");
+        const actorLength = matchActor.toString().split(" ");
 
-        if (ActorLength.length < 2) {
+        if (actorLength.length < 2) {
           return;
         }
 
         // $log(((JSON.parse(line)).name))
-        const foundActorMatch = util.stripStr(scenePath).match(MatchActor);
+        const foundActorMatch = util.stripStr(scenePath).match(matchActor);
 
         // $log(util.stripStr(sceneName))
 
         if (foundActorMatch !== null) {
-          GettingActor.push(JSON.parse(line).name);
+          gettingActor.push(JSON.parse(line).name);
           return;
         }
 
-        const AllAliases = JSON.parse(line).aliases.toString().split(",");
+        const allAliases = JSON.parse(line).aliases.toString().split(",");
 
-        AllAliases.forEach((PersonAlias) => {
-          const AliasLength = PersonAlias.toString().split(" ");
+        allAliases.forEach((personAlias) => {
+          const aliasLength = personAlias.toString().split(" ");
 
-          if (AliasLength.length < 2) {
+          if (aliasLength.length < 2) {
             return;
           }
 
-          let MatchAliasActor = new RegExp(PersonAlias, "i");
+          let matchAliasActor = new RegExp(personAlias, "i");
 
-          let foundAliasActorMatch = util.stripStr(scenePath).match(MatchAliasActor);
+          let foundAliasActorMatch = util.stripStr(scenePath).match(matchAliasActor);
 
           if (foundAliasActorMatch !== null) {
-            GettingActor.push(JSON.parse(line).name);
+            gettingActor.push(JSON.parse(line).name);
           } else {
-            const Aliasnospaces = PersonAlias.toString().replace(" ", "");
+            const aliasNoSpaces = personAlias.toString().replace(" ", "");
 
-            MatchAliasActor = new RegExp(Aliasnospaces, "i");
+            matchAliasActor = new RegExp(aliasNoSpaces, "i");
 
-            foundAliasActorMatch = util.stripStr(scenePath).match(MatchAliasActor);
+            foundAliasActorMatch = util.stripStr(scenePath).match(matchAliasActor);
 
             if (foundAliasActorMatch !== null) {
-              GettingActor.push(JSON.parse(line).name);
+              gettingActor.push(JSON.parse(line).name);
             }
           }
         });
       });
 
-    let Actorhighscore = 5000;
-    if (GettingActor.length && Array.isArray(GettingActor)) {
-      GettingActor.forEach((person) => {
+    let actorHighscore = 5000;
+    if (gettingActor.length && Array.isArray(gettingActor)) {
+      gettingActor.forEach((person) => {
         // This is a function that will see how many differences it will take to make the string match.
         // The lowest amount of changes means that it is probably the closest match to what we need.
         // lowest score wins :)
-        const found = levenshtein(person.toString().toLowerCase(), CleanPathname);
+        const found = levenshtein(person.toString().toLowerCase(), cleanPathname);
 
-        if (found < Actorhighscore) {
-          Actorhighscore = found;
+        if (found < actorHighscore) {
+          actorHighscore = found;
 
-          Actor[0] = person;
+          actor[0] = person;
         }
-        $log(`    SUCCESS: Found Actor:` + Actor);
+        $log(`    SUCCESS: Found Actor:` + actor);
       });
-      $log(`---> Using "best match" Actor For Search:` + Actor);
+      $log(`---> Using "best match" Actor For Search:` + actor);
     }
   }
   // -------------------STUDIO Parse
@@ -143,9 +143,9 @@ module.exports = async ({
 
   // creating a array to use for other functions
 
-  const GettingStudio = [];
+  const gettingStudio = [];
 
-  const Studio = [];
+  const studio = [];
 
   if (args.parseStudio) {
     $log(`:::::PARSE:::: Parsing Studios DB ==> ${args.source_settings.Studios}`);
@@ -162,19 +162,19 @@ module.exports = async ({
           return;
         }
 
-        let MatchStudio = new RegExp(JSON.parse(line).name, "i");
+        let matchStudio = new RegExp(JSON.parse(line).name, "i");
 
-        const foundStudioMatch = util.stripStr(scenePath).match(MatchStudio);
+        const foundStudioMatch = util.stripStr(scenePath).match(matchStudio);
 
         if (foundStudioMatch !== null) {
-          GettingStudio.push(JSON.parse(line).name);
+          gettingStudio.push(JSON.parse(line).name);
         } else if (JSON.parse(line).name !== null) {
-          MatchStudio = new RegExp(JSON.parse(line).name.replace(/ /g, ""), "i");
+          matchStudio = new RegExp(JSON.parse(line).name.replace(/ /g, ""), "i");
 
-          const foundStudioMatch = util.stripStr(scenePath).match(MatchStudio);
+          const foundStudioMatch = util.stripStr(scenePath).match(matchStudio);
 
           if (foundStudioMatch !== null) {
-            GettingStudio.push(JSON.parse(line).name);
+            gettingStudio.push(JSON.parse(line).name);
           }
         }
       });
@@ -182,22 +182,22 @@ module.exports = async ({
     // this is a debug option to se see how many studios were found by just doing a simple regex
     // $log(GettingStudio);
     let studiohighscore = 5000;
-    if (GettingStudio.length && Array.isArray(GettingStudio)) {
-      GettingStudio.forEach((stud) => {
+    if (gettingStudio.length && Array.isArray(gettingStudio)) {
+      gettingStudio.forEach((stud) => {
         // This is a function that will see how many differences it will take to make the string match.
         // The lowest amount of changes means that it is probably the closest match to what we need.
         // lowest score wins :)
-        const found = levenshtein(stud.toString().toLowerCase(), CleanPathname);
+        const found = levenshtein(stud.toString().toLowerCase(), cleanPathname);
 
         if (found < studiohighscore) {
           studiohighscore = found;
 
-          Studio[0] = stud;
+          studio[0] = stud;
         }
         $log(`    SUCCESS: Found Studio:` + stud);
       });
 
-      $log(`---> Using "best match" Studio For Search:` + Studio);
+      $log(`---> Using "best match" Studio For Search:` + studio);
     }
   }
   // Try to PARSE the SceneName and determine Date
@@ -239,8 +239,8 @@ module.exports = async ({
 
   // After everything has completed parsing, I run a function that will perform all of the lookups against TPDB
 
-  const FinalCallResult = await DoASearch(Actor, Studio, timestamp);
-  return FinalCallResult;
+  const finalCallResult = await doASearch(actor, studio, timestamp);
+  return finalCallResult;
 
   // -------------------------------------------------------------
 
@@ -251,46 +251,46 @@ module.exports = async ({
    * Standard block of manual questions that prompt the user for input
    * @returns {Promise<string[]|object>} either an array of all questions that need to be import manually
    */
-  async function ManualImport() {
+  async function manualImport() {
     const rl = $readline.createInterface({
       input: process.stdin,
       output: process.stdout,
     });
 
-    const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
+    const questionAsync = util.createQuestionPrompter(rl, testingStatus, $log);
 
     $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
 
-    const Q1answer = await questionAsync(
+    const Q1Answer = await questionAsync(
       "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) ",
       "TESTMODE Question Enter MANUAL Info?",
       testmode && testmode.Questions ? testmode.Questions.EnterManInfo : ""
     );
 
-    const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
+    const runInteractiveSearch = util.isPositiveAnswer(Q1Answer);
 
     if (!runInteractiveSearch) {
       rl.close();
       return {};
     }
 
-    const ManualMovieanswer = await questionAsync(
+    const manualMovieAnswer = await questionAsync(
       "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
       "TESTMODE Question MANUAL Movie",
       testmode && testmode.Questions ? testmode.Questions.EnterMovie : ""
     );
 
-    const ManualEnterMovieSearch = util.isPositiveAnswer(ManualMovieanswer);
+    const manualEnterMovieSearch = util.isPositiveAnswer(manualMovieAnswer);
 
-    if (ManualEnterMovieSearch) {
-      const ManualMovieName = await questionAsync(
+    if (manualEnterMovieSearch) {
+      const manualMovieName = await questionAsync(
         "What is the Title of the Movie?: ",
         "TESTMODE Question MANUAL Movie Title",
         testmode && testmode.Questions ? testmode.Questions.MovieTitle : ""
       );
 
-      if (result.movie === undefined && ManualMovieName !== "") {
-        result.movie = ManualMovieName;
+      if (result.movie === undefined && manualMovieName !== "") {
+        result.movie = manualMovieName;
       }
     }
 
@@ -328,27 +328,27 @@ module.exports = async ({
 
     const splitactors = await questionAsync(
       `What are the Actors NAMES in the scene?: (seperated by Comma) ${
-        Actor.length ? ` ${Actor.join(", ")}` : ""
+        actor.length ? ` ${actor.join(", ")}` : ""
       }`,
       "TESTMODE Question MANUAL actor names",
       testmode && testmode.Questions ? testmode.Questions.ManualActors : ""
     );
 
-    const AreActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
+    const areActorsBlank = splitactors === "" || splitactors === " " || splitactors === null;
 
-    if (!AreActorsBlank) {
+    if (!areActorsBlank) {
       result.actors = splitactors.trim().split(",");
     }
 
     const askedStudio = await questionAsync(
-      `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`,
+      `What Studio NAME is responsible for the scene?: ${studio[0] ? ` ${studio[0]}` : ""}`,
       "TESTMODE Question MANUAL Studio name",
       testmode && testmode.Questions ? testmode.Questions.EnterStudioName : ""
     );
 
-    const IsStudiosBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
+    const isStudioBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
 
-    if (!IsStudiosBlank) {
+    if (!isStudioBlank) {
       result.studio = askedStudio;
     }
 
@@ -360,12 +360,12 @@ module.exports = async ({
   /**
    * Retrieves the scene titles or details from TPDB
    *
-   * @param {string} Value - a TPDB url to a scene
-   * @param {boolean} AgressiveSearch - if the search does not only have 1 result, if this should run a manual import instead of trying to get titles
+   * @param {string} value - a TPDB url to a scene
+   * @param {boolean} agressiveSearch - if the search does not only have 1 result, if this should run a manual import instead of trying to get titles
    * @returns {Promise<string[]|object>} either an array of all the possible Porn Database search results, or a data object for the proper "found" scene
    */
-  async function run(Value, AgressiveSearch = false) {
-    const tpdbSceneSearchResponse = await $axios.get(Value, {
+  async function run(value, agressiveSearch = false) {
+    const tpdbSceneSearchResponse = await $axios.get(value, {
       validateStatus: false,
     });
 
@@ -374,15 +374,15 @@ module.exports = async ({
     if (
       tpdbSceneSearchResponse.status !== 200 ||
       tpdbSceneSearchResponse.data.length === 0 ||
-      (TestingTheSiteStatus !== undefined && TestingTheSiteStatus)
+      (testingTheSiteStatus !== undefined && testingTheSiteStatus)
     ) {
       $log(" ERR: TPDB API query failed");
 
-      if (TestingStatus && !TestingTheSiteStatus) {
+      if (testingStatus && !testingTheSiteStatus) {
         $log("!! This will impact the test if it was not expecting a failure !!");
       }
 
-      const manualInfo = await ManualImport();
+      const manualInfo = await manualImport();
       return manualInfo;
     }
 
@@ -401,10 +401,10 @@ module.exports = async ({
     const alltitles = [];
 
     // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
-    if (AgressiveSearch && correctSceneIdx === -1) {
+    if (agressiveSearch && correctSceneIdx === -1) {
       $log(" ERR: TPDB Could NOT find correct scene info");
 
-      const manualInfo = await ManualImport();
+      const manualInfo = await manualImport();
       return manualInfo;
     } else {
       // list the found results and tries to match the SCENENAME to the found results.
@@ -422,48 +422,48 @@ module.exports = async ({
 
           // It is better to search just the title.  We already have the actor and studio.
 
-          let SearchedTitle = util.stripStr(sceneName).toString().toLowerCase();
+          let searchedTitle = util.stripStr(sceneName).toString().toLowerCase();
 
-          let MatchTitle = util
+          let matchTitle = util
             .stripStr(alltitles["Title" + idx].Title)
             .toString()
             .toLowerCase();
 
           // lets remove the actors from the scenename and the searched title -- We should already know this
 
-          for (let j = 0; j < Actor.length; j++) {
-            SearchedTitle = SearchedTitle.replace(Actor[j].toString().toLowerCase(), "");
+          for (let j = 0; j < actor.length; j++) {
+            searchedTitle = searchedTitle.replace(actor[j].toString().toLowerCase(), "");
 
-            MatchTitle = MatchTitle.replace(Actor[j].toString().toLowerCase(), "").trim();
+            matchTitle = matchTitle.replace(actor[j].toString().toLowerCase(), "").trim();
           }
 
           // lets remove the Studio from the scenename and the searched title -- We should already know this
 
-          if (Studio[0] !== undefined) {
-            SearchedTitle = SearchedTitle.replace(Studio[0].toString().toLowerCase(), "");
+          if (studio[0] !== undefined) {
+            searchedTitle = searchedTitle.replace(studio[0].toString().toLowerCase(), "");
 
-            SearchedTitle = SearchedTitle.replace(
-              Studio[0].toString().toLowerCase().replace(" ", ""),
+            searchedTitle = searchedTitle.replace(
+              studio[0].toString().toLowerCase().replace(" ", ""),
               ""
             );
 
-            MatchTitle = MatchTitle.replace(Studio[0].toString().toLowerCase(), "").trim();
+            matchTitle = matchTitle.replace(studio[0].toString().toLowerCase(), "").trim();
           }
 
           // Only Run a match if there is a searched title to execute a match on
 
-          if (MatchTitle !== undefined) {
+          if (matchTitle !== undefined) {
             $log(
               `     SRCH: Trying to match TPD title: ` +
-                MatchTitle.toString().trim() +
+                matchTitle.toString().trim() +
                 " --with--> " +
-                SearchedTitle.toString().trim()
+                searchedTitle.toString().trim()
             );
 
-            MatchTitle = new RegExp(MatchTitle.toString().trim(), "i");
+            matchTitle = new RegExp(matchTitle.toString().trim(), "i");
 
-            if (SearchedTitle !== undefined) {
-              if (SearchedTitle.toString().trim().match(MatchTitle)) {
+            if (searchedTitle !== undefined) {
+              if (searchedTitle.toString().trim().match(matchTitle)) {
                 correctSceneIdx = idx;
 
                 break;
@@ -485,7 +485,7 @@ module.exports = async ({
 
         $log(" ERR: TPDB Could NOT find correct scene info");
 
-        const manualInfo = await ManualImport();
+        const manualInfo = await manualImport();
         return manualInfo;
       }
     }
@@ -496,44 +496,44 @@ module.exports = async ({
 
     if (tpdbSceneSearchData.title !== "") {
       // Is there a duplicate scene already in the Database with that name?
-      let FoundDupScene = false;
+      let foundDupScene = false;
       // If i decide to do anything with duplicate scenes, this variable on the next line will come into play
       // let TheDupedScene = [];
       if (args.SceneDuplicationCheck) {
         const lines = $fs.readFileSync(args.source_settings.Scenes, "utf8").split("\n");
 
         let line = lines.shift();
-        while (!FoundDupScene && line) {
+        while (!foundDupScene && line) {
           if (!line || !util.stripStr(JSON.parse(line).name.toString())) {
             line = lines.shift();
             continue;
           }
 
-          let MatchScene = new RegExp(util.stripStr(JSON.parse(line).name.toString()), "gi");
+          let matchScene = new RegExp(util.stripStr(JSON.parse(line).name.toString()), "gi");
 
-          const foundSceneMatch = util.stripStr(tpdbSceneSearchData.title).match(MatchScene);
+          const foundSceneMatch = util.stripStr(tpdbSceneSearchData.title).match(matchScene);
 
           if (foundSceneMatch !== null) {
-            FoundDupScene = true;
+            foundDupScene = true;
             // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
           } else if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
-            MatchScene = new RegExp(
+            matchScene = new RegExp(
               util.stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
               "gi"
             );
 
-            const foundSceneMatch = util.stripStr(tpdbSceneSearchData.title).match(MatchScene);
+            const foundSceneMatch = util.stripStr(tpdbSceneSearchData.title).match(matchScene);
 
             if (foundSceneMatch !== null) {
               // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
-              FoundDupScene = true;
+              foundDupScene = true;
             }
           }
 
           line = lines.shift();
         }
       }
-      if (FoundDupScene) {
+      if (foundDupScene) {
         // Found a possible duplicate
 
         $log(" [Title Duplication check] === Found a possible duplicate title in the database");
@@ -578,8 +578,8 @@ module.exports = async ({
     }
 
     if (tpdbSceneSearchData.site.name !== "") {
-      if (Studio) {
-        result.studio = Studio.toString().trim();
+      if (studio) {
+        result.studio = studio.toString().trim();
       } else {
         result.studio = tpdbSceneSearchData.site.name;
       }
@@ -596,27 +596,27 @@ module.exports = async ({
    * @param {string} Metadataapisiteaddress - The URL API that has the sites hosted on TPD
    * @returns {Promise<object>} either an array of all the Porn Database hosted sites, or no data
    */
-  async function Grabsites(Metadataapisiteaddress) {
+  async function grabSites(Metadataapisiteaddress) {
     try {
-      const ResultTheListofSites = await $axios.get(Metadataapisiteaddress, {
+      const resultTheListofSites = await $axios.get(Metadataapisiteaddress, {
         validateStatus: false,
       });
 
       if (
-        ResultTheListofSites.status !== 200 ||
-        ResultTheListofSites.data.length === 0 ||
-        (TestingTheSiteStatus !== undefined && TestingTheSiteStatus)
+        resultTheListofSites.status !== 200 ||
+        resultTheListofSites.data.length === 0 ||
+        (testingTheSiteStatus !== undefined && testingTheSiteStatus)
       ) {
         $log(" ERR: TPDB site Not Available OR the API query failed");
 
-        if (TestingStatus && !TestingTheSiteStatus) {
+        if (testingStatus && !testingTheSiteStatus) {
           $log("!! This will impact the test if it was not expecting a failure !!");
         }
 
         return [];
       }
 
-      const newTpdbSiteSearchContent = ResultTheListofSites.data;
+      const newTpdbSiteSearchContent = resultTheListofSites.data;
 
       // loops through all of the sites and grabs the "shortname" for the Studio or website
 
@@ -631,19 +631,19 @@ module.exports = async ({
   /**
    * The (Backbone) main Search function for the plugin
    *
-   * @param {string} SearchActor - The URL API that has the sites hosted on TPD
-   * @param {string} SearchStudio - The URL API that has the sites hosted on TPD
-   * @param {number} SearchFuncTimestamp - The URL API that has the sites hosted on TPD
+   * @param {string} searchActor - The URL API that has the sites hosted on TPD
+   * @param {string} searchStudio - The URL API that has the sites hosted on TPD
+   * @param {number} searchFuncTimestamp - The URL API that has the sites hosted on TPD
    * @returns {Promise<object>} return the proper scene information (either through manual questions or automatically)
    */
-  async function DoASearch(SearchActor, SearchStudio, SearchFuncTimestamp) {
+  async function doASearch(searchActor, searchStudio, searchFuncTimestamp) {
     // check to see if the Studio and Actor are available for searching.
 
     if (
-      Array.isArray(SearchStudio) &&
-      SearchStudio.length &&
-      Array.isArray(SearchActor) &&
-      SearchActor.length
+      Array.isArray(searchStudio) &&
+      searchStudio.length &&
+      Array.isArray(searchActor) &&
+      searchActor.length
     ) {
       // Grabs the searchable sites in TPM
 
@@ -652,37 +652,37 @@ module.exports = async ({
           "https://metadataapi.net/api/sites"
       );
 
-      const resultsOffoundStudioInAPI = await Grabsites("https://metadataapi.net/api/sites");
+      const resultsOffoundStudioInAPI = await grabSites("https://metadataapi.net/api/sites");
 
-      let DoesSiteExist;
+      let doesSiteExist;
 
-      let Comparehighscore = 5000;
+      let compareHighscore = 5000;
 
       for (let spot = 0; spot < resultsOffoundStudioInAPI.length; spot++) {
         if (resultsOffoundStudioInAPI[spot] !== "") {
           const siteNoSpaces = new RegExp(resultsOffoundStudioInAPI[spot], "gi");
 
-          const Studiowithnospaces = SearchStudio.toString().replace(/ /gi, "");
+          const studioWithNoSpaces = searchStudio.toString().replace(/ /gi, "");
 
-          const foundStudioInAPI = Studiowithnospaces.match(siteNoSpaces);
+          const foundStudioInAPI = studioWithNoSpaces.match(siteNoSpaces);
 
           if (foundStudioInAPI !== null) {
-            const Levenfound = levenshtein(foundStudioInAPI.toString(), SearchStudio.toString());
+            const levenFound = levenshtein(foundStudioInAPI.toString(), searchStudio.toString());
 
-            if (Levenfound < Comparehighscore) {
-              Comparehighscore = Levenfound;
-              DoesSiteExist = foundStudioInAPI;
+            if (levenFound < compareHighscore) {
+              compareHighscore = levenFound;
+              doesSiteExist = foundStudioInAPI;
             }
           }
         }
       }
 
-      if (!DoesSiteExist) {
+      if (!doesSiteExist) {
         $log(
           " ERR: This Studio does not exist in ThePornDatabase.  No searches are possible with this Studio / Network"
         );
 
-        const manualInfo = await ManualImport();
+        const manualInfo = await manualImport();
         return manualInfo;
       }
 
@@ -692,41 +692,41 @@ module.exports = async ({
 
       // making the search string based on the timespamp or not
 
-      if (isNaN(SearchFuncTimestamp)) {
+      if (isNaN(searchFuncTimestamp)) {
         $log(":::::MSG: Placing TPDB Search string without timestamp...");
 
         tpdbSceneSearchUrl =
           `https://metadataapi.net/api/scenes?parse=` +
-          encodeURIComponent(SearchStudio) +
+          encodeURIComponent(searchStudio) +
           "%20" +
-          encodeURIComponent(SearchActor[0]);
+          encodeURIComponent(searchActor[0]);
       } else {
         $log(":::::MSG: Placing TPDB Search string");
 
         tpdbSceneSearchUrl =
           `https://metadataapi.net/api/scenes?parse=` +
-          encodeURIComponent(SearchStudio) +
+          encodeURIComponent(searchStudio) +
           "%20" +
-          encodeURIComponent(SearchActor[0]) +
+          encodeURIComponent(searchActor[0]) +
           "%20" +
-          util.timeConverter(SearchFuncTimestamp);
+          util.timeConverter(searchFuncTimestamp);
       }
 
       // Grabbing the results using the "Normal" Search methods (comparing against scenename)
 
       $log(":::::MSG: Running TPDB Primary Search on: " + tpdbSceneSearchUrl);
 
-      const GrabResults = await run(tpdbSceneSearchUrl);
+      const grabResults = await run(tpdbSceneSearchUrl);
       // Once the results have been searched, we need to do something with them
-      if (GrabResults && Array.isArray(GrabResults)) {
+      if (grabResults && Array.isArray(grabResults)) {
         // Run through the list of titles and ask if they would like to choose one.
         $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
 
-        for (let loopspot = 0; loopspot < Object.keys(GrabResults).length; loopspot++) {
-          $log(":::::|> " + loopspot + ": [" + GrabResults["Title" + loopspot].Title + "]");
+        for (let loopspot = 0; loopspot < Object.keys(grabResults).length; loopspot++) {
+          $log(":::::|> " + loopspot + ": [" + grabResults["Title" + loopspot].Title + "]");
         }
 
-        $log(":::::|> " + Object.keys(GrabResults).length + ": ====== None of the above =====");
+        $log(":::::|> " + Object.keys(grabResults).length + ": ====== None of the above =====");
 
         $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
 
@@ -735,58 +735,58 @@ module.exports = async ({
           output: process.stdout,
         });
 
-        const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
+        const questionAsync = util.createQuestionPrompter(rl, testingStatus, $log);
 
-        const MultipleSitesAnswer = await questionAsync(
+        const multipleSitesAnswer = await questionAsync(
           "Which Title would you like to use? (number): ",
           "TESTMODE MultipleChoiceResult EnterInfo",
           testmode && testmode.Questions ? testmode.Questions.MultipleChoice : ""
         );
-        if (MultipleSitesAnswer === "" || MultipleSitesAnswer > Object.keys(GrabResults).length) {
+        if (multipleSitesAnswer === "" || multipleSitesAnswer > Object.keys(grabResults).length) {
           $log(" ERR: Not a valid option....");
 
           rl.close();
 
-          const manualInfo = await ManualImport();
+          const manualInfo = await manualImport();
           return manualInfo;
-        } else if (MultipleSitesAnswer <= Object.keys(GrabResults).length) {
+        } else if (multipleSitesAnswer <= Object.keys(grabResults).length) {
           const selectedtitle =
             `https://metadataapi.net/api/scenes?parse=` +
-            GrabResults["Title" + MultipleSitesAnswer].id;
+            grabResults["Title" + multipleSitesAnswer].id;
 
           rl.close();
           $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
-          const Gogetit = await run(selectedtitle, true);
+          const goGetIt = await run(selectedtitle, true);
 
           $log("====  Final Entry =====");
 
-          for (const property in Gogetit) {
-            $log(`${property}: ${Gogetit[property]}`);
+          for (const property in goGetIt) {
+            $log(`${property}: ${goGetIt[property]}`);
           }
 
-          return Gogetit;
+          return goGetIt;
         }
-      } else if (GrabResults && typeof GrabResults === "object") {
+      } else if (grabResults && typeof grabResults === "object") {
         // Will return any of the values found
 
         $log("====  Final Entry =====");
 
-        for (const property in GrabResults) {
-          $log(`${property}: ${GrabResults[property]}`);
+        for (const property in grabResults) {
+          $log(`${property}: ${grabResults[property]}`);
         }
 
-        return GrabResults;
+        return grabResults;
       }
 
       // If there was no studio or Actor, and the "Manual Touch" arg is set to TRUE, it will prompt you for entries manually.
     } else if (args.ManualTouch) {
       $log(" ERR:Could not find a Studio or Actor in the SceneName");
 
-      const QuestionActor = [];
+      const questionActor = [];
 
-      const QuestionStudio = [];
+      const questionStudio = [];
 
-      let QuestionDate;
+      let questionDate;
 
       const rl = $readline.createInterface({
         input: process.stdin,
@@ -794,20 +794,20 @@ module.exports = async ({
       });
 
       try {
-        const questionAsync = util.createQuestionPrompter(rl, TestingStatus, $log);
+        const questionAsync = util.createQuestionPrompter(rl, testingStatus, $log);
 
         $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
-        const Q1answer = await questionAsync(
+        const Q1Answer = await questionAsync(
           "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) ",
           `TESTMODE Question Enter Info`,
           testmode && testmode.Questions ? testmode.Questions.EnterInfoSearch : ""
         );
 
-        const runInteractiveSearch = util.isPositiveAnswer(Q1answer);
+        const runInteractiveSearch = util.isPositiveAnswer(Q1Answer);
 
         if (!runInteractiveSearch) {
           rl.close();
-          const manualInfo = await ManualImport();
+          const manualInfo = await manualImport();
           return manualInfo;
         }
 
@@ -816,39 +816,39 @@ module.exports = async ({
           "TESTMODE Question Enter Movie?",
           testmode && testmode.Questions ? testmode.Questions.EnterMovie : ""
         );
-        const EnterMovieSearch = util.isPositiveAnswer(Movieanswer);
+        const enterMovieSearch = util.isPositiveAnswer(Movieanswer);
 
-        if (EnterMovieSearch) {
-          const MovieName = await questionAsync(
+        if (enterMovieSearch) {
+          const movieName = await questionAsync(
             "What is the Title of the Movie?: ",
             "TESTMODE Question Movie Title",
             testmode && testmode.Questions ? testmode.Questions.MovieTitle : ""
           );
 
-          if (result.movie === undefined && MovieName !== "") {
-            result.movie = MovieName;
+          if (result.movie === undefined && movieName !== "") {
+            result.movie = movieName;
           }
         }
         const Q2Actor = await questionAsync(
-          `What is ONE of the Actors NAME in the scene?: ${Actor[0] ? ` ${Actor[0]}` : ""}`,
+          `What is ONE of the Actors NAME in the scene?: ${actor[0] ? ` ${actor[0]}` : ""}`,
           "TESTMODE Question One Actor",
           testmode && testmode.Questions ? testmode.Questions.EnterOneActorName : ""
         );
 
-        QuestionActor.push(Q2Actor);
-        if (Actor === undefined) {
-          Actor.push(Q2Actor);
+        questionActor.push(Q2Actor);
+        if (actor === undefined) {
+          actor.push(Q2Actor);
         }
 
         const Q3Studio = await questionAsync(
-          `What Studio NAME is responsible for the scene?: ${Studio[0] ? ` ${Studio[0]}` : ""}`,
+          `What Studio NAME is responsible for the scene?: ${studio[0] ? ` ${studio[0]}` : ""}`,
           "TESTMODE Question Studio Name",
           testmode && testmode.Questions ? testmode.Questions.EnterStudioName : ""
         );
 
-        QuestionStudio.push(Q3Studio);
-        if (Studio === undefined) {
-          Studio.push(Q3Studio);
+        questionStudio.push(Q3Studio);
+        if (studio === undefined) {
+          studio.push(Q3Studio);
         }
         const Q4date = await questionAsync(
           "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
@@ -866,14 +866,14 @@ module.exports = async ({
 
             $log(" MSG: Found => yyyymmdd");
 
-            QuestionDate = $moment(date, "YYYY-MM-DD").valueOf();
+            questionDate = $moment(date, "YYYY-MM-DD").valueOf();
           }
         }
 
         rl.close();
 
         // Re run the search with user's input
-        const res = await DoASearch(QuestionActor, QuestionStudio, QuestionDate);
+        const res = await doASearch(questionActor, questionStudio, questionDate);
 
         return res;
       } catch (error) {
