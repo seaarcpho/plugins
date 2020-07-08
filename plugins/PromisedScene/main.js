@@ -739,7 +739,7 @@ module.exports = async ({
 
         const multipleSitesAnswer = await questionAsync(
           "Which Title would you like to use? (number): ",
-          "TESTMODE MultipleChoiceResult EnterInfo",
+          "TESTMODE MultipleChoiceResult enterInfo",
           testMode && testMode.questions ? testMode.questions.multipleChoice : ""
         );
         if (multipleSitesAnswer === "" || multipleSitesAnswer > Object.keys(grabResults).length) {
