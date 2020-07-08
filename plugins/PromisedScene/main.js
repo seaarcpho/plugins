@@ -637,7 +637,7 @@ module.exports = async ({
    *
    * @param {string} SearchActor - The URL API that has the sites hosted on TPD
    * @param {string} SearchStudio - The URL API that has the sites hosted on TPD
-   * @param {string} SearchFuncTimestamp - The URL API that has the sites hosted on TPD
+   * @param {number} SearchFuncTimestamp - The URL API that has the sites hosted on TPD
    * @returns {Promise<object>} return the proper scene information (either through manual questions or automatically)
    */
   async function DoASearch(SearchActor, SearchStudio, SearchFuncTimestamp) {
@@ -692,7 +692,7 @@ module.exports = async ({
 
       $log(":::::MSG: Checking TPDB for Data Extraction");
 
-      let tpdb_scene_search_url = {};
+      let tpdb_scene_search_url = "";
 
       // making the search string based on the timespamp or not
 
@@ -760,7 +760,7 @@ module.exports = async ({
 
           rl.close();
           $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
-          const Gogetit = await run(selectedtitle, 1);
+          const Gogetit = await run(selectedtitle, true);
 
           $log("====  Final Entry =====");
 

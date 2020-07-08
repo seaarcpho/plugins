@@ -9,7 +9,7 @@
 const isPositiveAnswer = (answer = "") => ["y", "yes"].includes(answer.toLowerCase());
 
 /**
- * @param {string} The_timestamp - Time string to be converted to timestamp
+ * @param {number} The_timestamp - Time string to be converted to timestamp
  * @returns TODO:
  */
 function timeConverter(The_timestamp) {
