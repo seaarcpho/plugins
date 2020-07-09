@@ -364,10 +364,7 @@ module.exports = async ({
       testMode && testMode.questions ? testMode.questions.manualActors : ""
     );
 
-    const areActorsBlank =
-      splitactors.ActorsOfScene === "" ||
-      splitactors.ActorsOfScene === " " ||
-      splitactors.ActorsOfScene === null;
+    const areActorsBlank = !splitactors.ActorsOfScene || !splitactors.ActorsOfScene.trim();
 
     if (!areActorsBlank) {
       result.actors = splitactors.ActorsOfScene.trim().split(",");
