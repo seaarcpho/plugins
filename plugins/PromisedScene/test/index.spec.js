@@ -484,7 +484,7 @@ describe("PromisedScene", () => {
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questions: {
-            EnterInfo: "Should not ask",
+            enterInfo: "Should not ask",
             enterMovie: "Should not ask",
             enterOneActorName: "Should not ask",
             enterSceneDate: "Should not ask",

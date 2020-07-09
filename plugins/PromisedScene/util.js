@@ -67,7 +67,7 @@ const createQuestionPrompter = (inquirer, testingStatus, $log) => {
   const questionAsync = async (promptArgs, testQuestion, testAnswer) => {
     if (testingStatus) {
       $log(`:::::${testQuestion}:::: ${testAnswer}`);
-      return {testAnswer};
+      return testAnswer;
     }
 
     return inquirer.prompt(promptArgs);
