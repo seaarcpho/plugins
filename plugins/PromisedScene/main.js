@@ -302,7 +302,7 @@ module.exports = async ({
 
     result.title = manualEnterTitleScene;
 
-    const {ReleaseDateofScene: manualEnterReleaseDateScene} = await questionAsync({
+    const { ReleaseDateofScene: manualEnterReleaseDateScene } = await questionAsync({
       type: "input",
       name: "ReleaseDateofScene",
       message: "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
