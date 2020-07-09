@@ -672,8 +672,8 @@ module.exports = async ({
   /**
    * The (Backbone) main Search function for the plugin
    *
-   * @param {string} searchActor - The URL API that has the sites hosted on TPD
-   * @param {string} searchStudio - The URL API that has the sites hosted on TPD
+   * @param {array} searchActor - The URL API that has the sites hosted on TPD
+   * @param {array} searchStudio - The URL API that has the sites hosted on TPD
    * @param {number} searchFuncTimestamp - The URL API that has the sites hosted on TPD
    * @returns {Promise<object>} return the proper scene information (either through manual questions or automatically)
    */
