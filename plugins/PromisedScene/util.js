@@ -1,3 +1,4 @@
+/* eslint-disable func-style */
 /**
  * @param {string} answer - string to compare
  * @returns {boolean} if the answer is a positive confirmation (i.e. "yes")
@@ -50,28 +51,26 @@ function stripStr(str, keepDate = false) {
 }
 
 /**
- * @param {*} rl - the readline interface to use
+ * @param {*} inquirer - the inquire prompting questions
  * @param {boolean} testingStatus - if should just print test questions and use the param answer
  * @param {*} $log - logger function
  * @returns {(question: string, testQuestion: string, testAnswer: string) => Promise<string>} the question prompt function
  */
-const createQuestionPrompter = (rl, testingStatus, $log) => {
+const createQuestionPrompter = (inquirer, testingStatus, $log) => {
   /**
-   * @param {string} question - the question to ask
+   * @param {object} promptArgs - All of the arguments that are required for prompting a question
    * @param {string} testQuestion - the name of the question (for test mode)
    * @param {string} testAnswer - the answer that will be returned (for test mode)
-   * @returns {Promise<string>} the result of the question, or the inputted answer for test mode
+   * @returns {Array | string } the result of the question, or the inputted answer for test mode
    * @async
    */
-  const questionAsync = async (question, testQuestion, testAnswer) => {
+  const questionAsync = async (promptArgs, testQuestion, testAnswer) => {
     if (testingStatus) {
       $log(`:::::${testQuestion}:::: ${testAnswer}`);
-      return testAnswer;
+      return {testAnswer};
     }
 
-    return new Promise((resolve) => {
-      rl.question(question, resolve);
-    });
+    return inquirer.prompt(promptArgs);
   };
 
   return questionAsync;
