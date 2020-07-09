@@ -59,15 +59,14 @@ function stripStr(str, keepDate = false) {
 const createQuestionPrompter = (inquirer, testingStatus, $log) => {
   /**
    * @param {object} promptArgs - All of the arguments that are required for prompting a question
-   * @param {string} testQuestion - the name of the question (for test mode)
-   * @param {string} testAnswer - the answer that will be returned (for test mode)
    * @returns {Array | string } the result of the question, or the inputted answer for test mode
    * @async
    */
-  const questionAsync = async (promptArgs, testQuestion, testAnswer) => {
+  const questionAsync = async (promptArgs) => {
     if (testingStatus) {
-      $log(`:::::${testQuestion}:::: ${testAnswer}`);
-      return testAnswer;
+      $log(`======TESTMODE ${promptArgs.name}====`);
+      $log(`======TESTMODE Answer: ${promptArgs.testAnswer}`);
+      return { [promptArgs.name]: promptArgs.testAnswer };
     }
 
     return inquirer.prompt(promptArgs);

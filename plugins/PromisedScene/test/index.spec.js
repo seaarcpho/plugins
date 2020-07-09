@@ -22,7 +22,7 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
+          questionAnswers: {
             enterInfoSearch: "",
             enterManInfo: "",
             enterMovie: "",
@@ -66,9 +66,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Madison Swan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'n'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "n",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "",
             enterSceneDate: "",
@@ -110,9 +110,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] MadisonSwan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'n'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "n",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -156,9 +156,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Riley Nixon, Mia Malkova 16.04.08 - Makes the Heart Skip a Beat.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "16.04.08",
@@ -201,9 +201,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[Bangbros clips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -246,9 +246,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -290,9 +290,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -301,7 +301,7 @@ describe("PromisedScene", () => {
             manualActors: "",
             manualDescription: "",
             movieTitle: "",
-            multipleChoice: ["SearchedTitles: 'A Very Close Friend'"],
+            multipleChoice: "A Very Close Friend",
           },
           testSiteUnavailable: false,
           status: true,
@@ -331,9 +331,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -342,7 +342,7 @@ describe("PromisedScene", () => {
             manualActors: "",
             manualDescription: "",
             movieTitle: "",
-            multipleChoice: ["SearchedTitles: '== None of the above =='"],
+            multipleChoice: "== None of the above ==",
           },
           testSiteUnavailable: false,
           status: true,
@@ -367,9 +367,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #08.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova So Young So Sexy P.O.V. #08.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -408,9 +408,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -444,9 +444,9 @@ describe("PromisedScene", () => {
         sceneName: "[Colette] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[Colette] Mia Malkova.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -483,7 +483,7 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
+          questionAnswers: {
             enterInfo: "Should not ask",
             enterMovie: "Should not ask",
             enterOneActorName: "Should not ask",
@@ -519,9 +519,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'n'"],
-            enterManInfo: ["ManualEnter: 'y'"],
+          questionAnswers: {
+            enterInfoSearch: "n",
+            enterManInfo: "y",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -563,9 +563,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'n'"],
-            enterManInfo: ["ManualEnter: 'y'"],
+          questionAnswers: {
+            enterInfoSearch: "n",
+            enterManInfo: "y",
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -609,17 +609,16 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
             enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
             enterStudioName: "New Sensations",
             manualActors: "",
-            manualDescription:
-              "",
+            manualDescription: "",
             movieTitle: "So Young So Sexy P.O.V. #8",
             multipleChoice: "0",
           },
@@ -629,7 +628,7 @@ describe("PromisedScene", () => {
       });
       expect(result).to.be.an("object");
       expect(result.description).to.equal(
-        "Mia Malkovas back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
@@ -653,9 +652,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -673,8 +672,8 @@ describe("PromisedScene", () => {
       });
       expect(result).to.be.an("object");
       expect(result.description).to.equal(
-        "Mia Malkovas back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
-        );
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
@@ -697,9 +696,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -734,9 +733,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova -SoYoungSoSexyP.O.V.#8.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'n'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "n",
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -772,9 +771,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         testMode: {
-          questions: {
-            enterInfoSearch: ["ManualSearch: 'y'"],
-            enterManInfo: ["ManualEnter: 'y'"],
+          questionAnswers: {
+            enterInfoSearch: "y",
+            enterManInfo: "y",
             enterMovie: "n",
             enterOneActorName: "Mi Malkova",
             enterSceneDate: "2016.01.04",

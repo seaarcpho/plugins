@@ -256,74 +256,61 @@ module.exports = async ({
 
     $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
 
-    const Q1Answer = await questionAsync(
-      {
-        type: "input",
-        name: "ManualEnter",
-        message:
-          "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) ",
-      },
-      "TESTMODE Question Enter MANUAL Info?",
-      testMode && testMode.questions ? testMode.questions.enterManInfo : ""
-    );
+    const { ManualEnter: Q1Answer } = await questionAsync({
+      type: "input",
+      name: "ManualEnter",
+      message:
+        "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) ",
+      testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.enterManInfo : "",
+    });
 
-    const runInteractiveSearch = util.isPositiveAnswer(Q1Answer.ManualEnter);
+    const runInteractiveSearch = util.isPositiveAnswer(Q1Answer);
 
     if (!runInteractiveSearch) {
       return {};
     }
 
-    const manualMovieAnswer = await questionAsync(
-      {
-        type: "input",
-        name: "IsMovie",
-        message: "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
-      },
-      "TESTMODE Question MANUAL Movie",
-      testMode && testMode.questions ? testMode.questions.enterMovie : ""
-    );
+    const { IsMovie: manualMovieAnswer } = await questionAsync({
+      type: "input",
+      name: "IsMovie",
+      message: "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
+      testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.enterMovie : "",
+    });
 
-    const manualEnterMovieSearch = util.isPositiveAnswer(manualMovieAnswer.IsMovie);
+    const manualEnterMovieSearch = util.isPositiveAnswer(manualMovieAnswer);
 
     if (manualEnterMovieSearch) {
-      const manualMovieName = await questionAsync(
-        {
-          type: "input",
-          name: "TitleofMovie",
-          message: "What is the Title of the Movie?: ",
-        },
-        "TESTMODE Question MANUAL Movie Title",
-        testMode && testMode.questions ? testMode.questions.movieTitle : ""
-      );
+      const { TitleofMovie: manualMovieName } = await questionAsync({
+        type: "input",
+        name: "TitleofMovie",
+        message: "What is the Title of the Movie?: ",
+        testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.movieTitle : "",
+      });
 
-      if (result.movie === undefined && manualMovieName.TitleofMovie !== "") {
-        result.movie = manualMovieName.TitleofMovie;
+      if (result.movie === undefined && manualMovieName !== "") {
+        result.movie = manualMovieName;
       }
     }
 
-    const manualEnterTitleScene = await questionAsync(
-      {
-        type: "input",
-        name: "TitleofScene",
-        message: "What is the TITLE of the scene?: ",
-      },
-      "TESTMODE Question MANUAL Title",
-      testMode && testMode.questions ? testMode.questions.enterSceneTitle : ""
-    );
+    const { TitleofScene: manualEnterTitleScene } = await questionAsync({
+      type: "input",
+      name: "TitleofScene",
+      message: "What is the TITLE of the scene?: ",
+      testAnswer:
+        testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneTitle : "",
+    });
 
-    result.title = manualEnterTitleScene.TitleofScene;
+    result.title = manualEnterTitleScene;
 
-    const manualEnterReleaseDateScene = await questionAsync(
-      {
-        type: "input",
-        name: "ReleaseDateofScene",
-        message: "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
-      },
-      "TESTMODE Question MANUAL Date",
-      testMode && testMode.questions ? testMode.questions.enterSceneDate : ""
-    );
+    const {ReleaseDateofScene: manualEnterReleaseDateScene} = await questionAsync({
+      type: "input",
+      name: "ReleaseDateofScene",
+      message: "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
+      testAnswer:
+        testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneDate : "",
+    });
 
-    result.releaseDate = manualEnterReleaseDateScene.ReleaseDateofScene;
+    result.releaseDate = manualEnterReleaseDateScene;
 
     if (result.releaseDate !== "") {
       const questYear = result.releaseDate.match(/\d\d\d\d.\d\d.\d\d/);
@@ -339,57 +326,47 @@ module.exports = async ({
       }
     }
 
-    const manualEnterDescriptionOfScene = await questionAsync(
-      {
-        type: "input",
-        name: "DescriptionOfScene",
-        message: "What is the DESCRIPTION for the scene?: ",
+    const { DescriptionOfScene: manualEnterDescriptionOfScene } = await questionAsync({
+      type: "input",
+      name: "DescriptionOfScene",
+      message: "What is the DESCRIPTION for the scene?: ",
+      testAnswer:
+        testMode && testMode.questionAnswers ? testMode.questionAnswers.manualDescription : "",
+    });
+
+    result.description = manualEnterDescriptionOfScene;
+
+    const { ActorsOfScene: splitactors } = await questionAsync({
+      type: "input",
+      name: "ActorsOfScene",
+      message: `What are the Actors NAMES in the scene?: (seperated by Comma)`,
+      testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.manualActors : "",
+      default() {
+        return `${actor.length ? ` ${actor.join(", ")}` : ""}`;
       },
-      "TESTMODE Question MANUAL Description",
-      testMode && testMode.questions ? testMode.questions.manualDescription : ""
-    );
+    });
 
-    result.description = manualEnterDescriptionOfScene.DescriptionOfScene;
-
-    const splitactors = await questionAsync(
-      {
-        type: "input",
-        name: "ActorsOfScene",
-        message: `What are the Actors NAMES in the scene?: (seperated by Comma)`,
-        default() {
-          return `${actor.length ? ` ${actor.join(", ")}` : ""}`;
-        },
-      },
-      "TESTMODE Question MANUAL actor names",
-      testMode && testMode.questions ? testMode.questions.manualActors : ""
-    );
-
-    const areActorsBlank = !splitactors.ActorsOfScene || !splitactors.ActorsOfScene.trim();
+    const areActorsBlank = !splitactors || !splitactors.trim();
 
     if (!areActorsBlank) {
-      result.actors = splitactors.ActorsOfScene.trim().split(",");
+      result.actors = splitactors.trim().split(",");
     }
 
-    const askedStudio = await questionAsync(
-      {
-        type: "input",
-        name: "StudioOfScene",
-        message: `What Studio NAME is responsible for the scene?:`,
-        default() {
-          return `${studio[0] ? ` ${studio[0]}` : ""}`;
-        },
+    const { StudioOfScene: askedStudio } = await questionAsync({
+      type: "input",
+      name: "StudioOfScene",
+      message: `What Studio NAME is responsible for the scene?:`,
+      testAnswer:
+        testMode && testMode.questionAnswers ? testMode.questionAnswers.enterStudioName : "",
+      default() {
+        return `${studio[0] ? ` ${studio[0]}` : ""}`;
       },
-      "TESTMODE Question MANUAL Studio name",
-      testMode && testMode.questions ? testMode.questions.enterStudioName : ""
-    );
+    });
 
-    const isStudioBlank =
-      askedStudio.StudioOfScene === "" ||
-      askedStudio.StudioOfScene === " " ||
-      askedStudio.StudioOfScene === null;
+    const isStudioBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
 
     if (!isStudioBlank) {
-      result.studio = askedStudio.StudioOfScene;
+      result.studio = askedStudio;
     }
 
     return result;
@@ -616,7 +593,7 @@ module.exports = async ({
     }
 
     if (tpdbSceneSearchData.site.name !== "") {
-      if (studio.length) {
+      if (Array.isArray(studio) && studio.length) {
         result.studio = studio.toString().trim();
       } else {
         result.studio = tpdbSceneSearchData.site.name;
@@ -772,19 +749,16 @@ module.exports = async ({
         listing.push("== None of the above == ");
         listing.push("== Manual Search == ");
 
-        const multipleSitesAnswer = await questionAsync(
-          {
-            type: "rawlist",
-            name: "SearchedTitles",
-            message: "Which Title would you like to use?",
-            choices: listing,
-          },
-          "TESTMODE MultipleChoiceResult EnterInfo",
-          testMode && testMode.questions ? testMode.questions.multipleChoice : "",
-          grabResults
-        );
+        const { SearchedTitles: multipleSitesAnswer } = await questionAsync({
+          type: "rawlist",
+          name: "SearchedTitles",
+          message: "Which Title would you like to use?",
+          testAnswer:
+            testMode && testMode.questionAnswers ? testMode.questionAnswers.multipleChoice : "",
+          choices: listing,
+        });
 
-        const findresultindex = justtitles.indexOf(multipleSitesAnswer.SearchedTitles.trim());
+        const findresultindex = justtitles.indexOf(multipleSitesAnswer.trim());
 
         if (findresultindex < 0) {
           if (args.ManualTouch) {
@@ -796,7 +770,7 @@ module.exports = async ({
         } else if (findresultindex <= listing.length - 3) {
           const selectedtitle =
             `https://metadataapi.net/api/scenes?parse=` +
-            grabResults["Title" + listing.indexOf(multipleSitesAnswer.SearchedTitles)].id;
+            grabResults["Title" + listing.indexOf(multipleSitesAnswer)].id;
 
           $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
           const goGetIt = await run(selectedtitle, true);
@@ -835,97 +809,85 @@ module.exports = async ({
         const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
 
         $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
-        const Q1Answer = await questionAsync(
-          {
-            type: "input",
-            name: "ManualSearch",
-            message:
-              "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) ",
-          },
-          `TESTMODE Question Enter Info`,
-          testMode && testMode.questions ? testMode.questions.enterInfoSearch : ""
-        );
+        const { ManualSearch: Q1Answer } = await questionAsync({
+          type: "input",
+          name: "ManualSearch",
+          message:
+            "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) ",
+          testAnswer:
+            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterInfoSearch : "",
+        });
 
-        const runInteractiveSearch = util.isPositiveAnswer(Q1Answer.ManualSearch);
+        const runInteractiveSearch = util.isPositiveAnswer(Q1Answer);
 
         if (!runInteractiveSearch) {
           const manualInfo = await manualImport();
           return manualInfo;
         }
 
-        const Movieanswer = await questionAsync(
-          {
-            type: "input",
-            name: "MovieSearch",
-            message: "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
-          },
-          "TESTMODE Question Enter Movie?",
-          testMode && testMode.questions ? testMode.questions.enterMovie : ""
-        );
-        const enterMovieSearch = util.isPositiveAnswer(Movieanswer.MovieSearch);
+        const { MovieSearch: Movieanswer } = await questionAsync({
+          type: "input",
+          name: "MovieSearch",
+          message: "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
+          testAnswer:
+            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterMovie : "",
+        });
+        const enterMovieSearch = util.isPositiveAnswer(Movieanswer);
 
         if (enterMovieSearch) {
-          const movieName = await questionAsync(
-            {
-              type: "input",
-              name: "ManualMovieTitleSearch",
-              message: "What is the Title of the Movie?: ",
-            },
-            "TESTMODE Question Movie Title",
-            testMode && testMode.questions ? testMode.questions.movieTitle : ""
-          );
+          const { ManualMovieTitleSearch: movieName } = await questionAsync({
+            type: "input",
+            name: "ManualMovieTitleSearch",
+            message: "What is the Title of the Movie?: ",
+            testAnswer:
+              testMode && testMode.questionAnswers ? testMode.questionAnswers.movieTitle : "",
+          });
 
-          if (result.movie === undefined && movieName.ManualMovieTitleSearch !== "") {
-            result.movie = movieName.ManualMovieTitleSearch;
+          if (result.movie === undefined && movieName !== "") {
+            result.movie = movieName;
           }
         }
-        const Q2Actor = await questionAsync(
-          {
-            type: "input",
-            name: "ManualActorSearch",
-            message: `What is ONE of the Actors NAME in the scene?:`,
-            default() {
-              return `${actor[0] ? ` ${actor[0]}` : ""}`;
-            },
+        const { ManualActorSearch: Q2Actor } = await questionAsync({
+          type: "input",
+          name: "ManualActorSearch",
+          message: `What is ONE of the Actors NAME in the scene?:`,
+          testAnswer:
+            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterOneActorName : "",
+          default() {
+            return `${actor[0] ? ` ${actor[0]}` : ""}`;
           },
-          "TESTMODE Question One Actor",
-          testMode && testMode.questions ? testMode.questions.enterOneActorName : ""
-        );
+        });
 
-        questionActor.push(Q2Actor.ManualActorSearch);
-        if (actor.length) {
-          actor.push(Q2Actor.ManualActorSearch);
+        questionActor.push(Q2Actor);
+        if (Array.isArray(actor) && !actor.length) {
+          actor.push(Q2Actor);
         }
 
-        const Q3Studio = await questionAsync(
-          {
-            type: "input",
-            name: "ManualStudioSearch",
-            message: `What Studio NAME is responsible for the scene?:`,
-            default() {
-              return `${studio[0] ? ` ${studio[0]}` : ""}`;
-            },
+        const { ManualStudioSearch: Q3Studio } = await questionAsync({
+          type: "input",
+          name: "ManualStudioSearch",
+          message: `What Studio NAME is responsible for the scene?:`,
+          testAnswer:
+            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterStudioName : "",
+          default() {
+            return `${studio[0] ? ` ${studio[0]}` : ""}`;
           },
-          "TESTMODE Question Studio Name",
-          testMode && testMode.questions ? testMode.questions.enterStudioName : ""
-        );
+        });
 
-        questionStudio.push(Q3Studio.ManualStudioSearch);
-        if (studio.length) {
-          studio.push(Q3Studio.ManualStudioSearch);
+        questionStudio.push(Q3Studio);
+        if (Array.isArray(studio) && !studio.length) {
+          studio.push(Q3Studio);
         }
-        const Q4date = await questionAsync(
-          {
-            type: "input",
-            name: "ManualDateSearch",
-            message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
-          },
-          "TESTMODE Question Date",
-          testMode && testMode.questions ? testMode.questions.enterSceneDate : ""
-        );
+        const { ManualDateSearch: Q4date } = await questionAsync({
+          type: "input",
+          name: "ManualDateSearch",
+          message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
+          testAnswer:
+            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneDate : "",
+        });
 
-        if (Q4date.ManualDateSearch !== "") {
-          const questYear = Q4date.ManualDateSearch.match(/\d\d\d\d.\d\d.\d\d/);
+        if (Q4date !== "") {
+          const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
 
           $log(" MSG: Checking Date");
 
