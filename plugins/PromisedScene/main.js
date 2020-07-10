@@ -80,10 +80,7 @@ module.exports = async ({
           return;
         }
 
-        // $log(((JSON.parse(line)).name))
         const foundActorMatch = util.stripStr(scenePath).match(matchActor);
-
-        // $log(util.stripStr(sceneName))
 
         if (foundActorMatch !== null) {
           gettingActor.push(JSON.parse(line).name);
@@ -177,6 +174,28 @@ module.exports = async ({
             gettingStudio.push(JSON.parse(line).name);
           }
         }
+
+        const allStudioAliases = JSON.parse(line).aliases.toString().split(",");
+
+        allStudioAliases.forEach((studioAlias) => {
+          let matchAliasStudio = new RegExp(studioAlias, "i");
+
+          let foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
+
+          if (foundAliasStudioMatch !== null) {
+            gettingStudio.push(JSON.parse(line).name);
+          } else {
+            const aliasNoSpaces = studioAlias.toString().replace(" ", "");
+
+            matchAliasStudio = new RegExp(aliasNoSpaces, "i");
+
+            foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
+
+            if (foundAliasStudioMatch !== null) {
+              gettingStudio.push(JSON.parse(line).name);
+            }
+          }
+        });
       });
 
     // this is a debug option to se see how many studios were found by just doing a simple regex
@@ -194,9 +213,8 @@ module.exports = async ({
 
           studio[0] = stud;
         }
-        $log(`    SUCCESS: Found Studio:` + stud);
       });
-
+      $log(`    SUCCESS: Found Studio:` + studio);
       $log(`---> Using "best match" Studio For Search:` + studio);
     }
   }
