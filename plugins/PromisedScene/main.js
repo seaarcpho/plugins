@@ -175,27 +175,29 @@ module.exports = async ({
           }
         }
 
-        const allStudioAliases = JSON.parse(line).aliases.toString().split(",");
+        if (JSON.parse(line).aliases !== undefined) {
+          const allStudioAliases = JSON.parse(line).aliases.toString().split(",");
 
-        allStudioAliases.forEach((studioAlias) => {
-          let matchAliasStudio = new RegExp(studioAlias, "i");
+          allStudioAliases.forEach((studioAlias) => {
+            let matchAliasStudio = new RegExp(studioAlias, "i");
 
-          let foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
-
-          if (foundAliasStudioMatch !== null) {
-            gettingStudio.push(JSON.parse(line).name);
-          } else {
-            const aliasNoSpaces = studioAlias.toString().replace(" ", "");
-
-            matchAliasStudio = new RegExp(aliasNoSpaces, "i");
-
-            foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
+            let foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
 
             if (foundAliasStudioMatch !== null) {
               gettingStudio.push(JSON.parse(line).name);
+            } else {
+              const aliasNoSpaces = studioAlias.toString().replace(" ", "");
+
+              matchAliasStudio = new RegExp(aliasNoSpaces, "i");
+
+              foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
+
+              if (foundAliasStudioMatch !== null) {
+                gettingStudio.push(JSON.parse(line).name);
+              }
             }
-          }
-        });
+          });
+        }
       });
 
     // this is a debug option to se see how many studios were found by just doing a simple regex
