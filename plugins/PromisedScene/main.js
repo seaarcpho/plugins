@@ -1,7 +1,6 @@
 const levenshtein = require("./levenshtein.js");
 const util = require("./util");
 
-
 module.exports = async ({
   event,
   $throw,
@@ -176,10 +175,14 @@ module.exports = async ({
           }
         }
 
-        if (JSON.parse(line).aliases !== undefined) {
-          const allStudioAliases = JSON.parse(line).aliases.toString().split(",");
+        if (!JSON.parse(line).aliases) {
+          return;
+        }
 
-          allStudioAliases.forEach((studioAlias) => {
+        const allStudioAliases = JSON.parse(line).aliases.toString().split(",");
+
+        allStudioAliases.forEach((studioAlias) => {
+          if (studioAlias) {
             let matchAliasStudio = new RegExp(studioAlias, "i");
 
             let foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
@@ -197,8 +200,8 @@ module.exports = async ({
                 gettingStudio.push(JSON.parse(line).name);
               }
             }
-          });
-        }
+          }
+        });
       });
 
     // this is a debug option to se see how many studios were found by just doing a simple regex
