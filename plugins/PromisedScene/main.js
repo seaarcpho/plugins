@@ -21,6 +21,9 @@ module.exports = async ({
   // Array Variable that will be returned
   const result = {};
 
+  // need to make a global counter to see how many times makechoices will run, so that test case will know what option to use
+  let makeChoicesCounter = 0;
+
   // Variable that is used for all the "manualTouch" questions
 
   const cleanPathname = util.stripStr(scenePath.toString());
@@ -101,7 +104,7 @@ module.exports = async ({
           let foundAliasActorMatch = util.stripStr(scenePath).match(matchAliasActor);
 
           if (foundAliasActorMatch !== null) {
-            gettingActor.push(JSON.parse(line).name);
+            gettingActor.push("alias:" + JSON.parse(line).name);
           } else {
             const aliasNoSpaces = personAlias.toString().replace(" ", "");
 
@@ -110,7 +113,7 @@ module.exports = async ({
             foundAliasActorMatch = util.stripStr(scenePath).match(matchAliasActor);
 
             if (foundAliasActorMatch !== null) {
-              gettingActor.push(JSON.parse(line).name);
+              gettingActor.push("alias:" + JSON.parse(line).name);
             }
           }
         });
@@ -122,6 +125,11 @@ module.exports = async ({
         // This is a function that will see how many differences it will take to make the string match.
         // The lowest amount of changes means that it is probably the closest match to what we need.
         // lowest score wins :)
+        let foundAnAlias = 0;
+        if (person.includes("alias:")) {
+          person = person.toString().replace("alias:", "").trim();
+          foundAnAlias = 1;
+        }
         const found = levenshtein(person.toString().toLowerCase(), cleanPathname);
 
         if (found < actorHighscore) {
@@ -129,9 +137,13 @@ module.exports = async ({
 
           actor[0] = person;
         }
-        $log(`    SUCCESS: Found Actor:` + actor);
+        if (foundAnAlias) {
+          $log(`    SUCCESS: Found Actor-Alias: ` + actor);
+        } else {
+          $log(`    SUCCESS: Found Actor: ` + actor);
+        }
       });
-      $log(`---> Using "best match" Actor For Search:` + actor);
+      $log(`---> Using "best match" Actor For Search: ` + actor);
     }
   }
   // -------------------STUDIO Parse
@@ -188,7 +200,7 @@ module.exports = async ({
             let foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
 
             if (foundAliasStudioMatch !== null) {
-              gettingStudio.push(JSON.parse(line).name);
+              gettingStudio.push("alias:" + JSON.parse(line).name);
             } else {
               const aliasNoSpaces = studioAlias.toString().replace(" ", "");
 
@@ -197,18 +209,24 @@ module.exports = async ({
               foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
 
               if (foundAliasStudioMatch !== null) {
-                gettingStudio.push(JSON.parse(line).name);
+                gettingStudio.push("alias:" + JSON.parse(line).name);
               }
             }
           }
         });
       });
-
     // this is a debug option to se see how many studios were found by just doing a simple regex
     // $log(GettingStudio);
     let studiohighscore = 5000;
     if (gettingStudio.length && Array.isArray(gettingStudio)) {
+      let foundStudioAnAlias = 0;
       gettingStudio.forEach((stud) => {
+        let InstancefoundStudioAnAlias = 0;
+        if (stud.includes("alias:")) {
+          stud = stud.toString().replace("alias:", "").trim();
+          InstancefoundStudioAnAlias = 1;
+        }
+
         // This is a function that will see how many differences it will take to make the string match.
         // The lowest amount of changes means that it is probably the closest match to what we need.
         // lowest score wins :)
@@ -218,10 +236,15 @@ module.exports = async ({
           studiohighscore = found;
 
           studio[0] = stud;
+          foundStudioAnAlias = InstancefoundStudioAnAlias;
         }
       });
-      $log(`    SUCCESS: Found Studio:` + studio);
-      $log(`---> Using "best match" Studio For Search:` + studio);
+      if (foundStudioAnAlias) {
+        $log(`    SUCCESS: Found Studio-Alias: ` + studio[0]);
+      } else {
+        $log(`    SUCCESS: Found Studio: ` + studio[0]);
+      }
+      $log(`---> Using "best match" Studio For Search: ` + studio);
     }
   }
   // Try to PARSE the SceneName and determine Date
@@ -278,26 +301,10 @@ module.exports = async ({
   async function manualImport() {
     const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
 
-    $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
-
-    const { ManualEnter: Q1Answer } = await questionAsync({
-      type: "input",
-      name: "ManualEnter",
-      message:
-        "Due to failed searches, would you like to MANUALLY enter information to import directly into porn-vault?: (Y/N) ",
-      testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.enterManInfo : "",
-    });
-
-    const runInteractiveSearch = util.isPositiveAnswer(Q1Answer);
-
-    if (!runInteractiveSearch) {
-      return {};
-    }
-
     const { IsMovie: manualMovieAnswer } = await questionAsync({
       type: "input",
       name: "IsMovie",
-      message: "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
+      message: "Is this a Scene from a Movie / Set / Collection?: (y/N) ",
       testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.enterMovie : "",
     });
 
@@ -393,7 +400,187 @@ module.exports = async ({
       result.studio = askedStudio;
     }
 
-    return result;
+    $log("====  Final Entry =====");
+
+    for (const property in result) {
+      if (
+        property === "actors" &&
+        result[property] === "" &&
+        Array.isArray(actor) &&
+        actor.length
+      ) {
+        result[property] = actor;
+      }
+      if (
+        property === "studio" &&
+        result[property] === "" &&
+        Array.isArray(studio) &&
+        studio.length
+      ) {
+        result[property] = studio;
+      }
+      if (property === "releaseDate") {
+        $log(`${property}: ${util.timeConverter(result[property])}`);
+      } else {
+        $log(`${property}: ${result[property]}`);
+      }
+    }
+
+    const { CorrectImportInfo: resultsConfirmation } = await questionAsync({
+      type: "input",
+      name: "CorrectImportInfo",
+      message: "Is this the correct scene details to import? (y/N)",
+      testAnswer: testMode ? testMode.CorrectImportInfo : "",
+    });
+
+    const ResultsImport = util.isPositiveAnswer(resultsConfirmation);
+    if (ResultsImport) {
+      return result;
+    } else {
+      const res = await makeChoices();
+      return res;
+    }
+  }
+
+  /**
+   * Provides 3 choices to be completed:
+   * 1) search again => Completes a manual Search of The Porn Database
+   * 2) manual info => plugin returns "manualImport"
+   * 3) Do nothing => plugin does not return any results (empty object)
+   * @returns {Promise<object>} ???
+   */
+  async function makeChoices() {
+    const questionActor = [];
+
+    const questionStudio = [];
+
+    let questionDate;
+
+    /* If testmode is running and a question has already been asked,
+     *  we always want the second option to do nothing and return nothing
+     */
+    if (makeChoicesCounter === 1 && testMode) {
+      return {};
+    }
+
+    try {
+      const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
+
+      $log(" Config ==> [ManualTouch]  MSG: SET TO TRUE ");
+      const { Choices: Q1Answer } = await questionAsync({
+        type: "rawlist",
+        name: "Choices",
+        message: "Would you like to:",
+        testAnswer:
+          testMode && testMode.questionAnswers ? testMode.questionAnswers.enterInfoSearch : "",
+        choices: [
+          "Search scene details on The Porn Database (TPD)",
+          "Enter scene details manually, straight into the porn-valt",
+          "Do nothing (let the scene be imported with no details)",
+        ],
+      });
+
+      makeChoicesCounter += 1;
+
+      if (Q1Answer === "Enter scene details manually, straight into the porn-valt") {
+        const manualInfo = await manualImport();
+        return manualInfo;
+      }
+
+      if (Q1Answer === "Do nothing (let the scene be imported with no details)") {
+        return {};
+      }
+
+      const { MovieSearch: Movieanswer } = await questionAsync({
+        type: "input",
+        name: "MovieSearch",
+        message: "Is this a Scene from a Movie / Set / Collection?: (y/N) ",
+        testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.enterMovie : "",
+      });
+      const enterMovieSearch = util.isPositiveAnswer(Movieanswer);
+
+      if (enterMovieSearch) {
+        const { ManualMovieTitleSearch: movieName } = await questionAsync({
+          type: "input",
+          name: "ManualMovieTitleSearch",
+          message: "What is the Title of the Movie?: ",
+          testAnswer:
+            testMode && testMode.questionAnswers ? testMode.questionAnswers.movieTitle : "",
+        });
+
+        if (result.movie === undefined && movieName !== "") {
+          result.movie = movieName;
+        }
+      }
+      const { ManualActorSearch: Q2Actor } = await questionAsync({
+        type: "input",
+        name: "ManualActorSearch",
+        message: `What is ONE of the Actors NAME in the scene?:`,
+        testAnswer:
+          testMode && testMode.questionAnswers ? testMode.questionAnswers.enterOneActorName : "",
+        default() {
+          return `${actor[0] ? ` ${actor[0]}` : ""}`;
+        },
+      });
+
+      questionActor.push(Q2Actor);
+      if (Array.isArray(actor) && !actor.length) {
+        actor.push(Q2Actor);
+      }
+
+      const { ManualStudioSearch: Q3Studio } = await questionAsync({
+        type: "input",
+        name: "ManualStudioSearch",
+        message: `What Studio NAME is responsible for the scene?:`,
+        testAnswer:
+          testMode && testMode.questionAnswers ? testMode.questionAnswers.enterStudioName : "",
+        default() {
+          return `${studio[0] ? ` ${studio[0]}` : ""}`;
+        },
+      });
+
+      questionStudio.push(Q3Studio);
+      if (Array.isArray(studio) && !studio.length) {
+        studio.push(Q3Studio);
+      }
+      const { ManualDateSearch: Q4date } = await questionAsync({
+        type: "input",
+        name: "ManualDateSearch",
+        message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
+        testAnswer:
+          testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneDate : "",
+        default() {
+          if (!isNaN(util.timeConverter(timestamp).replace("-", "."))) {
+            return `${
+              util.timeConverter(timestamp).replace("-", ".")
+                ? ` ${util.timeConverter(timestamp).toString().replace("-", ".")}`
+                : ""
+            }`;
+          }
+        },
+      });
+
+      if (Q4date !== "") {
+        const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
+
+        $log(" MSG: Checking Date");
+
+        if (questYear && questYear.length) {
+          const date = questYear[0];
+
+          $log(" MSG: Found => yyyymmdd");
+
+          questionDate = $moment(date, "YYYY-MM-DD").valueOf();
+        }
+      }
+
+      // Re run the search with user's input
+      const res = await doASearch(questionActor, questionStudio, questionDate);
+
+      return res;
+    } catch (error) {
+      $log("Something went wrong asking for search questions");
+    }
   }
 
   /**
@@ -421,7 +608,7 @@ module.exports = async ({
         $log("!! This will impact the test if it was not expecting a failure !!");
       }
 
-      const manualInfo = await manualImport();
+      const manualInfo = await makeChoices();
       return manualInfo;
     }
 
@@ -443,7 +630,7 @@ module.exports = async ({
     if (agressiveSearch && correctSceneIdx === -1) {
       $log(" ERR: TPDB Could NOT find correct scene info");
 
-      const manualInfo = await manualImport();
+      const manualInfo = await makeChoices();
       return manualInfo;
     } else {
       // list the found results and tries to match the SCENENAME to the found results.
@@ -524,7 +711,7 @@ module.exports = async ({
 
         $log(" ERR: TPDB Could NOT find correct scene info");
 
-        const manualInfo = await manualImport();
+        const manualInfo = await makeChoices();
         return manualInfo;
       }
     }
@@ -597,19 +784,7 @@ module.exports = async ({
       tpdbSceneSearchData.background.large !== "" &&
       tpdbSceneSearchData.background.large !== "https://cdn.metadataapi.net/default.png"
     ) {
-      try {
-        const thumbnailFile = await $createImage(
-          tpdbSceneSearchData.background.large,
-
-          tpdbSceneSearchData.title,
-
-          true
-        );
-
-        result.thumbnail = thumbnailFile.toString();
-      } catch (e) {
-        $log("No thumbnail found");
-      }
+      result.thumbnail = tpdbSceneSearchData.background.large;
     }
 
     if (tpdbSceneSearchData.performers !== "") {
@@ -721,7 +896,7 @@ module.exports = async ({
           " ERR: This Studio does not exist in ThePornDatabase.  No searches are possible with this Studio / Network"
         );
 
-        const manualInfo = await manualImport();
+        const manualInfo = await makeChoices();
         return manualInfo;
       }
 
@@ -786,7 +961,7 @@ module.exports = async ({
 
         if (findresultindex < 0) {
           if (args.ManualTouch) {
-            const manualInfo = await manualImport();
+            const manualInfo = await makeChoices();
             return manualInfo;
           } else {
             return {};
@@ -802,137 +977,127 @@ module.exports = async ({
           $log("====  Final Entry =====");
 
           for (const property in goGetIt) {
-            $log(`${property}: ${goGetIt[property]}`);
+            if (
+              property === "actors" &&
+              goGetIt[property] === "" &&
+              Array.isArray(actor) &&
+              actor.length
+            ) {
+              goGetIt[property] = actor;
+            }
+            if (
+              property === "studio" &&
+              goGetIt[property] === "" &&
+              Array.isArray(studio) &&
+              studio.length
+            ) {
+              goGetIt[property] = studio;
+            }
+            if (property === "releaseDate") {
+              $log(`${property}: ${util.timeConverter(goGetIt[property])}`);
+            } else {
+              $log(`${property}: ${goGetIt[property]}`);
+            }
           }
 
-          return goGetIt;
+          const { CorrectImportInfo: resultsConfirmation } = await questionAsync({
+            type: "input",
+            name: "CorrectImportInfo",
+            message: "Does this information look like the correct information to import? (y/N)",
+            testAnswer: testMode ? testMode.CorrectImportInfo : "",
+          });
+
+          const ResultsImport = util.isPositiveAnswer(resultsConfirmation);
+          if (ResultsImport) {
+            if (goGetIt.thumbnail !== "") {
+              try {
+                const thumbnailFile = await $createImage(
+                  goGetIt.thumbnail,
+
+                  goGetIt.name,
+
+                  true
+                );
+
+                goGetIt.thumbnail = thumbnailFile.toString();
+              } catch (e) {
+                $log("No thumbnail found");
+              }
+            }
+
+            return goGetIt;
+          } else {
+            const res = await makeChoices();
+            return res;
+          }
         }
       } else if (grabResults && typeof grabResults === "object") {
         // Will return any of the values found
+        const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
 
         $log("====  Final Entry =====");
 
         for (const property in grabResults) {
-          $log(`${property}: ${grabResults[property]}`);
+          if (
+            property === "actors" &&
+            grabResults[property] === "" &&
+            Array.isArray(actor) &&
+            actor.length
+          ) {
+            grabResults[property] = actor;
+          }
+          if (
+            property === "studio" &&
+            grabResults[property] === "" &&
+            Array.isArray(studio) &&
+            studio.length
+          ) {
+            grabResults[property] = studio;
+          }
+          if (property === "releaseDate") {
+            $log(`${property}: ${util.timeConverter(grabResults[property])}`);
+          } else {
+            $log(`${property}: ${grabResults[property]}`);
+          }
         }
 
-        return grabResults;
+        const { CorrectImportInfo: resultsConfirmation } = await questionAsync({
+          type: "input",
+          name: "CorrectImportInfo",
+          message: "Does this information look like the correct information to import? (y/N)",
+          testAnswer: testMode ? testMode.CorrectImportInfo : "",
+        });
+
+        const ResultsImport = util.isPositiveAnswer(resultsConfirmation);
+        if (ResultsImport) {
+          if (grabResults.thumbnail !== "") {
+            try {
+              const thumbnailFile = await $createImage(
+                grabResults.thumbnail,
+
+                grabResults.name,
+
+                true
+              );
+
+              grabResults.thumbnail = thumbnailFile.toString();
+            } catch (e) {
+              $log("No thumbnail found");
+            }
+          }
+
+          return grabResults;
+        } else {
+          const res = await makeChoices();
+          return res;
+        }
       }
 
       // If there was no studio or Actor, and the "Manual Touch" arg is set to TRUE, it will prompt you for entries manually.
-    } else if (args.ManualTouch) {
-      $log(" ERR:Could not find a Studio or Actor in the SceneName");
-
-      const questionActor = [];
-
-      const questionStudio = [];
-
-      let questionDate;
-
-      try {
-        const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
-
-        $log(" Config ==> ManualTouch]  MSG: SET TO TRUE ");
-        const { ManualSearch: Q1Answer } = await questionAsync({
-          type: "input",
-          name: "ManualSearch",
-          message:
-            "Would you like to Manually Enter Scene information to search The Porn Database (TPDB)?: (Y/N) ",
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterInfoSearch : "",
-        });
-
-        const runInteractiveSearch = util.isPositiveAnswer(Q1Answer);
-
-        if (!runInteractiveSearch) {
-          const manualInfo = await manualImport();
-          return manualInfo;
-        }
-
-        const { MovieSearch: Movieanswer } = await questionAsync({
-          type: "input",
-          name: "MovieSearch",
-          message: "Is this a Scene from a Movie / Set / Collection?: (Y/N) ",
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterMovie : "",
-        });
-        const enterMovieSearch = util.isPositiveAnswer(Movieanswer);
-
-        if (enterMovieSearch) {
-          const { ManualMovieTitleSearch: movieName } = await questionAsync({
-            type: "input",
-            name: "ManualMovieTitleSearch",
-            message: "What is the Title of the Movie?: ",
-            testAnswer:
-              testMode && testMode.questionAnswers ? testMode.questionAnswers.movieTitle : "",
-          });
-
-          if (result.movie === undefined && movieName !== "") {
-            result.movie = movieName;
-          }
-        }
-        const { ManualActorSearch: Q2Actor } = await questionAsync({
-          type: "input",
-          name: "ManualActorSearch",
-          message: `What is ONE of the Actors NAME in the scene?:`,
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterOneActorName : "",
-          default() {
-            return `${actor[0] ? ` ${actor[0]}` : ""}`;
-          },
-        });
-
-        questionActor.push(Q2Actor);
-        if (Array.isArray(actor) && !actor.length) {
-          actor.push(Q2Actor);
-        }
-
-        const { ManualStudioSearch: Q3Studio } = await questionAsync({
-          type: "input",
-          name: "ManualStudioSearch",
-          message: `What Studio NAME is responsible for the scene?:`,
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterStudioName : "",
-          default() {
-            return `${studio[0] ? ` ${studio[0]}` : ""}`;
-          },
-        });
-
-        questionStudio.push(Q3Studio);
-        if (Array.isArray(studio) && !studio.length) {
-          studio.push(Q3Studio);
-        }
-        const { ManualDateSearch: Q4date } = await questionAsync({
-          type: "input",
-          name: "ManualDateSearch",
-          message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneDate : "",
-        });
-
-        if (Q4date !== "") {
-          const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
-
-          $log(" MSG: Checking Date");
-
-          if (questYear && questYear.length) {
-            const date = questYear[0];
-
-            $log(" MSG: Found => yyyymmdd");
-
-            questionDate = $moment(date, "YYYY-MM-DD").valueOf();
-          }
-        }
-
-        // Re run the search with user's input
-        const res = await doASearch(questionActor, questionStudio, questionDate);
-
-        return res;
-      } catch (error) {
-        $log("Something went wrong asking for search questions");
-      }
     } else {
-      return {};
+      $log(" ERR:Could not find a Studio or Actor in the SceneName");
+      const res = await makeChoices();
+      return res;
     }
   }
 };

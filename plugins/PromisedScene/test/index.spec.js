@@ -22,19 +22,7 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questionAnswers: {
-            enterInfoSearch: "",
-            enterManInfo: "",
-            enterMovie: "",
-            enterOneActorName: "",
-            enterSceneDate: "",
-            enterSceneTitle: "",
-            enterStudioName: "",
-            manualActors: "",
-            manualDescription: "",
-            movieTitle: "",
-            multipleChoice: "",
-          },
+          CorrectImportInfo: "y",
           testSiteUnavailable: false,
           status: true,
         },
@@ -66,19 +54,7 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Madison Swan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questionAnswers: {
-            enterInfoSearch: "n",
-            enterManInfo: "n",
-            enterMovie: "n",
-            enterOneActorName: "",
-            enterSceneDate: "",
-            enterSceneTitle: "",
-            enterStudioName: "",
-            manualActors: "",
-            manualDescription: "",
-            movieTitle: "",
-            multipleChoice: "",
-          },
+          CorrectImportInfo: "y",
           testSiteUnavailable: false,
           status: true,
         },
@@ -110,20 +86,7 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] MadisonSwan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questionAnswers: {
-            enterInfoSearch: "n",
-            enterManInfo: "n",
-            enterMovie: "n",
-            enterOneActorName: "Mia Malkova",
-            enterSceneDate: "2013.10.10",
-            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            enterStudioName: "New Sensations",
-            manualActors: "Mia Malkova, Mike Adriano",
-            manualDescription:
-              "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            movieTitle: "",
-            multipleChoice: "",
-          },
+          CorrectImportInfo: "y",
           testSiteUnavailable: false,
           status: true,
         },
@@ -157,8 +120,8 @@ describe("PromisedScene", () => {
           "Z:\\Keep\\test\\[New Sensations] Riley Nixon, Mia Malkova 16.04.08 - Makes the Heart Skip a Beat.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            CorrectImportInfo: "y",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "16.04.08",
@@ -183,7 +146,7 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
-    it("Search and Grab a Scene that has multiple parsed Studios - testing ddmmyyyy", async () => {
+    it("Search and Grab a Scene that has multiple parsed Studios - testing dd.mm.yyyy", async () => {
       const result = await plugin({
         ...context,
         args: {
@@ -201,9 +164,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[Bangbros clips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -228,7 +191,7 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("BANGBROS CLIPS");
     });
-    it("Search and Grab a Scene that has multiple parsed Studios with no spaces - testing ddmmyyyy", async () => {
+    it("Search and Grab a Scene that has multiple parsed Studios with no spaces - testing dd.mm.yyyy", async () => {
       const result = await plugin({
         ...context,
         args: {
@@ -246,9 +209,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -290,9 +253,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -308,13 +271,15 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia is pleasantly surprised by her husband’s growing excitement when she confesses to sharing a stolen kiss with another woman. Redhead Katy did not hesitate taking another hot steamy affair with Mia, while her husband seemed to enjoy himself a little too much."
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
-    it("Select a one of the last 2 options in a serach list, should fail because no manual search", async () => {
+    it("Select 'none of the above' of the last 2 options in a rawlist, it should make the user select a choice.  Should return nothing because we assume we select 'do nothing' when asked again", async () => {
       const result = await plugin({
         ...context,
         args: {
@@ -331,9 +296,9 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -368,8 +333,7 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova So Young So Sexy P.O.V. #08.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -385,7 +349,9 @@ describe("PromisedScene", () => {
         },
       });
       expect(result).to.be.an("object");
-      expect(result.description).to.be.a("string");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
@@ -409,8 +375,7 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -427,7 +392,7 @@ describe("PromisedScene", () => {
       });
       expect(result).to.deep.equal({});
     });
-    it("TPD does not support that specific studio return blank because no manual input", async () => {
+    it("TPD does not support that specific studio. Should return nothing because we assume we select 'do nothing' when asked again", async () => {
       const result = await plugin({
         ...context,
         args: {
@@ -445,8 +410,7 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[Colette] Mia Malkova.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -483,18 +447,6 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          questionAnswers: {
-            enterInfo: "Should not ask",
-            enterMovie: "Should not ask",
-            enterOneActorName: "Should not ask",
-            enterSceneDate: "Should not ask",
-            enterSceneTitle: "Should not ask",
-            enterStudioName: "Should not ask",
-            manualActors: "Should not ask",
-            manualDescription: "Should not ask",
-            movieTitle: "Should not ask",
-            multipleChoice: "Should not ask",
-          },
           testSiteUnavailable: false,
           status: true,
         },
@@ -519,9 +471,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "n",
-            enterManInfo: "y",
+            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -545,6 +497,44 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("New Sensations");
     });
+    it("Not the correct import information, saying 'no' should assume 'do nothing' on the second question", async () => {
+      const result = await plugin({
+        ...context,
+        args: {
+          ManualTouch: true,
+          SceneDuplicationCheck: false,
+          parseActor: true,
+          parseStudio: true,
+          source_settings: {
+            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+          },
+        },
+        sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
+        scenePath:
+          "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
+        testMode: {
+          CorrectImportInfo: "n",
+          questionAnswers: {
+            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "2013.10.10",
+            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
+            enterStudioName: "New Sensations",
+            manualActors: "Mia Malkova, Mike Adriano",
+            manualDescription:
+              "stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
+            movieTitle: "",
+            multipleChoice: "",
+          },
+          testSiteUnavailable: false,
+          status: true,
+        },
+      });
+      expect(result).to.deep.equal({});
+    });
     it("Should allow manual input, with movie, no search -- Unpopulated databases", async () => {
       const result = await plugin({
         ...context,
@@ -563,9 +553,9 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "n",
-            enterManInfo: "y",
+            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -610,8 +600,7 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -653,8 +642,7 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -697,105 +685,13 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
-            enterMovie: "y",
-            enterOneActorName: "Mia Malkova",
-            enterSceneDate: "2013.10.10",
-            enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            enterStudioName: "New Sensations",
-            manualActors: "Mia Malkova,Mike Adriano",
-            manualDescription:
-              "stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            movieTitle: "So Young So Sexy P.O.V. #8",
-            multipleChoice: "0",
+            enterInfoSearch: "Do nothing (let the scene be imported with no details)",
           },
           testSiteUnavailable: false,
           status: true,
         },
       });
       expect(result).to.deep.equal({});
-    });
-    it("Should have DB files with Scene already but return nothing, no spaces in title, no questions -- No Studio or Actor parsed", async () => {
-      const result = await plugin({
-        ...context,
-        args: {
-          ManualTouch: false,
-          SceneDuplicationCheck: true,
-          parseActor: true,
-          parseStudio: true,
-          source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
-          },
-        },
-        sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
-        scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova -SoYoungSoSexyP.O.V.#8.mp4",
-        testMode: {
-          questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "n",
-            enterMovie: "y",
-            enterOneActorName: "Mia Malkova",
-            enterSceneDate: "2013.10.10",
-            enterSceneTitle: "SoYoungSoSexyP.O.V.#8-Scene2",
-            enterStudioName: "New Sensations",
-            manualActors: "Mia Malkova,Mike Adriano",
-            manualDescription:
-              "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            movieTitle: "So Young So Sexy P.O.V. #8",
-            multipleChoice: "0",
-          },
-          testSiteUnavailable: false,
-          status: true,
-        },
-      });
-      expect(result).to.deep.equal({});
-    });
-    it("Wrong Query Search because of Actress Typo but should still allow ManualTouch", async () => {
-      const result = await plugin({
-        ...context,
-        args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
-          parseActor: true,
-          parseStudio: true,
-          source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-          },
-        },
-        sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-        scenePath:
-          "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-        testMode: {
-          questionAnswers: {
-            enterInfoSearch: "y",
-            enterManInfo: "y",
-            enterMovie: "n",
-            enterOneActorName: "Mi Malkova",
-            enterSceneDate: "2016.01.04",
-            enterSceneTitle: "Flexible while getting pounded",
-            enterStudioName: "BANGBROS CLIPS",
-            manualActors: "Mia Malkova",
-            manualDescription:
-              "stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
-            movieTitle: "",
-            multipleChoice: "",
-          },
-          testSiteUnavailable: false,
-          status: true,
-        },
-      });
-      expect(result).to.be.an("object");
-      expect(result.description).to.equal(
-        "stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
-      );
-      expect(result.releaseDate).to.be.a("number");
-      expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.equal("BANGBROS CLIPS");
     });
   });
   describe("Handle all of the errors properly.", () => {
