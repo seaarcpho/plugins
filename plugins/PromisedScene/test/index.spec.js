@@ -119,8 +119,8 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Riley Nixon, Mia Malkova 16.04.08 - Makes the Heart Skip a Beat.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
-            CorrectImportInfo: "y",
             enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
@@ -332,6 +332,7 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #08.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova So Young So Sexy P.O.V. #08.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
             enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
@@ -599,6 +600,7 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
             enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "n",
@@ -641,6 +643,7 @@ describe("PromisedScene", () => {
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
+          CorrectImportInfo: "y",
           questionAnswers: {
             enterInfoSearch: "Search scene details on The Porn Database (TPD)",
             enterMovie: "y",
