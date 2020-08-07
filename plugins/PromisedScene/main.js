@@ -220,11 +220,11 @@ module.exports = async ({
     let studiohighscore = 5000;
     if (gettingStudio.length && Array.isArray(gettingStudio)) {
       let foundStudioAnAlias = false;
+      let instanceFoundStudioAnAlias = false;
       gettingStudio.forEach((stud) => {
-        let instanceFoundStudioAnAlias = false;
         if (stud.includes("alias:")) {
           stud = stud.toString().replace("alias:", "").trim();
-          InstancefoundStudioAnAlias = 1;
+          instanceFoundStudioAnAlias = true;
         }
 
         // This is a function that will see how many differences it will take to make the string match.
@@ -236,7 +236,7 @@ module.exports = async ({
           studiohighscore = found;
 
           studio[0] = stud;
-          foundStudioAnAlias = InstancefoundStudioAnAlias;
+          foundStudioAnAlias = instanceFoundStudioAnAlias;
         }
         if (foundStudioAnAlias) {
           $log(`    SUCCESS: Found Studio-Alias: ` + studio[0]);
