@@ -221,7 +221,7 @@ module.exports = async ({
     if (gettingStudio.length && Array.isArray(gettingStudio)) {
       let foundStudioAnAlias = false;
       gettingStudio.forEach((stud) => {
-        let InstancefoundStudioAnAlias = 0;
+        let instanceFoundStudioAnAlias = false;
         if (stud.includes("alias:")) {
           stud = stud.toString().replace("alias:", "").trim();
           InstancefoundStudioAnAlias = 1;
