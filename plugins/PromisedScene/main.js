@@ -128,7 +128,7 @@ module.exports = async ({
         let foundAnAlias = false;
         if (person.includes("alias:")) {
           person = person.toString().replace("alias:", "").trim();
-          foundAnAlias = 1;
+          foundAnAlias = true;
         }
         const found = levenshtein(person.toString().toLowerCase(), cleanPathname);
 
