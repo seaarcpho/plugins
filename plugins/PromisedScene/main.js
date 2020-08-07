@@ -22,7 +22,7 @@ module.exports = async ({
   const result = {};
 
   // need to make a global counter to see how many times makechoices will run, so that test case will know what option to use
-  let makeChoicesCounter = 0;
+  let makeChoicesCounter = false;
 
   // Variable that is used for all the "manualTouch" questions
 
