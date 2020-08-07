@@ -219,7 +219,7 @@ module.exports = async ({
     // $log(GettingStudio);
     let studiohighscore = 5000;
     if (gettingStudio.length && Array.isArray(gettingStudio)) {
-      let foundStudioAnAlias = 0;
+      let foundStudioAnAlias = false;
       gettingStudio.forEach((stud) => {
         let InstancefoundStudioAnAlias = 0;
         if (stud.includes("alias:")) {
