@@ -125,7 +125,7 @@ module.exports = async ({
         // This is a function that will see how many differences it will take to make the string match.
         // The lowest amount of changes means that it is probably the closest match to what we need.
         // lowest score wins :)
-        let foundAnAlias = 0;
+        let foundAnAlias = false;
         if (person.includes("alias:")) {
           person = person.toString().replace("alias:", "").trim();
           foundAnAlias = 1;
