@@ -454,9 +454,9 @@ module.exports = async ({
 
   /**
    * Provides 3 choices to be completed:
-   * 1) search again => Completes a manual Search of The Porn Database
-   * 2) manual info => plugin returns "manualImport"
-   * 3) Do nothing => plugin does not return any results (empty object)
+   * 1. search again => Completes a manual Search of The Porn Database
+   * 2. manual info => plugin returns "manualImport"
+   * 3. Do nothing => plugin does not return any results (empty object)
    * @returns {Promise<object>} ???
    */
   async function makeChoices() {
