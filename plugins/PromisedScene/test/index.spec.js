@@ -36,6 +36,46 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
+    it("Should not return an actor with a single name like 'PRESSLEY', even if it exists but allow for manual SEARCH success", async () => {
+      const result = await plugin({
+        ...context,
+        args: {
+          ManualTouch: true,
+          SceneDuplicationCheck: true,
+          parseActor: true,
+          parseStudio: true,
+          source_settings: {
+            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+          },
+        },
+        sceneName: "[New Sensations] PRESSLEY 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
+        scenePath:
+          "Z:\\Keep\\test\\[New Sensations] PRESSLEY 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
+        testMode: {
+          questionAnswers: {
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterMovie: "n",
+            enterOneActorName: "Mia Malkova",
+            enterSceneDate: "",
+            enterSceneTitle: "So Young So Sexy",
+            enterStudioName: "New Sensations",
+          },
+          CorrectImportInfo: "y",
+          testSiteUnavailable: false,
+          status: true,
+        },
+      });
+      expect(result).to.be.an("object");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
+      expect(result.releaseDate).to.be.a("number");
+      expect(result.thumbnail).to.be.a("string");
+      expect(result.actors).to.be.a("Array");
+      expect(result.studio).to.equal("NEW SENSATIONS");
+    });
     it("Should grab an alias for an actor Madison Swan = Mia Malkova", async () => {
       const result = await plugin({
         ...context,
@@ -428,6 +468,46 @@ describe("PromisedScene", () => {
       });
       expect(result).to.deep.equal({});
     });
+    it("Should not parse the studio but success in searching it with fullname", async () => {
+      const result = await plugin({
+        ...context,
+        args: {
+          ManualTouch: true,
+          SceneDuplicationCheck: true,
+          parseActor: true,
+          parseStudio: true,
+          source_settings: {
+            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+          },
+        },
+        sceneName: "[bb18] Kia Perez - Cock Is Her Duty.mp4",
+        scenePath: "Z:\\Keep\\test\\[bb18] Kia Perez - Cock Is Her Duty.mp4",
+        testMode: {
+          CorrectImportInfo: "y",
+          questionAnswers: {
+            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterMovie: "n",
+            enterOneActorName: "Kia Perez",
+            enterSceneDate: "",
+            enterSceneTitle: "Cock Is Her Duty",
+            enterStudioName: "BangBros18",
+          },
+          testSiteUnavailable: false,
+          status: true,
+        },
+      });
+      expect(result).to.be.an("object");
+      expect(result.description).to.equal(
+        "FRAG OUT! Today we have the beautiful Kira Perez playing video games in her spare time. But then, out of the corner of the room, Lil D steps in to check his step sister out. He hides in a corner and throws paper balls to annoy her. Kira\'s had it with Lil D always bothering her so she challenges him to a match. Loser has to do something they don\'t want to do. Of course Kira beats his ass and so Lil D has to eat her ass. He isn\'t feeling it but Kira on the other hand, she wants more than just a tongue up her ass. She tells Lil D to put his pants down because she has an appetite for some dick. The rest is history as Kira shows us again why she is the hottest gamer girl out there. Shit, I might subscribe if she starts streaming! Watch Kira ride Lil D until she can\'t take it anymore and that\'s when she goes turbo mode and tries out different positions. Kira does her best to stay away from the gulag for you so watch until the end, dammit!"
+      );
+      expect(result.releaseDate).to.be.a("number");
+      expect(result.thumbnail).to.be.a("string");
+      expect(result.actors).to.be.a("Array");
+      expect(result.studio).to.equal("BANGBROS 18");
+    });
+
   });
   describe("When UnPopulated Databases exist...", () => {
     it("Should return nothing because no search is completed with no parsed Actor or Studio when manualTouch is false", async () => {

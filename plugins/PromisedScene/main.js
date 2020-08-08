@@ -23,7 +23,11 @@ module.exports = async ({
 
   // need to make a global counter to see how many times makechoices will run, so that test case will know what option to use
   let makeChoicesCounter = false;
-
+  const ManualTouchChoices = {
+    MANUAL_ENTER: "Enter scene details manually, straight into the porn-valt",
+    NOTHING: "Do nothing (let the scene be imported with no details)",
+    SEARCH: "Search scene details on The Porn Database (TPD)",
+  };
   // Variable that is used for all the "manualTouch" questions
 
   const cleanPathname = util.stripStr(scenePath.toString());
@@ -170,7 +174,6 @@ module.exports = async ({
         if (!JSON.parse(line).name) {
           return;
         }
-
         let matchStudio = new RegExp(JSON.parse(line).name, "i");
 
         const foundStudioMatch = util.stripStr(scenePath).match(matchStudio);
@@ -504,20 +507,20 @@ module.exports = async ({
           testAnswer:
             testMode && testMode.questionAnswers ? testMode.questionAnswers.enterInfoSearch : "",
           choices: [
-            "Search scene details on The Porn Database (TPD)",
-            "Enter scene details manually, straight into the porn-valt",
-            "Do nothing (let the scene be imported with no details)",
+            ManualTouchChoices.SEARCH,
+            ManualTouchChoices.MANUAL_ENTER,
+            ManualTouchChoices.NOTHING,
           ],
         });
 
         makeChoicesCounter += 1;
 
-        if (Q1Answer === "Enter scene details manually, straight into the porn-valt") {
+        if (Q1Answer === ManualTouchChoices.SEARCH) {
           const manualInfo = await manualImport();
           return manualInfo;
         }
 
-        if (Q1Answer === "Do nothing (let the scene be imported with no details)") {
+        if (Q1Answer === ManualTouchChoices.NOTHING) {
           return {};
         }
 
@@ -581,13 +584,11 @@ module.exports = async ({
           testAnswer:
             testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneDate : "",
           default() {
-            if (!isNaN(util.timeConverter(timestamp).replace("-", "."))) {
-              return `${
-                util.timeConverter(timestamp).replace("-", ".")
-                  ? ` ${util.timeConverter(timestamp).toString().replace("-", ".")}`
-                  : ""
-              }`;
+            const dottedTimestamp = util.timeConverter(timestamp).replace("-", ".");
+            if (dottedTimestamp && !isNaN(dottedTimestamp)) {
+              return ` ${dottedTimestamp}`;
             }
+            return "";
           },
         });
 
