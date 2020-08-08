@@ -515,7 +515,7 @@ module.exports = async ({
 
         makeChoicesCounter += 1;
 
-        if (Q1Answer === ManualTouchChoices.SEARCH) {
+        if (Q1Answer === ManualTouchChoices.MANUAL_ENTER) {
           const manualInfo = await manualImport();
           return manualInfo;
         }
