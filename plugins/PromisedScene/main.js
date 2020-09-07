@@ -471,12 +471,12 @@ module.exports = async ({
       } else {
         $log(
           "  MSG: Trying a single Agressive Search --> " +
-            `https://metadataapi.net/api/scenes?parse=` +
+            `https://api.metadataapi.net/api/scenes?parse=` +
             scenePath
         );
         makeChoicesCounter += 1;
         const agressearchnomanual = await run(
-          `https://metadataapi.net/api/scenes?parse=` + scenePath,
+          `https://api.metadataapi.net/api/scenes?parse=` + scenePath,
           true
         );
 
@@ -896,10 +896,10 @@ module.exports = async ({
 
       $log(
         " MSG: Grabbing all available Studios on Metadataapi: " +
-          "https://metadataapi.net/api/sites"
+          "https://api.metadataapi.net/api/sites"
       );
 
-      const resultsOffoundStudioInAPI = await grabSites("https://metadataapi.net/api/sites");
+      const resultsOffoundStudioInAPI = await grabSites("https://api.metadataapi.net/api/sites");
 
       let doesSiteExist;
 
@@ -943,7 +943,7 @@ module.exports = async ({
         $log(":::::MSG: Placing TPDB Search string without timestamp...");
 
         tpdbSceneSearchUrl =
-          `https://metadataapi.net/api/scenes?parse=` +
+          `https://api.metadataapi.net/api/scenes?parse=` +
           encodeURIComponent(searchStudio) +
           "%20" +
           encodeURIComponent(searchActor[0]);
@@ -951,7 +951,7 @@ module.exports = async ({
         $log(":::::MSG: Placing TPDB Search string");
 
         tpdbSceneSearchUrl =
-          `https://metadataapi.net/api/scenes?parse=` +
+          `https://api.metadataapi.net/api/scenes?parse=` +
           encodeURIComponent(searchStudio) +
           "%20" +
           encodeURIComponent(searchActor[0]) +
@@ -1001,7 +1001,7 @@ module.exports = async ({
           }
         } else if (findresultindex <= listing.length - 3) {
           const selectedtitle =
-            `https://metadataapi.net/api/scenes?parse=` +
+            `https://api.metadataapi.net/api/scenes?parse=` +
             grabResults["Title" + listing.indexOf(multipleSitesAnswer)].id;
 
           $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
