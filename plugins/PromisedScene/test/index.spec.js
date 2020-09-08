@@ -299,7 +299,7 @@ describe("PromisedScene", () => {
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
-            enterSceneTitle: "New Sensations Mia Malkova",
+            enterSceneTitle: "Mia Malkova New Sensations",
             enterStudioName: "New Sensations",
             manualActors: "",
             manualDescription: "",

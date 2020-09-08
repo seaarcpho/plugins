@@ -675,7 +675,7 @@ module.exports = async ({
         for (let idx = 0; idx < tpdbSceneSearchContent.data.length; idx++) {
           const element = tpdbSceneSearchContent.data[idx];
 
-          alltitles["Title" + idx] = { Title: element.title, id: element.id };
+          alltitles["Title" + idx] = { Title: element.title, slug: element.slug };
 
           // making variables to use to elimate Actors and scenes from the search results.
 
@@ -1002,7 +1002,7 @@ module.exports = async ({
         } else if (findresultindex <= listing.length - 3) {
           const selectedtitle =
             `https://api.metadataapi.net/api/scenes?parse=` +
-            grabResults["Title" + listing.indexOf(multipleSitesAnswer)].id;
+            grabResults["Title" + listing.indexOf(multipleSitesAnswer)].slug;
 
           $log(" MSG: Running Aggressive-Grab Search on: " + selectedtitle);
           const goGetIt = await run(selectedtitle, true);
