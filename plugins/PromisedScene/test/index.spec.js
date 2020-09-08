@@ -500,14 +500,13 @@ describe("PromisedScene", () => {
       });
       expect(result).to.be.an("object");
       expect(result.description).to.equal(
-        "FRAG OUT! Today we have the beautiful Kira Perez playing video games in her spare time. But then, out of the corner of the room, Lil D steps in to check his step sister out. He hides in a corner and throws paper balls to annoy her. Kira\'s had it with Lil D always bothering her so she challenges him to a match. Loser has to do something they don\'t want to do. Of course Kira beats his ass and so Lil D has to eat her ass. He isn\'t feeling it but Kira on the other hand, she wants more than just a tongue up her ass. She tells Lil D to put his pants down because she has an appetite for some dick. The rest is history as Kira shows us again why she is the hottest gamer girl out there. Shit, I might subscribe if she starts streaming! Watch Kira ride Lil D until she can\'t take it anymore and that\'s when she goes turbo mode and tries out different positions. Kira does her best to stay away from the gulag for you so watch until the end, dammit!"
+        "FRAG OUT! Today we have the beautiful Kira Perez playing video games in her spare time. But then, out of the corner of the room, Lil D steps in to check his step sister out. He hides in a corner and throws paper balls to annoy her. Kira's had it with Lil D always bothering her so she challenges him to a match. Loser has to do something they don't want to do. Of course Kira beats his ass and so Lil D has to eat her ass. He isn't feeling it but Kira on the other hand, she wants more than just a tongue up her ass. She tells Lil D to put his pants down because she has an appetite for some dick. The rest is history as Kira shows us again why she is the hottest gamer girl out there. Shit, I might subscribe if she starts streaming! Watch Kira ride Lil D until she can't take it anymore and that's when she goes turbo mode and tries out different positions. Kira does her best to stay away from the gulag for you so watch until the end, dammit!"
       );
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("BANGBROS 18");
     });
-
   });
   describe("When UnPopulated Databases exist...", () => {
     it("Should return nothing because no search is completed with no parsed Actor or Studio when manualTouch is false", async () => {
