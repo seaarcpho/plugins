@@ -3,8 +3,8 @@ module.exports = {
   $throw: (msg) => {
     throw new Error(msg);
   },
-  $log: (msg) => {
-    console.log(msg);
+  $log: (...msgs) => {
+    console.log(...msgs);
   },
   $cheerio: require("cheerio"),
   $createImage: () => {
