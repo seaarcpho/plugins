@@ -611,7 +611,7 @@ module.exports = async ({
 
         return res;
       } catch (error) {
-        $log("Something went wrong asking for search questions");
+        $log("Something went wrong asking for search questions", error);
       }
     }
   }
@@ -871,7 +871,7 @@ module.exports = async ({
 
       return allSites;
     } catch (err) {
-      $throw(err);
+      $log("Error returning results from TPD...", err);
     }
   }
 
