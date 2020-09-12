@@ -79,7 +79,7 @@ module.exports = async ({
           return;
         }
 
-        const matchActor = new RegExp(JSON.parse(line).name, "i");
+        const matchActor = new RegExp(escapeRegExp(JSON.parse(line).name), "i");
 
         const actorLength = matchActor.toString().split(" ");
 
@@ -103,7 +103,7 @@ module.exports = async ({
             return;
           }
 
-          let matchAliasActor = new RegExp(personAlias, "i");
+          let matchAliasActor = new RegExp(escapeRegExp(personAlias), "i");
 
           let foundAliasActorMatch = util.stripStr(scenePath).match(matchAliasActor);
 
@@ -112,7 +112,7 @@ module.exports = async ({
           } else {
             const aliasNoSpaces = personAlias.toString().replace(" ", "");
 
-            matchAliasActor = new RegExp(aliasNoSpaces, "i");
+            matchAliasActor = new RegExp(escapeRegExp(aliasNoSpaces), "i");
 
             foundAliasActorMatch = util.stripStr(scenePath).match(matchAliasActor);
 
@@ -174,14 +174,14 @@ module.exports = async ({
         if (!JSON.parse(line).name) {
           return;
         }
-        let matchStudio = new RegExp(JSON.parse(line).name, "i");
+        let matchStudio = new RegExp(escapeRegExp(JSON.parse(line).name), "i");
 
         const foundStudioMatch = util.stripStr(scenePath).match(matchStudio);
 
         if (foundStudioMatch !== null) {
           gettingStudio.push(JSON.parse(line).name);
         } else if (JSON.parse(line).name !== null) {
-          matchStudio = new RegExp(JSON.parse(line).name.replace(/ /g, ""), "i");
+          matchStudio = new RegExp(escapeRegExp(JSON.parse(line).name.replace(/ /g, "")), "i");
 
           const foundStudioMatch = util.stripStr(scenePath).match(matchStudio);
 
@@ -198,7 +198,7 @@ module.exports = async ({
 
         allStudioAliases.forEach((studioAlias) => {
           if (studioAlias) {
-            let matchAliasStudio = new RegExp(studioAlias, "i");
+            let matchAliasStudio = new RegExp(escapeRegExp(studioAlias), "i");
 
             let foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
 
@@ -207,7 +207,7 @@ module.exports = async ({
             } else {
               const aliasNoSpaces = studioAlias.toString().replace(" ", "");
 
-              matchAliasStudio = new RegExp(aliasNoSpaces, "i");
+              matchAliasStudio = new RegExp(escapeRegExp(aliasNoSpaces), "i");
 
               foundAliasStudioMatch = util.stripStr(scenePath).match(matchAliasStudio);
 
@@ -298,6 +298,11 @@ module.exports = async ({
   // -------------------Fucntions & Async functions---------------
 
   // -------------------------------------------------------------
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+  }
+
   /**
    * Standard block of manual questions that prompt the user for input
    * @returns {Promise<string[]|object>} either an array of all questions that need to be import manually
@@ -719,7 +724,7 @@ module.exports = async ({
                 searchedTitle.toString().trim()
             );
 
-            matchTitle = new RegExp(matchTitle.toString().trim(), "i");
+            matchTitle = new RegExp(escapeRegExp(matchTitle.toString().trim()), "i");
 
             if (searchedTitle !== undefined) {
               if (searchedTitle.toString().trim().match(matchTitle)) {
@@ -768,7 +773,10 @@ module.exports = async ({
             continue;
           }
 
-          let matchScene = new RegExp(util.stripStr(JSON.parse(line).name.toString()), "gi");
+          let matchScene = new RegExp(
+            escapeRegExp(util.stripStr(JSON.parse(line).name.toString())),
+            "gi"
+          );
 
           const foundSceneMatch = util.stripStr(tpdbSceneSearchData.title).match(matchScene);
 
@@ -777,7 +785,7 @@ module.exports = async ({
             // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
           } else if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
             matchScene = new RegExp(
-              util.stripStr(JSON.parse(line).name.toString()).replace(/ /g, ""),
+              escapeRegExp(util.stripStr(JSON.parse(line).name.toString()).replace(/ /g, "")),
               "gi"
             );
 
@@ -907,7 +915,7 @@ module.exports = async ({
 
       for (let spot = 0; spot < resultsOffoundStudioInAPI.length; spot++) {
         if (resultsOffoundStudioInAPI[spot] !== "") {
-          const siteNoSpaces = new RegExp(resultsOffoundStudioInAPI[spot], "gi");
+          const siteNoSpaces = new RegExp(escapeRegExp(resultsOffoundStudioInAPI[spot]), "gi");
 
           const studioWithNoSpaces = searchStudio.toString().replace(/ /gi, "");
 
