@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^7.1.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.1",
@@ -30,7 +31,9 @@
     "doc": "cd md_gen && npm start",
     "check-info": "node check_info.js",
     "coverage": "nyc npm run test",
+    "coverage:promise": "nyc npm run promise",
     "test": "mocha plugins/**/*.spec.js --timeout 10000",
+    "promise": "mocha plugins/PromisedScene/**/*.spec.js --timeout 10000",
     "lint": "eslint \"plugins/**/*.js\"",
     "lint:fix": "eslint --quiet --fix \"plugins/**/*.js\""
   },
