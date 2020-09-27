@@ -12,7 +12,6 @@ function search(args = {}) {
 
 describe("freeones", () => {
   it("Search 'Zoe Bloom'", async () => {
-    console.log("Fetching freeones.xxx...");
     const result = await search({
       dry: false,
       blacklist: [],
