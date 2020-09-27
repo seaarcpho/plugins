@@ -17,31 +17,33 @@ Filter labels returned by other plugins
 ```json
 ---
 {
-  "PLUGINS": {
-    "label_filter": {
-      "path": "./plugins/label_filter/main.js",
-      "args": {
-        "whitelist": [],
-        "blacklist": []
+  "plugins": {
+    "register": {
+      "label_filter": {
+        "path": "./plugins/label_filter/main.js",
+        "args": {
+          "whitelist": [],
+          "blacklist": []
+        }
       }
+    },
+    "events": {
+      "actorCreated": [
+        "label_filter"
+      ],
+      "actorCustom": [
+        "label_filter"
+      ],
+      "sceneCreated": [
+        "label_filter"
+      ],
+      "sceneCustom": [
+        "label_filter"
+      ],
+      "movieCreated": [
+        "label_filter"
+      ]
     }
-  },
-  "PLUGIN_EVENTS": {
-    "actorCreated": [
-      "label_filter"
-    ],
-    "actorCustom": [
-      "label_filter"
-    ],
-    "sceneCreated": [
-      "label_filter"
-    ],
-    "sceneCustom": [
-      "label_filter"
-    ],
-    "movieCreated": [
-      "label_filter"
-    ]
   }
 }
 ---
@@ -50,23 +52,24 @@ Filter labels returned by other plugins
 `config.yaml`
 ```yaml
 ---
-PLUGINS:
-  label_filter:
-    path: ./plugins/label_filter/main.js
-    args:
-      whitelist: []
-      blacklist: []
-PLUGIN_EVENTS:
-  actorCreated:
-    - label_filter
-  actorCustom:
-    - label_filter
-  sceneCreated:
-    - label_filter
-  sceneCustom:
-    - label_filter
-  movieCreated:
-    - label_filter
+plugins:
+  register:
+    label_filter:
+      path: ./plugins/label_filter/main.js
+      args:
+        whitelist: []
+        blacklist: []
+  events:
+    actorCreated:
+      - label_filter
+    actorCustom:
+      - label_filter
+    sceneCreated:
+      - label_filter
+    sceneCustom:
+      - label_filter
+    movieCreated:
+      - label_filter
 
 ---
 ```

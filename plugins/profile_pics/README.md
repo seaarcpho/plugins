@@ -19,21 +19,23 @@ Find actor images based on local files. GIF support.
 ```json
 ---
 {
-  "PLUGINS": {
-    "profile_pics": {
-      "path": "./plugins/profile_pics/main.js",
-      "args": {
-        "path_thumb": null,
-        "path_alt": null,
-        "path_avatar": null,
-        "path_hero": null
+  "plugins": {
+    "register": {
+      "profile_pics": {
+        "path": "./plugins/profile_pics/main.js",
+        "args": {
+          "path_thumb": null,
+          "path_alt": null,
+          "path_avatar": null,
+          "path_hero": null
+        }
       }
+    },
+    "events": {
+      "actorCreated": [
+        "profile_pics"
+      ]
     }
-  },
-  "PLUGIN_EVENTS": {
-    "actorCreated": [
-      "profile_pics"
-    ]
   }
 }
 ---
@@ -42,17 +44,18 @@ Find actor images based on local files. GIF support.
 `config.yaml`
 ```yaml
 ---
-PLUGINS:
-  profile_pics:
-    path: ./plugins/profile_pics/main.js
-    args:
-      path_thumb: null
-      path_alt: null
-      path_avatar: null
-      path_hero: null
-PLUGIN_EVENTS:
-  actorCreated:
-    - profile_pics
+plugins:
+  register:
+    profile_pics:
+      path: ./plugins/profile_pics/main.js
+      args:
+        path_thumb: null
+        path_alt: null
+        path_avatar: null
+        path_hero: null
+  events:
+    actorCreated:
+      - profile_pics
 
 ---
 ```

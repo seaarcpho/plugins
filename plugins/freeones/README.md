@@ -19,24 +19,26 @@ Scrape data from freeones.xxx. Custom fields can only be named as follows (not c
 ```json
 ---
 {
-  "PLUGINS": {
-    "freeones": {
-      "path": "./plugins/freeones/main.js",
-      "args": {
-        "dry": false,
-        "blacklist": [],
-        "useImperial": false,
-        "useAvatarAsThumbnail": false
+  "plugins": {
+    "register": {
+      "freeones": {
+        "path": "./plugins/freeones/main.js",
+        "args": {
+          "dry": false,
+          "blacklist": [],
+          "useImperial": false,
+          "useAvatarAsThumbnail": false
+        }
       }
+    },
+    "events": {
+      "actorCreated": [
+        "freeones"
+      ],
+      "actorCustom": [
+        "freeones"
+      ]
     }
-  },
-  "PLUGIN_EVENTS": {
-    "actorCreated": [
-      "freeones"
-    ],
-    "actorCustom": [
-      "freeones"
-    ]
   }
 }
 ---
@@ -45,19 +47,20 @@ Scrape data from freeones.xxx. Custom fields can only be named as follows (not c
 `config.yaml`
 ```yaml
 ---
-PLUGINS:
-  freeones:
-    path: ./plugins/freeones/main.js
-    args:
-      dry: false
-      blacklist: []
-      useImperial: false
-      useAvatarAsThumbnail: false
-PLUGIN_EVENTS:
-  actorCreated:
-    - freeones
-  actorCustom:
-    - freeones
+plugins:
+  register:
+    freeones:
+      path: ./plugins/freeones/main.js
+      args:
+        dry: false
+        blacklist: []
+        useImperial: false
+        useAvatarAsThumbnail: false
+  events:
+    actorCreated:
+      - freeones
+    actorCustom:
+      - freeones
 
 ---
 ```

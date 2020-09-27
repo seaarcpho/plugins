@@ -22,29 +22,31 @@ Ask questions and make sure scene parsing is correct
 ```json
 ---
 {
-  "PLUGINS": {
-    "PromisedScene": {
-      "path": "./plugins/PromisedScene/main.js",
-      "args": {
-        "parseActor": true,
-        "parseStudio": true,
-        "ManualTouch": true,
-        "SceneDuplicationCheck": true,
-        "source_settings": {
-          "Actors": "./library/actors.db",
-          "Studios": "./library/studios.db",
-          "Scenes": "./library/scenes.db"
+  "plugins": {
+    "register": {
+      "PromisedScene": {
+        "path": "./plugins/PromisedScene/main.js",
+        "args": {
+          "parseActor": true,
+          "parseStudio": true,
+          "ManualTouch": true,
+          "SceneDuplicationCheck": true,
+          "source_settings": {
+            "Actors": "./library/actors.db",
+            "Studios": "./library/studios.db",
+            "Scenes": "./library/scenes.db"
+          }
         }
       }
+    },
+    "events": {
+      "sceneCreated": [
+        "PromisedScene"
+      ],
+      "sceneCustom": [
+        "PromisedScene"
+      ]
     }
-  },
-  "PLUGIN_EVENTS": {
-    "sceneCreated": [
-      "PromisedScene"
-    ],
-    "sceneCustom": [
-      "PromisedScene"
-    ]
   }
 }
 ---
@@ -53,23 +55,24 @@ Ask questions and make sure scene parsing is correct
 `config.yaml`
 ```yaml
 ---
-PLUGINS:
-  PromisedScene:
-    path: ./plugins/PromisedScene/main.js
-    args:
-      parseActor: true
-      parseStudio: true
-      ManualTouch: true
-      SceneDuplicationCheck: true
-      source_settings:
-        Actors: ./library/actors.db
-        Studios: ./library/studios.db
-        Scenes: ./library/scenes.db
-PLUGIN_EVENTS:
-  sceneCreated:
-    - PromisedScene
-  sceneCustom:
-    - PromisedScene
+plugins:
+  register:
+    PromisedScene:
+      path: ./plugins/PromisedScene/main.js
+      args:
+        parseActor: true
+        parseStudio: true
+        ManualTouch: true
+        SceneDuplicationCheck: true
+        source_settings:
+          Actors: ./library/actors.db
+          Studios: ./library/studios.db
+          Scenes: ./library/scenes.db
+  events:
+    sceneCreated:
+      - PromisedScene
+    sceneCustom:
+      - PromisedScene
 
 ---
 ```

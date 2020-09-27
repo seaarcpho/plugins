@@ -16,21 +16,23 @@ Scrape data from adultempire
 ```json
 ---
 {
-  "PLUGINS": {
-    "adultempire": {
-      "path": "./plugins/adultempire/main.js",
-      "args": {
-        "dry": false
+  "plugins": {
+    "register": {
+      "adultempire": {
+        "path": "./plugins/adultempire/main.js",
+        "args": {
+          "dry": false
+        }
       }
+    },
+    "events": {
+      "movieCreated": [
+        "adultempire"
+      ],
+      "actorCreated": [
+        "adultempire"
+      ]
     }
-  },
-  "PLUGIN_EVENTS": {
-    "movieCreated": [
-      "adultempire"
-    ],
-    "actorCreated": [
-      "adultempire"
-    ]
   }
 }
 ---
@@ -39,16 +41,17 @@ Scrape data from adultempire
 `config.yaml`
 ```yaml
 ---
-PLUGINS:
-  adultempire:
-    path: ./plugins/adultempire/main.js
-    args:
-      dry: false
-PLUGIN_EVENTS:
-  movieCreated:
-    - adultempire
-  actorCreated:
-    - adultempire
+plugins:
+  register:
+    adultempire:
+      path: ./plugins/adultempire/main.js
+      args:
+        dry: false
+  events:
+    movieCreated:
+      - adultempire
+    actorCreated:
+      - adultempire
 
 ---
 ```
