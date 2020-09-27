@@ -1,4 +1,4 @@
-## freeones 0.6.0
+## freeones 0.7.0
 
 by boi123212321, john4valor, pizzyjohnny
 
@@ -9,7 +9,8 @@ Scrape data from freeones.xxx. Custom fields can only be named as follows (not c
 | Name                 | Type          | Required | Description                                                                                                                                                                                 |
 | -------------------- | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | dry                  | Boolean       | false    | Whether to commit data changes                                                                                                                                                              |
-| blacklist            | Array&lt;String&gt; | false    | Array of data fields to omit (possible values: &#x27;zodiac&#x27;, &#x27;aliases&#x27;, &#x27;height&#x27;, &#x27;weight&#x27;, &#x27;avatar&#x27;, &#x27;bornOn&#x27;, &#x27;labels&#x27;, &#x27;hair color&#x27;, &#x27;eye color&#x27;, &#x27;ethnicity&#x27;, &#x27;birthplace&#x27;, &#x27;measurements&#x27;) |
+| whitelist            | Array&lt;String&gt; | false    | Array of data fields to pick (possible values: &#x27;zodiac&#x27;, &#x27;aliases&#x27;, &#x27;height&#x27;, &#x27;weight&#x27;, &#x27;avatar&#x27;, &#x27;bornOn&#x27;, &#x27;labels&#x27;, &#x27;hair color&#x27;, &#x27;eye color&#x27;, &#x27;ethnicity&#x27;, &#x27;birthplace&#x27;, &#x27;measurements&#x27;) |
+| blacklist            | Array&lt;String&gt; | false    | Array of data fields to omit (for values see whitelist)                                                                                                                                     |
 | useImperial          | Boolean       | false    | Use imperial units for height and weight                                                                                                                                                    |
 | useAvatarAsThumbnail | Boolean       | false    | Use the discovered Actor Avatar as the Actor Thumbnail image                                                                                                                                |
 
@@ -25,6 +26,7 @@ Scrape data from freeones.xxx. Custom fields can only be named as follows (not c
         "path": "./plugins/freeones/main.js",
         "args": {
           "dry": false,
+          "whitelist": [],
           "blacklist": [],
           "useImperial": false,
           "useAvatarAsThumbnail": false
@@ -53,6 +55,7 @@ plugins:
       path: ./plugins/freeones/main.js
       args:
         dry: false
+        whitelist: []
         blacklist: []
         useImperial: false
         useAvatarAsThumbnail: false
