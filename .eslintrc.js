@@ -20,6 +20,7 @@ module.exports = {
   },
   plugins: ["mocha", "chai-friendly"],
   rules: {
+    curly: "warn",
     "mocha/no-mocha-arrows": "off",
     // Disable the default rule
     "no-unused-expressions": 0,
