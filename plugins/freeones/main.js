@@ -38,8 +38,15 @@ module.exports = async (ctx) => {
 
   const blacklist = (args.blacklist || []).map(lowercase);
   if (!args.blacklist) $log("No blacklist defined, returning everything...");
+  if (blacklist.length) $log(`Blacklist defined, will ignore: ${blacklist.join(", ")}`);
+
+  const whitelist = (args.whitelist || []).map(lowercase);
+  if (whitelist.length) $log(`Whitelist defined, will only return: ${whitelist.join(", ")}...`);
 
   function isBlacklisted(prop) {
+    if (whitelist.length) {
+      return !whitelist.includes(lowercase(prop));
+    }
     return blacklist.includes(lowercase(prop));
   }
 
@@ -268,7 +275,7 @@ module.exports = async (ctx) => {
     custom,
   };
 
-  if (!blacklist.includes("labels")) {
+  if (!isBlacklisted("labels")) {
     data.labels = [];
     if (custom["hair color"]) data.labels.push(`${custom["hair color"]} Hair`);
     if (custom["eye color"]) data.labels.push(`${custom["eye color"]} Eyes`);

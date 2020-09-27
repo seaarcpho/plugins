@@ -42,6 +42,27 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Caucasian");
   });
 
+  it("Search 'Whitney Wright' with whitelist", async () => {
+    console.log("Fetching freeones.xxx...");
+    const result = await searchWhitney({
+      whitelist: ["nationality", "hair color"],
+    });
+    expect(result).to.deep.equal({
+      nationality: "US",
+      custom: {
+        "hair color": "Brown",
+      },
+    });
+  });
+
+  it("Search 'Whitney Wright', dry", async () => {
+    console.log("Fetching freeones.xxx...");
+    const result = await searchWhitney({
+      dry: true,
+    });
+    expect(result).to.deep.equal({});
+  });
+
   it("Search 'Whitney Wright, with avatar as thumbnail'", async () => {
     console.log("Fetching freeones.xxx...");
     const result = await searchWhitney({
