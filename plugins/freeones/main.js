@@ -240,7 +240,7 @@ module.exports = async (ctx) => {
   function getMeasurements() {
     if (isBlacklisted("measurements")) return {};
     $log("Getting measurements...");
-    let measurementParts = [];
+    const measurementParts = [];
     $('[data-test="p-measurements"] .text-underline-always').each(function (i, element) {
       measurementParts[i] = $(this).text();
     });
