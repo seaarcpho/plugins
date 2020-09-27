@@ -30,6 +30,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -54,6 +55,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -76,6 +78,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -99,6 +102,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -121,6 +125,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -143,6 +148,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -165,6 +171,7 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       weight: 57,
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -188,6 +195,7 @@ describe("freeones", () => {
       height: 168,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -212,6 +220,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -236,6 +245,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -257,6 +267,7 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.be.undefined;
     expect(result.bornOn).to.be.a("number");
@@ -281,6 +292,7 @@ describe("freeones", () => {
       weight: 125.4,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      measurements: "32B-25-36",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -289,6 +301,29 @@ describe("freeones", () => {
     expect(result.labels).to.have.length.greaterThan(0);
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
+    expect(result.labels).to.contain("Caucasian");
+  });
+
+  it("Search 'Whitney Wright', but without measurements", async () => {
+    console.log("Fetching freeones.xxx...");
+    const result = await searchWhitney({
+      blacklist: ["measurements"],
+    });
+    expect(result.custom).to.deep.equal({
+      "hair color": "Brown",
+      "eye color": "Hazel",
+      ethnicity: "Caucasian",
+      height: 168,
+      weight: 57,
+      birthplace: "Oklahoma City, OK",
+      zodiac: "Virgo",
+    });
+    expect(result.nationality).to.equal("US");
+    expect(result.bornOn).to.be.a("number");
+    expect(result.avatar).to.be.a("string");
+    expect(result.thumbnail).to.be.undefined;
+    expect(result.labels).to.have.length.greaterThan(0);
+    expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Caucasian");
   });
 });

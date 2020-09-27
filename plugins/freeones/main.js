@@ -237,12 +237,25 @@ module.exports = async (ctx) => {
     return { aliases };
   }
 
+  function getMeasurements() {
+    if (isBlacklisted("measurements")) return {};
+    $log("Getting measurements...");
+    const measurementParts = [];
+    $('[data-test="p-measurements"] .text-underline-always').each(function (i, element) {
+      measurementParts[i] = $(this).text();
+    });
+    const measurements = measurementParts.join("-");
+
+    return !measurements ? {} : { measurements };
+  }
+
   const custom = {
     ...scrapeText("hair color", '[data-test="link_hair_color"] .text-underline-always'),
     ...scrapeText("eye color", '[data-test="link_eye_color"] .text-underline-always'),
     ...scrapeText("ethnicity", '[data-test="link_ethnicity"] .text-underline-always'),
     ...getHeight(),
     ...getWeight(),
+    ...getMeasurements(),
     ...getBirthplace(),
     ...getZodiac(),
   };

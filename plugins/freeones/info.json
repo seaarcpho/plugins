@@ -1,8 +1,8 @@
 {
   "name": "freeones",
-  "version": "0.5.1",
-  "authors": ["boi123212321", "john4valor"],
-  "description": "Scrape data from freeones.xxx. Custom fields can only be named as follows (not case sensitive): Hair Color, Eye Color, Ethnicity, Height, Weight, Birthplace, Zodiac",
+  "version": "0.6.0",
+  "authors": ["boi123212321", "john4valor", "pizzyjohnny"],
+  "description": "Scrape data from freeones.xxx. Custom fields can only be named as follows (not case sensitive): Hair Color, Eye Color, Ethnicity, Height, Weight, Birthplace, Zodiac, Measurements",
   "pluginEvents": ["actorCreated", "actorCustom"],
   "arguments": [
     {
@@ -17,7 +17,7 @@
       "type": "Array<String>",
       "required": false,
       "default": [],
-      "description": "Array of data fields to omit (possible values: 'zodiac', 'aliases', 'height', 'weight', 'avatar', 'bornOn', 'labels', 'hair color', 'eye color', 'ethnicity')"
+      "description": "Array of data fields to omit (possible values: 'zodiac', 'aliases', 'height', 'weight', 'avatar', 'bornOn', 'labels', 'hair color', 'eye color', 'ethnicity', 'birthplace', 'measurements')"
     },
     {
       "name": "useImperial",
