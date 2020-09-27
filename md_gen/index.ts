@@ -74,13 +74,15 @@ function generatePluginExample(pluginInfo: PluginInfo) {
   const pluginEvents = generatePluginEvents(pluginInfo.name, pluginInfo.pluginEvents);
 
   return {
-    PLUGINS: {
-      [pluginInfo.name]: {
-        path: `./plugins/${pluginInfo.name}/main.js`,
-        args: defaultArgs,
+    plugins: {
+      register: {
+        [pluginInfo.name]: {
+          path: `./plugins/${pluginInfo.name}/main.js`,
+          args: defaultArgs,
+        },
       },
+      events: pluginEvents,
     },
-    PLUGIN_EVENTS: pluginEvents,
   };
 }
 
