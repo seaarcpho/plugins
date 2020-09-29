@@ -28,6 +28,14 @@ describe("freeones", () => {
       birthplace: "Addison, IL, IL",
       zodiac: "Virgo",
       measurements: "34C-26-36",
+      "chest size": 34,
+      "waist size": 26,
+      "hip size": 36,
+      "cup size": "34C",
+      "bust size": "34C",
+      "bra size": "34C",
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -37,6 +45,7 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Brown Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
   });
 
   it("Search 'Gia DiMarco' without measurements", async () => {
@@ -55,6 +64,8 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Addison, IL, IL",
       zodiac: "Virgo",
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -64,5 +75,6 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Brown Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
   });
 });

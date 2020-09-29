@@ -27,6 +27,14 @@ describe("freeones", () => {
       birthplace: "Pittsburgh, PA",
       zodiac: "Aries",
       measurements: "32A-24-35",
+      "chest size": 32,
+      "waist size": 24,
+      "hip size": 35,
+      "cup size": "32A",
+      "bra size": "32A",
+      "bust size": "32A",
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -34,6 +42,7 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Green Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
   });
 
   it("Search 'Zoe Bloom' but without measurements", async () => {
@@ -52,6 +61,8 @@ describe("freeones", () => {
       weight: 50,
       birthplace: "Pittsburgh, PA",
       zodiac: "Aries",
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -59,5 +70,6 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Green Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
   });
 });

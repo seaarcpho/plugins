@@ -1,8 +1,8 @@
 {
   "name": "freeones",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "authors": ["boi123212321", "john4valor", "pizzyjohnny"],
-  "description": "Scrape data from freeones.xxx. Custom fields can only be named as follows (not case sensitive): Hair Color, Eye Color, Ethnicity, Height, Weight, Birthplace, Zodiac, Measurements",
+  "description": "Scrape data from freeones.xxx. Custom fields can only be named as follows (not case sensitive): Hair Color, Eye Color, Ethnicity, Height, Weight, Birthplace, Zodiac, Measurements, Chest Size, Waist Size, Hip Size, Cup Size, Bra Size, Bust Size",
   "pluginEvents": ["actorCreated", "actorCustom"],
   "arguments": [
     {
