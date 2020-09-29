@@ -321,6 +321,16 @@ module.exports = async (ctx) => {
     return { sex: "Female", gender: "Female" };
   }
 
+  let tattooResult = scrapeText("tattoos", '[cdata-test="p_has_tattoos"]');
+  if (!Object.keys(tattooResult).length) {
+    tattooResult = scrapeText("tattoos", '[data-test="p_has_tattoos"]');
+  }
+  const tattooText = tattooResult.tattoos;
+  const hasTattoos = !!tattooText && !!tattooText.length && tattooText !== "No Tattoos";
+
+  const piercingText = scrapeText("piercings", '[data-test="p_has_piercings"]').piercings;
+  const hasPiercings = !!piercingText && !!piercingText.length && piercingText !== "No Piercings";
+
   const custom = {
     ...scrapeText("hair color", '[data-test="link_hair_color"] .text-underline-always'),
     ...scrapeText("eye color", '[data-test="link_eye_color"] .text-underline-always'),
@@ -351,6 +361,8 @@ module.exports = async (ctx) => {
     if (custom["eye color"]) data.labels.push(`${custom["eye color"]} Eyes`);
     if (custom.ethnicity) data.labels.push(custom.ethnicity);
     if (custom.gender) data.labels.push("Female");
+    if (hasPiercings) data.labels.push("Piercings");
+    if (hasTattoos) data.labels.push("Tattoos");
   }
 
   if (args.dry === true) {

@@ -43,6 +43,8 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Green Eyes");
     expect(result.labels).to.contain("Caucasian");
     expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.contain("Tattoos");
   });
 
   it("Search 'Zoe Bloom' but without measurements", async () => {
@@ -71,5 +73,7 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Green Eyes");
     expect(result.labels).to.contain("Caucasian");
     expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.contain("Tattoos");
   });
 });

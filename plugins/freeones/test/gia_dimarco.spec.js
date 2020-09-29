@@ -46,6 +46,8 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Eyes");
     expect(result.labels).to.contain("Caucasian");
     expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Gia DiMarco' without measurements", async () => {
@@ -76,5 +78,7 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Eyes");
     expect(result.labels).to.contain("Caucasian");
     expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 });
