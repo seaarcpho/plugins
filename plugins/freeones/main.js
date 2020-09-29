@@ -32,7 +32,6 @@ async function getFirstSearchResult(ctx, query) {
 
 class Measurements {
   static fromString(str) {
-    console.log("Building measurements from " + str);
     const [bra, waist, hip] = str.split("-");
     if (bra && waist && hip) {
       const measurements = new Measurements();
@@ -40,7 +39,6 @@ class Measurements {
       measurements.cup = bra.replace(measurements.chest, "");
       measurements.waist = Number(waist);
       measurements.hip = Number(hip);
-      console.log("Got ", measurements);
       return measurements;
     }
     return null;
