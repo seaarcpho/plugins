@@ -35,8 +35,8 @@ class Measurements {
     const [bra, waist, hip] = str.split("-");
     if (bra && waist && hip) {
       const measurements = new Measurements();
-      measurements.chest = parseInt(bra);
-      measurements.cup = bra.replace(measurements.chest, "");
+      measurements.bust = parseInt(bra);
+      measurements.cup = bra.replace(measurements.bust, "");
       measurements.waist = Number(waist);
       measurements.hip = Number(hip);
       return measurements;
@@ -49,7 +49,7 @@ class Measurements {
   }
 
   braSize() {
-    return `${this.chest}${this.cup}`;
+    return `${this.bust}${this.cup}`;
   }
 }
 
@@ -284,12 +284,6 @@ module.exports = async (ctx) => {
     return measurements ? { measurements: measurements.toString() } : {};
   }
 
-  function getChestSize() {
-    if (isBlacklisted("measurements")) return {};
-    $log("Getting chest size...");
-    return measurements ? { "chest size": measurements.chest } : {};
-  }
-
   function getWaistSize() {
     if (isBlacklisted("measurements")) return {};
     $log("Getting waist size...");
@@ -307,9 +301,9 @@ module.exports = async (ctx) => {
     $log("Getting bra/cup/bust size...");
     return measurements
       ? {
-          "cup size": measurements.braSize(),
+          "cup size": measurements.cup,
           "bra size": measurements.braSize(),
-          "bust size": measurements.braSize(),
+          "bust size": measurements.bust,
         }
       : {};
   }
@@ -336,7 +330,6 @@ module.exports = async (ctx) => {
     ...getHeight(),
     ...getWeight(),
     ...getMeasurements(),
-    ...getChestSize(),
     ...getWaistSize(),
     ...getHipSize(),
     ...getBraSize(),
