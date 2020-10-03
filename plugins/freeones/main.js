@@ -30,6 +30,29 @@ async function getFirstSearchResult(ctx, query) {
   return el;
 }
 
+class Measurements {
+  static fromString(str) {
+    const [bra, waist, hip] = str.split("-");
+    if (bra && waist && hip) {
+      const measurements = new Measurements();
+      measurements.bust = parseInt(bra);
+      measurements.cup = bra.replace(measurements.bust, "");
+      measurements.waist = Number(waist);
+      measurements.hip = Number(hip);
+      return measurements;
+    }
+    return null;
+  }
+
+  toString() {
+    return `${this.braSize()}-${this.waist}-${this.hip}`;
+  }
+
+  braSize() {
+    return `${this.bust}${this.cup}`;
+  }
+}
+
 module.exports = async (ctx) => {
   const { $createImage, args, $axios, $moment, $cheerio, $throw, $log, actorName } = ctx;
   if (!actorName) $throw("Uh oh. You shouldn't use the plugin for this type of event");
@@ -244,17 +267,61 @@ module.exports = async (ctx) => {
     return { aliases };
   }
 
-  function getMeasurements() {
-    if (isBlacklisted("measurements")) return {};
-    $log("Getting measurements...");
+  function scrapeMeasurements() {
     const measurementParts = [];
     $('[data-test="p-measurements"] .text-underline-always').each(function (i, element) {
       measurementParts[i] = $(this).text();
     });
     const measurements = measurementParts.join("-");
-
-    return !measurements ? {} : { measurements };
+    return Measurements.fromString(measurements);
   }
+
+  const measurements = scrapeMeasurements();
+
+  function getMeasurements() {
+    if (isBlacklisted("measurements")) return {};
+    $log("Getting measurements...");
+    return measurements ? { measurements: measurements.toString() } : {};
+  }
+
+  function getWaistSize() {
+    if (isBlacklisted("measurements")) return {};
+    $log("Getting waist size...");
+    return measurements ? { "waist size": measurements.waist } : {};
+  }
+
+  function getHipSize() {
+    if (isBlacklisted("measurements")) return {};
+    $log("Getting hip size...");
+    return measurements ? { "hip size": measurements.hip } : {};
+  }
+
+  function getBraSize() {
+    if (isBlacklisted("measurements")) return {};
+    $log("Getting bra/cup/bust size...");
+    return measurements
+      ? {
+          "cup size": measurements.cup,
+          "bra size": measurements.braSize(),
+          "bust size": measurements.bust,
+        }
+      : {};
+  }
+
+  function getGender() {
+    if (isBlacklisted("gender")) return {};
+    return { sex: "Female", gender: "Female" };
+  }
+
+  let tattooResult = scrapeText("tattoos", '[cdata-test="p_has_tattoos"]');
+  if (!Object.keys(tattooResult).length) {
+    tattooResult = scrapeText("tattoos", '[data-test="p_has_tattoos"]');
+  }
+  const tattooText = tattooResult.tattoos;
+  const hasTattoos = !!tattooText && !!tattooText.length && tattooText !== "No Tattoos";
+
+  const piercingText = scrapeText("piercings", '[data-test="p_has_piercings"]').piercings;
+  const hasPiercings = !!piercingText && !!piercingText.length && piercingText !== "No Piercings";
 
   const custom = {
     ...scrapeText("hair color", '[data-test="link_hair_color"] .text-underline-always'),
@@ -263,8 +330,12 @@ module.exports = async (ctx) => {
     ...getHeight(),
     ...getWeight(),
     ...getMeasurements(),
+    ...getWaistSize(),
+    ...getHipSize(),
+    ...getBraSize(),
     ...getBirthplace(),
     ...getZodiac(),
+    ...getGender(),
   };
 
   const data = {
@@ -280,6 +351,9 @@ module.exports = async (ctx) => {
     if (custom["hair color"]) data.labels.push(`${custom["hair color"]} Hair`);
     if (custom["eye color"]) data.labels.push(`${custom["eye color"]} Eyes`);
     if (custom.ethnicity) data.labels.push(custom.ethnicity);
+    if (custom.gender) data.labels.push("Female");
+    if (hasPiercings) data.labels.push("Piercings");
+    if (hasTattoos) data.labels.push("Tattoos");
   }
 
   if (args.dry === true) {
