@@ -2,7 +2,7 @@ module.exports = async (ctx) => {
   const { args, $moment, $axios, $cheerio, $log, movieName, $createImage } = ctx;
 
   const name = movieName
-    .replace(/#/g, "")
+    .replace(/[#&]/g, "")
     .replace(/\s{2,}/g, " ")
     .trim();
   $log(`Scraping movie covers for '${name}', dry mode: ${args.dry || false}...`);

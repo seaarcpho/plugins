@@ -58,6 +58,29 @@ describe("adultempire", () => {
       expect(date.getFullYear(), 2019);
     });
 
+    it("Should fetch covers & studio name from page 2", async () => {
+      console.log("Fetching adultempire.com...");
+      const result = await plugin({
+        ...context,
+        movieName: "Black & White Vol. 15",
+        args: {},
+      });
+      expect(result).to.be.an("object");
+      expect(result.frontCover).to.be.a("string");
+      expect(result.backCover).to.be.a("string");
+      expect(result.studio).to.be.a("string").equal("Blacked");
+      expect(result.description)
+        .to.be.a("string")
+        .equal(
+          "BLACKED.com and Greg Lansky are proud to present Black and White Vol. 15! This next collection in the award-winning series is back to showcase the absolute biggest and brightest in IR sex. Cover model Kali Roses plays a college student who is the best type of insatiable - one that could only be satisfied by an entire football team. Also featuring career-defining performances by Nicole Aniston, Khloe Kapri, and Angel Emily. Come for BLACKED.com's unrivaled production value, and stay for the hot, unparalleled passionate IR performances. Black and White Vol. 15 is a collection not to be missed."
+        );
+      expect(result.releaseDate).to.be.a("number");
+      const date = new Date(result.releaseDate);
+      expect(date.getDate(), 28);
+      expect(date.getMonth(), 7);
+      expect(date.getFullYear(), 2019);
+    });
+
     it("Should not fetch covers etc (404)", async () => {
       console.log("Fetching adultempire.com...");
       const result = await plugin({
