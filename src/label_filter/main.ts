@@ -1,6 +1,17 @@
-const lower = (s) => s.toLowerCase();
+import { ActorContext } from "../types/actor";
+import { MovieContext } from "../types/movie";
+import { SceneContext } from "../types/scene";
 
-module.exports = ({ args, data }) => {
+interface MyContext {
+  args: {
+    whitelist?: string[];
+    blacklist?: string[];
+  };
+}
+
+const lower = (s: string): string => s.toLowerCase();
+
+module.exports = ({ args, data }: (ActorContext | SceneContext | MovieContext) & MyContext) => {
   const whitelist = (args.whitelist || []).map(lower);
   const blacklist = (args.blacklist || []).map(lower);
 

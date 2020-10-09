@@ -36,6 +36,10 @@ export interface Context<D = unknown> {
   $createLocalImage: (path: string, name: string, thumbnail?: boolean) => Promise<string>;
   // Plugin
   event: string;
-  args: unknown;
+  args?: unknown;
   data: D;
+}
+
+export interface CustomFieldsOutput {
+  custom?: any;
 }

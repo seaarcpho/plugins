@@ -1,11 +1,19 @@
-module.exports = async (ctx) => {
+import { MovieContext, MovieOutput } from "../types/movie";
+
+interface MyContext extends MovieContext {
+  args: {
+    dry?: boolean;
+  };
+}
+
+export default async function (ctx: MyContext): Promise<MovieOutput> {
   const { args, $moment, $axios, $cheerio, $log, movieName, $createImage } = ctx;
 
   const name = movieName
     .replace(/[#&]/g, "")
     .replace(/\s{2,}/g, " ")
     .trim();
-  $log(`Scraping movie covers for '${name}', dry mode: ${args.dry || false}...`);
+  $log(`Scraping movie covers for '${name}', dry mode: ${args?.dry || false}...`);
 
   const url = `https://www.adultempire.com/allsearch/search?q=${name}`;
   const html = (await $axios.get(url)).data;
@@ -32,10 +40,10 @@ module.exports = async (ctx) => {
     const studioName = $(`.title-rating-section .item-info > a`).eq(0).text().trim();
 
     const frontCover = $("#front-cover img").toArray()[0];
-    const frontCoverSrc = $(frontCover).attr("src");
+    const frontCoverSrc = $(frontCover).attr("src") || "";
     const backCoverSrc = frontCoverSrc.replace("h.jpg", "bh.jpg");
 
-    if (args.dry === true) {
+    if (args?.dry === true) {
       $log({
         movieUrl,
         frontCoverSrc,
@@ -59,4 +67,4 @@ module.exports = async (ctx) => {
   }
 
   return {};
-};
+}

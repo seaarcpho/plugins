@@ -1,4 +1,4 @@
-import { Context } from "./plugin";
+import { Context, CustomFieldsOutput } from "./plugin";
 
 export interface Actor {
   _id: string;
@@ -18,7 +18,7 @@ export interface Actor {
   nationality?: string | null;
 }
 
-export interface ActorOutput {
+export interface ActorOutput extends CustomFieldsOutput {
   name?: string;
   description?: string;
   bornOn?: number;

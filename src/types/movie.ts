@@ -1,4 +1,4 @@
-import { Context } from "./plugin";
+import { Context, CustomFieldsOutput } from "./plugin";
 
 export interface Movie {
   _id: string;
@@ -16,13 +16,14 @@ export interface Movie {
   customFields: Record<string, boolean | string | number | string[] | null>;
   studio: string | null;
 }
-export interface MovieOutput {
-  name: string;
-  description: string;
-  releaseDate: number;
-  frontCover: string;
-  backCover: string;
-  labels: string[];
+export interface MovieOutput extends CustomFieldsOutput {
+  name?: string;
+  description?: string;
+  releaseDate?: number;
+  frontCover?: string;
+  backCover?: string;
+  labels?: string[];
+  studio?: string;
 }
 
 export interface MovieContext extends Context<MovieOutput> {

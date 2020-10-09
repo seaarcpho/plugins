@@ -1,4 +1,4 @@
-import { Context } from "./plugin";
+import { Context, CustomFieldsOutput } from "./plugin";
 
 export interface IDimensions {
   width: number;
@@ -32,14 +32,14 @@ interface Scene {
   studio: string | null;
   processed?: boolean;
 }
-export interface SceneOutput {
-  name: string;
-  description: string;
-  releaseDate: number;
-  thumbnail: string;
-  actors: string[];
-  labels: string[];
-  studio: string;
+export interface SceneOutput extends CustomFieldsOutput {
+  name?: string;
+  description?: string;
+  releaseDate?: number;
+  thumbnail?: string;
+  actors?: string[];
+  labels?: string[];
+  studio?: string;
 }
 
 export interface SceneContext extends Context<SceneOutput> {
