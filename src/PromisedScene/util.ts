@@ -53,6 +53,15 @@ export function stripStr(str: string, keepDate: boolean = false): string {
 }
 
 /**
+ * Escapes RegExp reserved characters
+ * @param string - the string to escape
+ * @returns the string to be used to create a RegExp
+ */
+export function escapeRegExp(string) {
+  return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
+/**
  * @param inquirer - the inquire prompting questions
  * @param testingStatus - if should just print test questions and use the param answer
  * @param $log - logger function
