@@ -502,13 +502,7 @@ module.exports = async ({
         return res;
       }
     } else {
-      const ResultsImport = true;
-      if (ResultsImport) {
-        return result;
-      } else {
-        const res = await makeChoices();
-        return res;
-      }
+      return result;
     }
   }
 
@@ -1144,27 +1138,21 @@ module.exports = async ({
             return res;
           }
         } else {
-          const ResultsImport = true;
-          if (ResultsImport) {
-            if (grabResults.thumbnail) {
-              try {
-                const thumbnailFile = await $createImage(
-                  grabResults.thumbnail,
-                  grabResults.name || "",
-                  true
-                );
+          if (grabResults.thumbnail) {
+            try {
+              const thumbnailFile = await $createImage(
+                grabResults.thumbnail,
+                grabResults.name || "",
+                true
+              );
 
-                grabResults.thumbnail = thumbnailFile.toString();
-              } catch (e) {
-                $log("No thumbnail found");
-              }
+              grabResults.thumbnail = thumbnailFile.toString();
+            } catch (e) {
+              $log("No thumbnail found");
             }
-
-            return grabResults;
-          } else {
-            const res = await makeChoices();
-            return res;
           }
+
+          return grabResults;
         }
       }
 
