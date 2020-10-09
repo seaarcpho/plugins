@@ -32,6 +32,7 @@
     "mocha": "^8.1.3",
     "nyc": "^15.1.0",
     "prettier": "^2.1.2",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.3",
     "yaml": "^1.10.0"
   },
@@ -40,9 +41,9 @@
     "check-info": "node check_info.js",
     "coverage": "nyc npm run test",
     "coverage:promise": "nyc npm run promise",
-    "test": "mocha plugins/**/*.spec.js --timeout 10000",
-    "lint": "eslint \"plugins/**/*.js\"",
-    "lint:fix": "eslint --quiet --fix \"plugins/**/*.js\"",
+    "test": "mocha -r ts-node/register src/**/*.spec.js --timeout 10000",
+    "lint": "eslint \"src/**/*.js\"",
+    "lint:fix": "eslint --quiet --fix \"src/**/*.js\"",
     "transpile": "tsc"
   },
   "repository": {
