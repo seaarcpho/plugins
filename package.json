@@ -40,10 +40,9 @@
     "doc": "cd md_gen && npm start",
     "check-info": "node check_info.js",
     "coverage": "nyc npm run test",
-    "coverage:promise": "nyc npm run promise",
-    "test": "mocha -r ts-node/register src/**/*.spec.js --timeout 10000",
-    "lint": "eslint \"src/**/*.js\"",
-    "lint:fix": "eslint --quiet --fix \"src/**/*.js\"",
+    "test": "mocha -r ts-node/register \"plugins/**/*.spec.js\" --timeout 10000",
+    "lint": "eslint \"plugins/**/*.js\"",
+    "lint:fix": "eslint --quiet --fix \"plugins/**/*.js\"",
     "transpile": "tsc"
   },
   "repository": {

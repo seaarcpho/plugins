@@ -1,7 +1,7 @@
 {
   "include": [
-    "src/**/*.ts",
-    "src/**/*.js"
+    "plugins/**/*.ts",
+    "plugins/**/*.js"
   ],
   "exclude": [
     "node_modules",
@@ -29,8 +29,8 @@
     // "sourceMap": true,
     /* Generates corresponding '.map' file. */
     // "outFile": "./dist/index.js",                       /* Concatenate and emit output to single file. */
-    "outDir": "./plugins" /* Redirect output structure to the directory. */,
-    "rootDir": "src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+    "outDir": "./dist" /* Redirect output structure to the directory. */,
+    "rootDir": "plugins" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
     "composite": false, /* Enable project compilation */
     "removeComments": true /* Do not emit comments to output. */,
     // "noEmit": true,                        /* Do not emit outputs. */
