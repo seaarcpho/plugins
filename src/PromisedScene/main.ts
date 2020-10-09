@@ -1,5 +1,38 @@
+import { SceneContext, SceneOutput } from "../types/scene";
+
 const levenshtein = require("./levenshtein.js");
-const util = require("./util");
+import * as util from "./util";
+
+interface MyContext extends SceneContext {
+  args?: {
+    parseActor?: boolean;
+    parseStudio?: boolean;
+    ManualTouch?: boolean;
+    SceneDuplicationCheck?: boolean;
+    source_settings?: {
+      Actors?: string;
+      Studios?: string;
+      Scenes?: string;
+    };
+  };
+  testMode?: {
+    questionAnswers?: {
+      enterInfoSearch?: string;
+      enterMovie?: string;
+      enterOneActorName?: string;
+      enterSceneDate?: string;
+      enterSceneTitle?: string;
+      enterStudioName?: string;
+      movieTitle?: string;
+      manualDescription?: string;
+      manualActors?: string;
+      multipleChoice?: string;
+    };
+    CorrectImportInfo?: string;
+    testSiteUnavailable?: boolean;
+    status?: boolean;
+  };
+}
 
 module.exports = async ({
   event,
@@ -14,15 +47,18 @@ module.exports = async ({
   args,
   $inquirer,
   $createImage,
-}) => {
+}: MyContext): Promise<SceneOutput> => {
   const testingStatus = testMode ? testMode.status : false;
   const testingTheSiteStatus = testMode ? testMode.testSiteUnavailable : false;
 
   // Array Variable that will be returned
-  const result = {};
+  const result: any = {}; // TODO: type this
 
-  // need to make a global counter to see how many times makechoices will run, so that test case will know what option to use
-  let makeChoicesCounter = false;
+  /**
+   * If makeChoices() was already run
+   */
+  let didRunMakeChoices = false;
+
   const ManualTouchChoices = {
     MANUAL_ENTER: "Enter scene details manually, straight into the porn-valt",
     NOTHING: "Do nothing (let the scene be imported with no details)",
@@ -40,23 +76,23 @@ module.exports = async ({
 
   // Checking all of the arguments are set in the plugin
 
-  if (args.source_settings === undefined) {
+  if (args?.source_settings === undefined) {
     $throw(" ERR: Missing source_settings in plugin args");
   }
 
-  if (args.parseActor === undefined) {
+  if (args?.parseActor === undefined) {
     $throw(" ERR: Missing ParseActor in plugin args");
   }
 
-  if (args.parseStudio === undefined) {
+  if (args?.parseStudio === undefined) {
     $throw(" ERR: Missing parseStudio in plugin args");
   }
 
-  if (args.ManualTouch === undefined) {
+  if (args?.ManualTouch === undefined) {
     $throw(" ERR: Missing ManualTouch in plugin args");
   }
 
-  if (args.SceneDuplicationCheck === undefined) {
+  if (args?.SceneDuplicationCheck === undefined) {
     $throw(" ERR: Missing SceneDuplicationCheck in plugin args");
   }
 
@@ -66,10 +102,10 @@ module.exports = async ({
   // This is where the plugin attempts to check for Actors using the Actors.db
 
   // creating a array to use for other functions
-  const gettingActor = [];
-  const actor = [];
+  const gettingActor: string[] = [];
+  const actor: string[] = [];
 
-  if (args.parseActor) {
+  if (args?.parseActor && args?.source_settings?.Actors) {
     $log(`:::::PARSE:::: Parsing Actors DB ==> ${args.source_settings.Actors}`);
     $fs
       .readFileSync(args.source_settings.Actors, "utf8")
@@ -94,7 +130,7 @@ module.exports = async ({
           return;
         }
 
-        const allAliases = JSON.parse(line).aliases.toString().split(",");
+        const allAliases: string[] = JSON.parse(line).aliases.toString().split(",");
 
         allAliases.forEach((personAlias) => {
           const aliasLength = personAlias.toString().split(" ");
@@ -156,11 +192,11 @@ module.exports = async ({
 
   // creating a array to use for other functions
 
-  const gettingStudio = [];
+  const gettingStudio: string[] = [];
 
-  const studio = [];
+  const studio: string[] = [];
 
-  if (args.parseStudio) {
+  if (args?.parseStudio && args?.source_settings?.Studios) {
     $log(`:::::PARSE:::: Parsing Studios DB ==> ${args.source_settings.Studios}`);
 
     $fs
@@ -259,7 +295,7 @@ module.exports = async ({
 
   const yymmdd = util.stripStr(scenePath, true).match(/\d\d \d\d \d\d/);
 
-  let timestamp = {};
+  let timestamp = Number.NaN;
 
   $log(":::::PARSE:::: Parsing Date from ScenePath");
   // $log(util.stripStr(scenePath, true));
@@ -310,21 +346,21 @@ module.exports = async ({
   async function manualImport() {
     const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
 
-    const { IsMovie: manualMovieAnswer } = await questionAsync({
+    const { IsMovie: manualMovieAnswer } = await questionAsync<{ IsMovie: string }>({
       type: "input",
       name: "IsMovie",
       message: "Is this a Scene from a Movie / Set / Collection?: (y/N) ",
-      testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.enterMovie : "",
+      testAnswer: testMode?.questionAnswers?.enterMovie ?? "",
     });
 
     const manualEnterMovieSearch = util.isPositiveAnswer(manualMovieAnswer);
 
     if (manualEnterMovieSearch) {
-      const { TitleofMovie: manualMovieName } = await questionAsync({
+      const { TitleofMovie: manualMovieName } = await questionAsync<{ TitleofMovie: string }>({
         type: "input",
         name: "TitleofMovie",
         message: "What is the Title of the Movie?: ",
-        testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.movieTitle : "",
+        testAnswer: testMode?.questionAnswers?.movieTitle ?? "",
       });
 
       if (result.movie === undefined && manualMovieName !== "") {
@@ -332,22 +368,22 @@ module.exports = async ({
       }
     }
 
-    const { TitleofScene: manualEnterTitleScene } = await questionAsync({
+    const { TitleofScene: manualEnterTitleScene } = await questionAsync<{ TitleofScene: string }>({
       type: "input",
       name: "TitleofScene",
       message: "What is the TITLE of the scene?: ",
-      testAnswer:
-        testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneTitle : "",
+      testAnswer: testMode?.questionAnswers?.enterSceneTitle ?? "",
     });
 
     result.title = manualEnterTitleScene;
 
-    const { ReleaseDateofScene: manualEnterReleaseDateScene } = await questionAsync({
+    const { ReleaseDateofScene: manualEnterReleaseDateScene } = await questionAsync<{
+      ReleaseDateofScene: string;
+    }>({
       type: "input",
       name: "ReleaseDateofScene",
       message: "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
-      testAnswer:
-        testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneDate : "",
+      testAnswer: testMode?.questionAnswers?.enterSceneDate ?? "",
     });
 
     result.releaseDate = manualEnterReleaseDateScene;
@@ -366,21 +402,22 @@ module.exports = async ({
       }
     }
 
-    const { DescriptionOfScene: manualEnterDescriptionOfScene } = await questionAsync({
+    const { DescriptionOfScene: manualEnterDescriptionOfScene } = await questionAsync<{
+      DescriptionOfScene: string;
+    }>({
       type: "input",
       name: "DescriptionOfScene",
       message: "What is the DESCRIPTION for the scene?: ",
-      testAnswer:
-        testMode && testMode.questionAnswers ? testMode.questionAnswers.manualDescription : "",
+      testAnswer: testMode?.questionAnswers?.manualDescription ?? "",
     });
 
     result.description = manualEnterDescriptionOfScene;
 
-    const { ActorsOfScene: splitactors } = await questionAsync({
+    const { ActorsOfScene: splitactors } = await questionAsync<{ ActorsOfScene: string }>({
       type: "input",
       name: "ActorsOfScene",
       message: `What are the Actors NAMES in the scene?: (seperated by Comma)`,
-      testAnswer: testMode && testMode.questionAnswers ? testMode.questionAnswers.manualActors : "",
+      testAnswer: testMode?.questionAnswers?.manualActors ?? "",
       default() {
         return `${actor.length ? ` ${actor.join(", ")}` : ""}`;
       },
@@ -392,12 +429,11 @@ module.exports = async ({
       result.actors = splitactors.trim().split(",");
     }
 
-    const { StudioOfScene: askedStudio } = await questionAsync({
+    const { StudioOfScene: askedStudio } = await questionAsync<{ StudioOfScene: string }>({
       type: "input",
       name: "StudioOfScene",
       message: `What Studio NAME is responsible for the scene?:`,
-      testAnswer:
-        testMode && testMode.questionAnswers ? testMode.questionAnswers.enterStudioName : "",
+      testAnswer: testMode?.questionAnswers?.enterStudioName ?? "",
       default() {
         return `${studio[0] ? ` ${studio[0]}` : ""}`;
       },
@@ -434,8 +470,10 @@ module.exports = async ({
         $log(`${property}: ${result[property]}`);
       }
     }
-    if (args.ManualTouch) {
-      const { CorrectImportInfo: resultsConfirmation } = await questionAsync({
+    if (args?.ManualTouch) {
+      const { CorrectImportInfo: resultsConfirmation } = await questionAsync<{
+        CorrectImportInfo: string;
+      }>({
         type: "input",
         name: "CorrectImportInfo",
         message: "Is this the correct scene details to import? (y/N)",
@@ -468,9 +506,9 @@ module.exports = async ({
    * @returns {Promise<object>} ???
    */
   async function makeChoices() {
-    if (!args.ManualTouch) {
+    if (!args?.ManualTouch) {
       $log(" Config ==> [ManualTouch]  MSG: SET TO FALSE ");
-      if (makeChoicesCounter > 0) {
+      if (didRunMakeChoices) {
         $log("  MSG: returning nothing");
         return {};
       } else {
@@ -479,7 +517,7 @@ module.exports = async ({
             `https://api.metadataapi.net/api/scenes?parse=` +
             scenePath
         );
-        makeChoicesCounter += 1;
+        didRunMakeChoices = true;
         const agressearchnomanual = await run(
           `https://api.metadataapi.net/api/scenes?parse=` + scenePath,
           true
@@ -488,16 +526,16 @@ module.exports = async ({
         return agressearchnomanual;
       }
     } else {
-      const questionActor = [];
+      const questionActor: string[] = [];
 
-      const questionStudio = [];
+      const questionStudio: string[] = [];
 
       let questionDate;
 
       /* If testmode is running and a question has already been asked,
        *  we always want the second option to do nothing and return nothing
        */
-      if (makeChoicesCounter === 1 && testMode) {
+      if (didRunMakeChoices && testMode) {
         return {};
       }
 
@@ -505,12 +543,11 @@ module.exports = async ({
         const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
 
         $log(" Config ==> [ManualTouch]  MSG: SET TO TRUE ");
-        const { Choices: Q1Answer } = await questionAsync({
+        const { Choices: Q1Answer } = await questionAsync<{ Choices: string }>({
           type: "rawlist",
           name: "Choices",
           message: "Would you like to:",
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterInfoSearch : "",
+          testAnswer: testMode?.questionAnswers?.enterInfoSearch ?? "",
           choices: [
             ManualTouchChoices.SEARCH,
             ManualTouchChoices.MANUAL_ENTER,
@@ -518,7 +555,7 @@ module.exports = async ({
           ],
         });
 
-        makeChoicesCounter += 1;
+        didRunMakeChoices = true;
 
         if (Q1Answer === ManualTouchChoices.MANUAL_ENTER) {
           const manualInfo = await manualImport();
@@ -529,34 +566,33 @@ module.exports = async ({
           return {};
         }
 
-        const { MovieSearch: Movieanswer } = await questionAsync({
+        const { MovieSearch: Movieanswer } = await questionAsync<{ MovieSearch: string }>({
           type: "input",
           name: "MovieSearch",
           message: "Is this a Scene from a Movie / Set / Collection?: (y/N) ",
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterMovie : "",
+          testAnswer: testMode?.questionAnswers?.enterMovie ?? "",
         });
         const enterMovieSearch = util.isPositiveAnswer(Movieanswer);
 
         if (enterMovieSearch) {
-          const { ManualMovieTitleSearch: movieName } = await questionAsync({
+          const { ManualMovieTitleSearch: movieName } = await questionAsync<{
+            ManualMovieTitleSearch: string;
+          }>({
             type: "input",
             name: "ManualMovieTitleSearch",
             message: "What is the Title of the Movie?: ",
-            testAnswer:
-              testMode && testMode.questionAnswers ? testMode.questionAnswers.movieTitle : "",
+            testAnswer: testMode?.questionAnswers?.movieTitle ?? "",
           });
 
           if (result.movie === undefined && movieName !== "") {
             result.movie = movieName;
           }
         }
-        const { ManualActorSearch: Q2Actor } = await questionAsync({
+        const { ManualActorSearch: Q2Actor } = await questionAsync<{ ManualActorSearch: string }>({
           type: "input",
           name: "ManualActorSearch",
           message: `What is ONE of the Actors NAME in the scene?:`,
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterOneActorName : "",
+          testAnswer: testMode?.questionAnswers?.enterOneActorName ?? "",
           default() {
             return `${actor[0] ? ` ${actor[0]}` : ""}`;
           },
@@ -567,12 +603,13 @@ module.exports = async ({
           actor.push(Q2Actor);
         }
 
-        const { ManualStudioSearch: Q3Studio } = await questionAsync({
+        const { ManualStudioSearch: Q3Studio } = await questionAsync<{
+          ManualStudioSearch: string;
+        }>({
           type: "input",
           name: "ManualStudioSearch",
           message: `What Studio NAME is responsible for the scene?:`,
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterStudioName : "",
+          testAnswer: testMode?.questionAnswers?.enterStudioName ?? "",
           default() {
             return `${studio[0] ? ` ${studio[0]}` : ""}`;
           },
@@ -582,15 +619,14 @@ module.exports = async ({
         if (Array.isArray(studio) && !studio.length) {
           studio.push(Q3Studio);
         }
-        const { ManualDateSearch: Q4date } = await questionAsync({
+        const { ManualDateSearch: Q4date } = await questionAsync<{ ManualDateSearch: string }>({
           type: "input",
           name: "ManualDateSearch",
           message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.enterSceneDate : "",
+          testAnswer: testMode?.questionAnswers?.enterSceneDate ?? "",
           default() {
             const dottedTimestamp = util.timeConverter(timestamp).replace("-", ".");
-            if (dottedTimestamp && !isNaN(dottedTimestamp)) {
+            if (dottedTimestamp && !isNaN(+dottedTimestamp)) {
               return ` ${dottedTimestamp}`;
             }
             return "";
@@ -630,7 +666,7 @@ module.exports = async ({
    */
   async function run(value, agressiveSearch = false) {
     const tpdbSceneSearchResponse = await $axios.get(value, {
-      validateStatus: false,
+      validateStatus: () => true,
     });
 
     // checking the status of the link or site, will escape if the site is down
@@ -724,10 +760,10 @@ module.exports = async ({
                 searchedTitle.toString().trim()
             );
 
-            matchTitle = new RegExp(escapeRegExp(matchTitle.toString().trim()), "i");
+            const matchTitleRegex = new RegExp(escapeRegExp(matchTitle.toString().trim()), "i");
 
             if (searchedTitle !== undefined) {
-              if (searchedTitle.toString().trim().match(matchTitle)) {
+              if (searchedTitle.toString().trim().match(matchTitleRegex)) {
                 correctSceneIdx = idx;
 
                 break;
@@ -741,7 +777,7 @@ module.exports = async ({
       if (correctSceneIdx === -1) {
         // Will provide a list back the user if no Scene was found
 
-        if (tpdbSceneSearchContent.data.length > 1 && args.ManualTouch === true) {
+        if (tpdbSceneSearchContent.data.length > 1 && args?.ManualTouch === true) {
           $log(" ERR: TPDB Could NOT find correct scene info, here were the results");
 
           return alltitles;
@@ -763,7 +799,7 @@ module.exports = async ({
       let foundDupScene = false;
       // If i decide to do anything with duplicate scenes, this variable on the next line will come into play
       // let TheDupedScene = [];
-      if (args.SceneDuplicationCheck) {
+      if (args?.SceneDuplicationCheck && args?.source_settings?.Scenes) {
         const lines = $fs.readFileSync(args.source_settings.Scenes, "utf8").split("\n");
 
         let line = lines.shift();
@@ -854,7 +890,7 @@ module.exports = async ({
   async function grabSites(Metadataapisiteaddress) {
     try {
       const resultTheListofSites = await $axios.get(Metadataapisiteaddress, {
-        validateStatus: false,
+        validateStatus: () => true,
       });
 
       if (
@@ -886,12 +922,16 @@ module.exports = async ({
   /**
    * The (Backbone) main Search function for the plugin
    *
-   * @param {array} searchActor - The URL API that has the sites hosted on TPD
-   * @param {array} searchStudio - The URL API that has the sites hosted on TPD
-   * @param {number} searchFuncTimestamp - The URL API that has the sites hosted on TPD
+   * @param searchActor - The URL API that has the sites hosted on TPD
+   * @param searchStudio - The URL API that has the sites hosted on TPD
+   * @param searchFuncTimestamp - The URL API that has the sites hosted on TPD
    * @returns {Promise<object>} return the proper scene information (either through manual questions or automatically)
    */
-  async function doASearch(searchActor, searchStudio, searchFuncTimestamp) {
+  async function doASearch(
+    searchActor: string[] | string,
+    searchStudio: string[] | string,
+    searchFuncTimestamp: number
+  ) {
     // check to see if the Studio and Actor are available for searching.
 
     if (
@@ -952,7 +992,7 @@ module.exports = async ({
 
         tpdbSceneSearchUrl =
           `https://api.metadataapi.net/api/scenes?parse=` +
-          encodeURIComponent(searchStudio) +
+          encodeURIComponent(searchStudio[0]) +
           "%20" +
           encodeURIComponent(searchActor[0]);
       } else {
@@ -960,7 +1000,7 @@ module.exports = async ({
 
         tpdbSceneSearchUrl =
           `https://api.metadataapi.net/api/scenes?parse=` +
-          encodeURIComponent(searchStudio) +
+          encodeURIComponent(searchStudio[0]) +
           "%20" +
           encodeURIComponent(searchActor[0]) +
           "%20" +
@@ -977,31 +1017,32 @@ module.exports = async ({
         // Run through the list of titles and ask if they would like to choose one.
         $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
 
-        const listing = [];
-        const justtitles = [];
+        const listing: string[] = [];
+        const justtitles: string[] = [];
         for (let loopspot = 0; loopspot < Object.keys(grabResults).length; loopspot++) {
           listing.push(grabResults["Title" + loopspot].Title);
           justtitles.push(grabResults["Title" + loopspot].Title);
         }
 
         const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
-        listing.push(new $inquirer.Separator());
+        listing.push((new $inquirer.Separator() as any) as string);
         listing.push("== None of the above == ");
         listing.push("== Manual Search == ");
 
-        const { SearchedTitles: multipleSitesAnswer } = await questionAsync({
+        const { SearchedTitles: multipleSitesAnswer } = await questionAsync<{
+          SearchedTitles: string;
+        }>({
           type: "rawlist",
           name: "SearchedTitles",
           message: "Which Title would you like to use?",
-          testAnswer:
-            testMode && testMode.questionAnswers ? testMode.questionAnswers.multipleChoice : "",
+          testAnswer: testMode?.questionAnswers?.multipleChoice ?? "",
           choices: listing,
         });
 
         const findresultindex = justtitles.indexOf(multipleSitesAnswer.trim());
 
         if (findresultindex < 0) {
-          if (args.ManualTouch) {
+          if (args?.ManualTouch) {
             const manualInfo = await makeChoices();
             return manualInfo;
           } else {
@@ -1040,8 +1081,10 @@ module.exports = async ({
               $log(`${property}: ${goGetIt[property]}`);
             }
           }
-          if (args.ManualTouch) {
-            const { CorrectImportInfo: resultsConfirmation } = await questionAsync({
+          if (args?.ManualTouch) {
+            const { CorrectImportInfo: resultsConfirmation } = await questionAsync<{
+              CorrectImportInfo: string;
+            }>({
               type: "input",
               name: "CorrectImportInfo",
               message: "Does this information look like the correct information to import? (y/N)",
@@ -1126,8 +1169,10 @@ module.exports = async ({
             $log(`${property}: ${grabResults[property]}`);
           }
         }
-        if (args.ManualTouch) {
-          const { CorrectImportInfo: resultsConfirmation } = await questionAsync({
+        if (args?.ManualTouch) {
+          const { CorrectImportInfo: resultsConfirmation } = await questionAsync<{
+            CorrectImportInfo: string;
+          }>({
             type: "input",
             name: "CorrectImportInfo",
             message: "Does this information look like the correct information to import? (y/N)",

@@ -1,5 +1,4 @@
 import axios from "axios";
-import cheerio from "cheerio";
 
 import { ActorContext, ActorOutput } from "./../types/actor";
 

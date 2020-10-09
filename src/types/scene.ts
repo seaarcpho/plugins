@@ -40,6 +40,7 @@ export interface SceneOutput extends CustomFieldsOutput {
   actors?: string[];
   labels?: string[];
   studio?: string;
+  movie?: string;
 }
 
 export interface SceneContext extends Context<SceneOutput> {
