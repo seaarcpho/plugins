@@ -32,16 +32,18 @@ interface Scene {
   studio: string | null;
   processed?: boolean;
 }
-export interface SceneOutput extends CustomFieldsOutput {
-  name?: string;
-  description?: string;
-  releaseDate?: number;
-  thumbnail?: string;
-  actors?: string[];
-  labels?: string[];
-  studio?: string;
-  movie?: string;
+export interface FullSceneOutput extends CustomFieldsOutput {
+  name: string;
+  description: string;
+  releaseDate: number;
+  thumbnail: string;
+  actors: string[];
+  labels: string[];
+  studio: string;
+  movie: string;
 }
+
+export type SceneOutput = Partial<FullSceneOutput>;
 
 export interface SceneContext extends Context<SceneOutput> {
   scene: Scene;

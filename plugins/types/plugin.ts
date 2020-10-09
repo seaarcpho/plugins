@@ -11,7 +11,7 @@ import ffmpeg from "fluent-ffmpeg";
 import jimp from "jimp";
 import yaml from "yaml";
 
-export interface Context<D = unknown> {
+export interface Context<Data = unknown> {
   // Libraries
   $axios: typeof axios;
   $cheerio: typeof cheerio;
@@ -37,7 +37,7 @@ export interface Context<D = unknown> {
   // Plugin
   event: string;
   args?: unknown;
-  data: D;
+  data: Data;
 }
 
 export interface CustomFieldsOutput {

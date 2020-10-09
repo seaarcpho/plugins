@@ -18,15 +18,17 @@ export interface Actor {
   nationality?: string | null;
 }
 
-export interface ActorOutput extends CustomFieldsOutput {
-  name?: string;
-  description?: string;
-  bornOn?: number;
-  thumbnail?: string;
-  aliases?: string[];
-  labels?: string[];
-  altThumbnail?: string;
+export interface FullActorOutput extends CustomFieldsOutput {
+  name: string;
+  description: string;
+  bornOn: number;
+  thumbnail: string;
+  aliases: string[];
+  labels: string[];
+  altThumbnail: string;
 }
+
+export type ActorOutput = Partial<FullActorOutput>;
 
 export interface ActorContext extends Context<ActorOutput> {
   actor: Actor;

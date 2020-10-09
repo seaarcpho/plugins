@@ -16,15 +16,17 @@ export interface Movie {
   customFields: Record<string, boolean | string | number | string[] | null>;
   studio: string | null;
 }
-export interface MovieOutput extends CustomFieldsOutput {
-  name?: string;
-  description?: string;
-  releaseDate?: number;
-  frontCover?: string;
-  backCover?: string;
-  labels?: string[];
-  studio?: string;
+export interface FullMovieOutput extends CustomFieldsOutput {
+  name: string;
+  description: string;
+  releaseDate: number;
+  frontCover: string;
+  backCover: string;
+  labels: string[];
+  studio: string;
 }
+
+export type MovieOutput = Partial<FullMovieOutput>
 
 export interface MovieContext extends Context<MovieOutput> {
   movie: Movie;
