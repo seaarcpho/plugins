@@ -155,7 +155,7 @@ export interface Meta {
   total: number;
 }
 
-export interface TPDBResult {
+export interface SceneSearchResult {
   data: SceneData[];
   links: Links;
   meta: Meta;
