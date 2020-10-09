@@ -18,7 +18,7 @@ export class TPDBApi {
   }
 
   async getSites() {
-    return this.axios.get<SiteListResult>(ENDPOINTS.SCENES);
+    return this.axios.get<SiteListResult>(ENDPOINTS.SITES);
   }
 
   async parseScene(parse: string) {

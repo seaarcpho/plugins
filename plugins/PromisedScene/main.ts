@@ -1,9 +1,10 @@
 import { SceneContext, SceneOutput } from "../types/scene";
-import { ENDPOINTS, TPDBApi } from "./api";
+import { TPDBApi } from "./api";
 import {
   createQuestionPrompter,
   escapeRegExp,
   isPositiveAnswer,
+  ManualTouchChoices,
   stripStr,
   timeConverter,
 } from "./util";
@@ -44,12 +45,6 @@ interface TitleObj {
   title: string;
   slug: string;
 }
-
-const ManualTouchChoices = {
-  MANUAL_ENTER: "Enter scene details manually, straight into the porn-vault",
-  NOTHING: "Do nothing (let the scene be imported with no details)",
-  SEARCH: "Search scene details on The Porn Database (TPD)",
-};
 
 function applyStudioAndActors(
   result: { actors?: string[]; studio?: string } | undefined,
@@ -410,20 +405,20 @@ module.exports = async ({
       }
     }
 
-    const { titleofScene: manualEnterTitleScene } = await questionAsync<{ titleofScene: string }>({
+    const { titleOfScene: manualEnterTitleScene } = await questionAsync<{ titleOfScene: string }>({
       type: "input",
-      name: "titleofScene",
+      name: "titleOfScene",
       message: "What is the TITLE of the scene?: ",
       testAnswer: testMode?.questionAnswers?.enterSceneTitle ?? "",
     });
 
     result.name = manualEnterTitleScene;
 
-    const { ReleaseDateOfScene: manualEnterReleaseDateScene } = await questionAsync<{
-      ReleaseDateOfScene: string;
+    const { releaseDateOfScene: manualEnterReleaseDateScene } = await questionAsync<{
+      releaseDateOfScene: string;
     }>({
       type: "input",
-      name: "ReleaseDateOfScene",
+      name: "releaseDateOfScene",
       message: "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
       testAnswer: testMode?.questionAnswers?.enterSceneDate ?? "",
     });
@@ -442,20 +437,20 @@ module.exports = async ({
       }
     }
 
-    const { DescriptionOfScene: manualEnterDescriptionOfScene } = await questionAsync<{
-      DescriptionOfScene: string;
+    const { descriptionOfScene: manualEnterDescriptionOfScene } = await questionAsync<{
+      descriptionOfScene: string;
     }>({
       type: "input",
-      name: "DescriptionOfScene",
+      name: "descriptionOfScene",
       message: "What is the DESCRIPTION for the scene?: ",
       testAnswer: testMode?.questionAnswers?.manualDescription ?? "",
     });
 
     result.description = manualEnterDescriptionOfScene;
 
-    const { ActorsOfScene: splitActors } = await questionAsync<{ ActorsOfScene: string }>({
+    const { actorsOfScene: splitActors } = await questionAsync<{ actorsOfScene: string }>({
       type: "input",
-      name: "ActorsOfScene",
+      name: "actorsOfScene",
       message: `What are the Actors NAMES in the scene?: (separated by Comma)`,
       testAnswer: testMode?.questionAnswers?.manualActors ?? "",
       default() {
@@ -469,9 +464,9 @@ module.exports = async ({
       result.actors = splitActors.trim().split(",");
     }
 
-    const { StudioOfScene: askedStudio } = await questionAsync<{ StudioOfScene: string }>({
+    const { studioOfScene: askedStudio } = await questionAsync<{ studioOfScene: string }>({
       type: "input",
-      name: "StudioOfScene",
+      name: "studioOfScene",
       message: `What Studio NAME is responsible for the scene?:`,
       testAnswer: testMode?.questionAnswers?.enterStudioName ?? "",
       default() {
@@ -491,11 +486,11 @@ module.exports = async ({
     logResultObject(result);
 
     if (args?.ManualTouch) {
-      const { CorrectImportInfo: resultsConfirmation } = await questionAsync<{
-        CorrectImportInfo: string;
+      const { correctImportInfo: resultsConfirmation } = await questionAsync<{
+        correctImportInfo: string;
       }>({
         type: "input",
-        name: "CorrectImportInfo",
+        name: "correctImportInfo",
         message: "Is this the correct scene details to import? (y/N)",
         testAnswer: testMode ? testMode.CorrectImportInfo : "",
       });
@@ -531,7 +526,7 @@ module.exports = async ({
         $log("  MSG: returning nothing");
         return {};
       } else {
-        $log("  MSG: Trying a single Aggressive Search --> " + ENDPOINTS.SCENES + scenePath);
+        $log("  MSG: Trying a single Aggressive Search --> ");
         didRunMakeChoices = true;
         const aggressiveSearchNoManual = await run(scenePath, true);
 
@@ -555,9 +550,9 @@ module.exports = async ({
         const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
 
         $log(" Config ==> [ManualTouch]  MSG: SET TO TRUE ");
-        const { Choices: Q1Answer } = await questionAsync<{ Choices: string }>({
+        const { choices: Q1Answer } = await questionAsync<{ choices: string }>({
           type: "rawlist",
-          name: "Choices",
+          name: "choices",
           message: "Would you like to:",
           testAnswer: testMode?.questionAnswers?.enterInfoSearch ?? "",
           choices: Object.values(ManualTouchChoices),
@@ -583,11 +578,11 @@ module.exports = async ({
         const enterMovieSearch = isPositiveAnswer(movieAnswer);
 
         if (enterMovieSearch) {
-          const { ManualMovieTitleSearch: movieName } = await questionAsync<{
-            ManualMovieTitleSearch: string;
+          const { manualMovieTitleSearch: movieName } = await questionAsync<{
+            manualMovieTitleSearch: string;
           }>({
             type: "input",
-            name: "ManualMovieTitleSearch",
+            name: "manualMovieTitleSearch",
             message: "What is the Title of the Movie?: ",
             testAnswer: testMode?.questionAnswers?.movieTitle ?? "",
           });
@@ -611,11 +606,11 @@ module.exports = async ({
           actor.push(Q2Actor);
         }
 
-        const { ManualStudioSearch: Q3Studio } = await questionAsync<{
-          ManualStudioSearch: string;
+        const { manualStudioSearch: Q3Studio } = await questionAsync<{
+          manualStudioSearch: string;
         }>({
           type: "input",
-          name: "ManualStudioSearch",
+          name: "manualStudioSearch",
           message: `What Studio NAME is responsible for the scene?:`,
           testAnswer: testMode?.questionAnswers?.enterStudioName ?? "",
           default() {
@@ -627,9 +622,9 @@ module.exports = async ({
         if (Array.isArray(studio) && !studio.length) {
           studio.push(Q3Studio);
         }
-        const { ManualDateSearch: Q4date } = await questionAsync<{ ManualDateSearch: string }>({
+        const { manualDateSearch: Q4date } = await questionAsync<{ manualDateSearch: string }>({
           type: "input",
-          name: "ManualDateSearch",
+          name: "manualDateSearch",
           message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
           testAnswer: testMode?.questionAnswers?.enterSceneDate ?? "",
           default() {
@@ -677,6 +672,9 @@ module.exports = async ({
     aggressiveSearch = false
   ): Promise<SceneOutput | TitleObj[] | undefined> {
     const tpdbSceneSearchRes = await tpdbApi.parseScene(parseQuery);
+    $log(
+      `Scene search url: ${tpdbSceneSearchRes.config.url}?parse=${encodeURIComponent(parseQuery)}`
+    );
 
     // checking the status of the link or site, will escape if the site is down
 
@@ -890,11 +888,12 @@ module.exports = async ({
   /**
    * Grabs a list of all the searchable Studios or websites available in TPDB
    *
-   * @returns {Promise<object>} either an array of all the Porn Database hosted sites, or no data
+   * @returns either an array of all the Porn Database hosted sites, or no data
    */
   async function grabSites(): Promise<string[]> {
     try {
       const siteListRes = await tpdbApi.getSites();
+      $log(`MSG: Grabbing all available Studios on Metadataapi: ${siteListRes.config.url}`);
 
       if (
         siteListRes.status !== 200 ||
@@ -946,29 +945,25 @@ module.exports = async ({
     ) {
       // Grabs the searchable sites in TPM
 
-      $log(" MSG: Grabbing all available Studios on Metadataapi: " + ENDPOINTS.SITES);
-
-      const resultsOfFoundStudioInAPI = await grabSites();
+      const studioShortNames = await grabSites();
 
       let doesSiteExist;
 
       let compareHighScore = 5000;
 
-      for (let spot = 0; spot < resultsOfFoundStudioInAPI.length; spot++) {
-        if (resultsOfFoundStudioInAPI[spot] !== "") {
-          const siteNoSpaces = new RegExp(escapeRegExp(resultsOfFoundStudioInAPI[spot]), "gi");
+      for (const studioName of studioShortNames) {
+        const siteNoSpaces = new RegExp(escapeRegExp(studioName), "gi");
 
-          const studioWithNoSpaces = searchStudio.toString().replace(/ /gi, "");
+        const studioWithNoSpaces = searchStudio.toString().replace(/ /gi, "");
 
-          const foundStudioInAPI = studioWithNoSpaces.match(siteNoSpaces);
+        const foundStudioInAPI = studioWithNoSpaces.match(siteNoSpaces);
 
-          if (foundStudioInAPI !== null) {
-            const levenFound = levenshtein(foundStudioInAPI.toString(), searchStudio.toString());
+        if (foundStudioInAPI !== null) {
+          const levenFound = levenshtein(foundStudioInAPI.toString(), searchStudio.toString());
 
-            if (levenFound < compareHighScore) {
-              compareHighScore = levenFound;
-              doesSiteExist = foundStudioInAPI;
-            }
+          if (levenFound < compareHighScore) {
+            compareHighScore = levenFound;
+            doesSiteExist = foundStudioInAPI;
           }
         }
       }
@@ -1063,11 +1058,11 @@ module.exports = async ({
           logResultObject(goGetIt);
 
           if (args?.ManualTouch) {
-            const { CorrectImportInfo: resultsConfirmation } = await questionAsync<{
-              CorrectImportInfo: string;
+            const { correctImportInfo: resultsConfirmation } = await questionAsync<{
+              correctImportInfo: string;
             }>({
               type: "input",
-              name: "CorrectImportInfo",
+              name: "correctImportInfo",
               message: "Does this information look like the correct information to import? (y/N)",
               testAnswer: testMode ? testMode.CorrectImportInfo : "",
             });
@@ -1119,11 +1114,11 @@ module.exports = async ({
         logResultObject(grabResults);
 
         if (args?.ManualTouch) {
-          const { CorrectImportInfo: resultsConfirmation } = await questionAsync<{
-            CorrectImportInfo: string;
+          const { correctImportInfo: resultsConfirmation } = await questionAsync<{
+            correctImportInfo: string;
           }>({
             type: "input",
-            name: "CorrectImportInfo",
+            name: "correctImportInfo",
             message: "Does this information look like the correct information to import? (y/N)",
             testAnswer: testMode ? testMode.CorrectImportInfo : "",
           });

@@ -1,5 +1,7 @@
+import plugin from "../main";
+import { ManualTouchChoices } from "../util";
+
 const context = require("../../../context");
-const plugin = require("../main");
 const { expect } = require("chai");
 
 describe("PromisedScene", () => {
@@ -55,7 +57,7 @@ describe("PromisedScene", () => {
           "Z:\\Keep\\test\\[New Sensations] PRESSLEY 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -161,7 +163,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "16.04.08",
@@ -206,7 +208,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -251,7 +253,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -295,7 +297,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -338,7 +340,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -374,7 +376,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -416,7 +418,7 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -451,7 +453,7 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[Colette] Mia Malkova.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -487,7 +489,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Kira Perez",
             enterSceneDate: "",
@@ -553,7 +555,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
+            enterInfoSearch: ManualTouchChoices.MANUAL_ENTER,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -597,7 +599,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "n",
           questionAnswers: {
-            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
+            enterInfoSearch: ManualTouchChoices.MANUAL_ENTER,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -635,7 +637,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
+            enterInfoSearch: ManualTouchChoices.MANUAL_ENTER,
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -681,7 +683,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -724,7 +726,7 @@ describe("PromisedScene", () => {
         testMode: {
           CorrectImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: ManualTouchChoices.SEARCH,
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -767,7 +769,7 @@ describe("PromisedScene", () => {
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "Do nothing (let the scene be imported with no details)",
+            enterInfoSearch: ManualTouchChoices.NOTHING,
           },
           testSiteUnavailable: false,
           status: true,

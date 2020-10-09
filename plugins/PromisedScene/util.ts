@@ -1,5 +1,11 @@
 import { Context } from "./../types/plugin";
-/* eslint-disable func-style */
+
+export const ManualTouchChoices = {
+  MANUAL_ENTER: "Enter scene details manually, straight into the porn-vault",
+  NOTHING: "Do nothing (let the scene be imported with no details)",
+  SEARCH: "Search scene details on The Porn Database (TPD)",
+};
+
 /**
  * @param answer - string to compare
  * @returns if the answer is a positive confirmation (i.e. "yes")
@@ -57,7 +63,7 @@ export function stripStr(str: string, keepDate: boolean = false): string {
  * @param string - the string to escape
  * @returns the string to be used to create a RegExp
  */
-export function escapeRegExp(string) {
+export function escapeRegExp(string: string): string {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
