@@ -687,47 +687,52 @@ module.exports = async ({
           // It is better to search just the title.  We already have the actor and studio.
 
           let searchedTitle = util.stripStr(sceneName).toString().toLowerCase();
-
-          let matchTitle = util
+          let matchTitle;
+          if (util.stripStr(alltitles["Title" + idx].Title) !== "") {
+            matchTitle = util
             .stripStr(alltitles["Title" + idx].Title)
             .toString()
-            .toLowerCase();
-
-          // lets remove the actors from the scenename and the searched title -- We should already know this
-
-          for (let j = 0; j < actor.length; j++) {
-            searchedTitle = searchedTitle.replace(actor[j].toString().toLowerCase(), "");
-
-            matchTitle = matchTitle.replace(actor[j].toString().toLowerCase(), "").trim();
+            .toLowerCase();  
           }
-
-          // lets remove the Studio from the scenename and the searched title -- We should already know this
-
-          if (studio[0] !== undefined) {
-            searchedTitle = searchedTitle.replace(studio[0].toString().toLowerCase(), "");
-
-            searchedTitle = searchedTitle.replace(
-              studio[0].toString().toLowerCase().replace(" ", ""),
-              ""
-            );
-
-            matchTitle = matchTitle.replace(studio[0].toString().toLowerCase(), "").trim();
-          }
-
+          
           // Only Run a match if there is a searched title to execute a match on
 
           if (matchTitle !== undefined) {
+            // lets remove the actors from the scenename and the searched title -- We should already know this
+
+            for (let j = 0; j < actor.length; j++) {
+              if (actor[j] !== undefined) {
+                searchedTitle = searchedTitle.replace(actor[j].toString().toLowerCase(), "");
+
+                matchTitle = matchTitle.replace(actor[j].toString().toLowerCase(), "").trim();
+              }     
+            }
+
+            // lets remove the Studio from the scenename and the searched title -- We should already know this
+
+            if (studio[0] !== undefined) {
+              searchedTitle = searchedTitle.replace(studio[0].toString().toLowerCase(), "");
+
+              searchedTitle = searchedTitle.replace(
+                studio[0].toString().toLowerCase().replace(" ", ""),
+                ""
+              );
+
+              matchTitle = matchTitle.replace(studio[0].toString().toLowerCase(), "").trim();
+            }
+
+          
             $log(
               `     SRCH: Trying to match TPD title: ` +
-                matchTitle.toString().trim() +
+                matchTitle.trim() +
                 " --with--> " +
-                searchedTitle.toString().trim()
+                searchedTitle.trim()
             );
 
-            matchTitle = new RegExp(escapeRegExp(matchTitle.toString().trim()), "i");
+            matchTitle = new RegExp(escapeRegExp(matchTitle.trim()), "i");
 
             if (searchedTitle !== undefined) {
-              if (searchedTitle.toString().trim().match(matchTitle)) {
+              if (searchedTitle.trim().match(matchTitle)) {
                 correctSceneIdx = idx;
 
                 break;
@@ -768,13 +773,13 @@ module.exports = async ({
 
         let line = lines.shift();
         while (!foundDupScene && line) {
-          if (!line || !util.stripStr(JSON.parse(line).name.toString())) {
+          if (!line || !util.stripStr(JSON.parse(line).name)) {
             line = lines.shift();
             continue;
           }
 
           let matchScene = new RegExp(
-            escapeRegExp(util.stripStr(JSON.parse(line).name.toString())),
+            escapeRegExp(util.stripStr(JSON.parse(line).name)),
             "gi"
           );
 
@@ -785,7 +790,7 @@ module.exports = async ({
             // TheDupedScene = util.stripStr(JSON.parse(line).name.toString());
           } else if (util.stripStr(JSON.parse(line).name.toString()) !== null) {
             matchScene = new RegExp(
-              escapeRegExp(util.stripStr(JSON.parse(line).name.toString()).replace(/ /g, "")),
+              escapeRegExp(util.stripStr(JSON.parse(line).name).replace(/ /g, "")),
               "gi"
             );
 
@@ -901,7 +906,7 @@ module.exports = async ({
       searchActor.length
     ) {
       // Grabs the searchable sites in TPM
-
+/*
       $log(
         " MSG: Grabbing all available Studios on Metadataapi: " +
           "https://api.metadataapi.net/api/sites"
@@ -940,7 +945,7 @@ module.exports = async ({
         const manualInfo = await makeChoices();
         return manualInfo;
       }
-
+*/
       $log(":::::MSG: Checking TPDB for Data Extraction");
 
       let tpdbSceneSearchUrl = "";
