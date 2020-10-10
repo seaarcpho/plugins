@@ -1,7 +1,6 @@
-import Axios from "axios";
-
 import { SceneSearchResult } from "../types/scene";
 import { SiteListResult } from "../types/sites";
+import { Context } from "./../../types/plugin";
 
 const BASE = "https://api.metadataapi.net/api";
 
@@ -11,9 +10,9 @@ export const ENDPOINTS = {
 };
 
 export class TPDBApi {
-  axios: typeof Axios;
+  axios: Context["$axios"];
 
-  constructor(axios: typeof Axios) {
+  constructor(axios: Context["$axios"]) {
     this.axios = axios;
   }
 

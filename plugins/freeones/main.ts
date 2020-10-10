@@ -1,6 +1,5 @@
-import axios from "axios";
-
 import { ActorContext, ActorOutput } from "./../types/actor";
+import { Context } from "./../types/plugin";
 
 interface MyContext extends ActorContext {
   args: {
@@ -26,7 +25,10 @@ function kgToLbs(kg: number): number {
   return Math.round((kg + Number.EPSILON) * 100) / 100;
 }
 
-async function search({ $axios }: { $axios: typeof axios }, query: string): Promise<string> {
+async function search(
+  { $axios }: { $axios: Context["$axios"] },
+  query: string
+): Promise<string> {
   const url = `https://www.freeones.xxx/partial/subject`;
   return (
     await $axios.get(url, {
