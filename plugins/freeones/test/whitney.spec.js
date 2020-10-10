@@ -31,6 +31,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -40,6 +47,8 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright' with whitelist", async () => {
@@ -77,6 +86,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -86,6 +102,9 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wri'", async () => {
@@ -100,6 +119,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -109,6 +135,9 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but without hair color", async () => {
@@ -124,6 +153,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -132,6 +168,9 @@ describe("freeones", () => {
     expect(result.labels).to.have.length.greaterThan(0);
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but without eye color", async () => {
@@ -147,6 +186,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -155,6 +201,9 @@ describe("freeones", () => {
     expect(result.labels).to.have.length.greaterThan(0);
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but without ethnicity", async () => {
@@ -170,6 +219,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -178,6 +234,9 @@ describe("freeones", () => {
     expect(result.labels).to.have.length.greaterThan(0);
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but without height", async () => {
@@ -193,6 +252,13 @@ describe("freeones", () => {
       zodiac: "Virgo",
       weight: 57,
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -202,6 +268,9 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but without weight", async () => {
@@ -217,6 +286,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -226,6 +302,8 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but without avatar", async () => {
@@ -242,6 +320,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -251,6 +336,8 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but without labels", async () => {
@@ -267,6 +354,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -289,6 +383,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.be.undefined;
     expect(result.bornOn).to.be.a("number");
@@ -298,6 +399,9 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but imperial", async () => {
@@ -314,6 +418,13 @@ describe("freeones", () => {
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
       measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -323,6 +434,9 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Hazel Eyes");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 
   it("Search 'Whitney Wright', but without measurements", async () => {
@@ -338,6 +452,8 @@ describe("freeones", () => {
       weight: 57,
       birthplace: "Oklahoma City, OK",
       zodiac: "Virgo",
+      gender: "Female",
+      sex: "Female",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -346,5 +462,8 @@ describe("freeones", () => {
     expect(result.labels).to.have.length.greaterThan(0);
     expect(result.labels).to.contain("Brown Hair");
     expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Female");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
   });
 });
