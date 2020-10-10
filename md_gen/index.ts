@@ -92,6 +92,11 @@ const generatePluginDocs = () => {
     const pluginPath = nodepath.join(pluginFolder, pluginDirName);
 
     const infoPath = nodepath.join(pluginPath, "info.json");
+    if (!fs.existsSync(infoPath)) {
+      console.warn(`${pluginDirName} does not contain 'info.json', skipping`);
+      return;
+    }
+
     const pluginInfo = JSON.parse(fs.readFileSync(infoPath, "utf-8")) as PluginInfo;
     info[pluginDirName] = pluginInfo;
 
