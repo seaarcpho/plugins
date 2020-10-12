@@ -75,7 +75,7 @@ module.exports = async ({
       .readFileSync(args.source_settings.Actors, "utf8")
       .split("\n")
       .forEach((line) => {
-        if (!line) {
+        if (!line || JSON.parse(line).$$deleted) {
           return;
         }
 
@@ -167,7 +167,7 @@ module.exports = async ({
       .readFileSync(args.source_settings.Studios, "utf8")
       .split("\n")
       .forEach((line) => {
-        if (!line) {
+        if (!line || JSON.parse(line).$$deleted) {
           return;
         }
 
