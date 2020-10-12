@@ -31,7 +31,12 @@ module.exports = async (ctx) => {
     const desc = $(".m-b-0.text-dark.synopsis").text();
     let release;
 
-    const movieName = $(`.title-rating-section .col-sm-6 h1`).eq(0).text().trim();
+    const movieName = $(`.title-rating-section .col-sm-6 h1`)
+      .text()
+      .replace(/[\t\n]+/g, " ")
+      .replace(/ {2,}/, " ")
+      .replace("- On Sale! Porn Video Sale", "")
+      .trim();
 
     $(".col-sm-4.m-b-2 li").each(function (i, elm) {
       const grabrvars = $(elm).text().split(":");
