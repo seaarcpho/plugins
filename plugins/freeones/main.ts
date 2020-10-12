@@ -1,5 +1,5 @@
-import { ActorContext, ActorOutput } from "./../types/actor";
-import { Context } from "./../types/plugin";
+import { ActorContext, ActorOutput } from "../../types/actor";
+import { Context } from "../../types/plugin";
 
 interface MyContext extends ActorContext {
   args: {

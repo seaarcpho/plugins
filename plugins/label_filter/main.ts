@@ -1,6 +1,6 @@
-import { ActorContext } from "../types/actor";
-import { MovieContext } from "../types/movie";
-import { SceneContext } from "../types/scene";
+import { ActorContext } from "../../types/actor";
+import { MovieContext } from "../../types/movie";
+import { SceneContext } from "../../types/scene";
 
 interface MyContext {
   args: {

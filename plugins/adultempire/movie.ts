@@ -1,4 +1,4 @@
-import { MovieContext, MovieOutput } from "../types/movie";
+import { MovieContext, MovieOutput } from "../../types/movie";
 
 interface MyContext extends MovieContext {
   args: {

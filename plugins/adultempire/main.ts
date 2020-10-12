@@ -1,5 +1,5 @@
-import { ActorContext, ActorOutput } from "../types/actor";
-import { MovieContext, MovieOutput } from "../types/movie";
+import { ActorContext, ActorOutput } from "../../types/actor";
+import { MovieContext, MovieOutput } from "../../types/movie";
 
 import actorHandler from "./actor";
 import movieHandler from "./movie";
