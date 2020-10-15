@@ -43,6 +43,7 @@ describe("adultempire", () => {
         args: {},
       });
       expect(result).to.be.an("object");
+      expect(result.name).to.equal("Tushy Raw V5");
       expect(result.frontCover).to.be.a("string");
       expect(result.backCover).to.be.a("string");
       expect(result.studio).to.be.a("string").equal("Tushy Raw");
@@ -66,6 +67,7 @@ describe("adultempire", () => {
         args: {},
       });
       expect(result).to.be.an("object");
+      expect(result.name).to.equal("Black & White Vol. 15");
       expect(result.frontCover).to.be.a("string");
       expect(result.backCover).to.be.a("string");
       expect(result.studio).to.be.a("string").equal("Blacked");

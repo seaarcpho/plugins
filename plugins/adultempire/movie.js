@@ -1,3 +1,17 @@
+async function searchForMovie({ $cheerio, $axios }, name) {
+  const url = `https://www.adultempire.com/allsearch/search?q=${name}`;
+  const html = (await $axios.get(url)).data;
+  const $ = $cheerio.load(html);
+
+  const firstResult = $(".boxcover").toArray()[0];
+  const href = $(firstResult).attr("href");
+
+  if (!href) {
+    return false;
+  }
+  return "https://adultempire.com" + href;
+}
+
 module.exports = async (ctx) => {
   const { args, $moment, $axios, $cheerio, $log, movieName, $createImage } = ctx;
 
@@ -7,20 +21,22 @@ module.exports = async (ctx) => {
     .trim();
   $log(`Scraping movie covers for '${name}', dry mode: ${args.dry || false}...`);
 
-  const url = `https://www.adultempire.com/allsearch/search?q=${name}`;
-  const html = (await $axios.get(url)).data;
-  const $ = $cheerio.load(html);
+  const url = movieName.startsWith("http") ? movieName : await searchForMovie(ctx, name);
 
-  const firstResult = $(".boxcover").toArray()[0];
-  const href = $(firstResult).attr("href");
-
-  if (href) {
-    const movieUrl = "https://adultempire.com" + href;
+  if (url) {
+    const movieUrl = url;
     const html = (await $axios.get(movieUrl)).data;
     const $ = $cheerio.load(html);
 
     const desc = $(".m-b-0.text-dark.synopsis").text();
     let release;
+
+    const movieName = $(`.title-rating-section .col-sm-6 h1`)
+      .text()
+      .replace(/[\t\n]+/g, " ")
+      .replace(/ {2,}/, " ")
+      .replace("- On Sale! Porn Video Sale", "")
+      .trim();
 
     $(".col-sm-4.m-b-2 li").each(function (i, elm) {
       const grabrvars = $(elm).text().split(":");
@@ -37,6 +53,7 @@ module.exports = async (ctx) => {
 
     if (args.dry === true) {
       $log({
+        name: movieName,
         movieUrl,
         frontCoverSrc,
         backCoverSrc,
@@ -49,6 +66,7 @@ module.exports = async (ctx) => {
       const backCoverImg = await $createImage(backCoverSrc, `${movieName} (back cover)`);
 
       return {
+        name: movieName,
         frontCover: frontCoverImg,
         backCover: backCoverImg,
         description: desc,
