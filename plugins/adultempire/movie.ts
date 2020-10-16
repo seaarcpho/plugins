@@ -47,7 +47,7 @@ export default async function (ctx: MyContext): Promise<MovieOutput> {
       .text()
       .replace(/[\t\n]+/g, " ")
       .replace(/ {2,}/, " ")
-      .replace("- On Sale! Porn Video Sale", "")
+      .replace(/- On Sale!.*/, "")
       .trim();
 
     $(".col-sm-4.m-b-2 li").each(function (i, elm) {
