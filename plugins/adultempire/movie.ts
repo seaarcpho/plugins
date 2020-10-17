@@ -1,4 +1,16 @@
-async function searchForMovie({ $cheerio, $axios }, name) {
+import { MovieContext, MovieOutput } from "../../types/movie";
+import { Context } from "../../types/plugin";
+
+interface MyContext extends MovieContext {
+  args: {
+    dry?: boolean;
+  };
+}
+
+async function searchForMovie(
+  { $cheerio, $axios }: { $cheerio: Context["$cheerio"]; $axios: Context["$axios"] },
+  name: string
+): Promise<string | false> {
   const url = `https://www.adultempire.com/allsearch/search?q=${name}`;
   const html = (await $axios.get(url)).data;
   const $ = $cheerio.load(html);
@@ -12,14 +24,14 @@ async function searchForMovie({ $cheerio, $axios }, name) {
   return "https://adultempire.com" + href;
 }
 
-module.exports = async (ctx) => {
+export default async function (ctx: MyContext): Promise<MovieOutput> {
   const { args, $moment, $axios, $cheerio, $log, movieName, $createImage } = ctx;
 
   const name = movieName
     .replace(/[#&]/g, "")
     .replace(/\s{2,}/g, " ")
     .trim();
-  $log(`Scraping movie covers for '${name}', dry mode: ${args.dry || false}...`);
+  $log(`Scraping movie covers for '${name}', dry mode: ${args?.dry || false}...`);
 
   const url = movieName.startsWith("http") ? movieName : await searchForMovie(ctx, name);
 
@@ -29,13 +41,13 @@ module.exports = async (ctx) => {
     const $ = $cheerio.load(html);
 
     const desc = $(".m-b-0.text-dark.synopsis").text();
-    let release;
+    let release: number | undefined = undefined;
 
     const movieName = $(`.title-rating-section .col-sm-6 h1`)
       .text()
       .replace(/[\t\n]+/g, " ")
       .replace(/ {2,}/, " ")
-      .replace("- On Sale! Porn Video Sale", "")
+      .replace(/- On Sale!.*/i, "")
       .trim();
 
     $(".col-sm-4.m-b-2 li").each(function (i, elm) {
@@ -48,10 +60,10 @@ module.exports = async (ctx) => {
     const studioName = $(`.title-rating-section .item-info > a`).eq(0).text().trim();
 
     const frontCover = $("#front-cover img").toArray()[0];
-    const frontCoverSrc = $(frontCover).attr("src");
+    const frontCoverSrc = $(frontCover).attr("src") || "";
     const backCoverSrc = frontCoverSrc.replace("h.jpg", "bh.jpg");
 
-    if (args.dry === true) {
+    if (args?.dry === true) {
       $log({
         name: movieName,
         movieUrl,
@@ -77,4 +89,4 @@ module.exports = async (ctx) => {
   }
 
   return {};
-};
+}
