@@ -22,10 +22,17 @@ export interface FullActorOutput extends CustomFieldsOutput {
   name: string;
   description: string;
   bornOn: number;
-  thumbnail: string;
+  addedOn: number;
+  rating: number;
+  favorite: boolean;
+  bookmark: number;
+  nationality: string;
   aliases: string[];
   labels: string[];
+  thumbnail: string;
   altThumbnail: string;
+  avatar: string;
+  hero: string;
 }
 
 export type ActorOutput = Partial<FullActorOutput>;

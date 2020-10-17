@@ -20,9 +20,14 @@ export interface FullMovieOutput extends CustomFieldsOutput {
   name: string;
   description: string;
   releaseDate: number;
+  addedOn: number;
+  rating: number;
+  favorite: boolean;
+  bookmark: number;
   frontCover: string;
   backCover: string;
-  labels: string[];
+  spineCover: string;
+  labels: string[]; // TODO: implement in server
   studio: string;
 }
 

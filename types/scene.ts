@@ -34,8 +34,15 @@ interface Scene {
 }
 export interface FullSceneOutput extends CustomFieldsOutput {
   name: string;
+  path: string;
   description: string;
   releaseDate: number;
+  addedOn: number;
+  views: number[];
+  watches: number[];
+  rating: number;
+  favorite: boolean;
+  bookmark: number;
   thumbnail: string;
   actors: string[];
   labels: string[];
