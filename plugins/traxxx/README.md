@@ -16,6 +16,10 @@ This plugin retrieves data from Traxxx.
     * &#x60;name&#x60; : name of the studio
     * &#x60;description&#x60; : description of the studio
     * &#x60;parent&#x60;: the parent channel/network
+    * &#x60;custom&#x60; : custom fields:
+        * &#x60;traxxx_id&#x60; : the matched id
+        * &#x60;traxxx_type&#x60; : the type of channel/network
+        * &#x60;url&#x60; : the url of the studio
 
 
 - In Traxxx, studios can either be channels or networks. Think of a tree: studios with children are networks, and studios with no children are channels.
@@ -33,7 +37,7 @@ In this case, when &#x60;args.studios.uniqueNames&#x60; is &#x60;true&#x60;, the
 | Name                      | Type     | Required | Description                                                                                                                                                               |
 | ------------------------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | dry                       | Boolean  | false    | Whether to commit data changes                                                                                                                                            |
-| studios                   | Object   | true     | Configuration for studio events                                                                                                                                           |
+| studios                   | Object   | false    | Configuration for studio events                                                                                                                                           |
 | studios.channelPriority   | Boolean  | false    | When the studio type is unknown, and the name corresponds to both a channel &amp; a network, whether to prefer the channel or the network                                     |
 | studios.uniqueNames       | Boolean  | false    | When the studio name corresponds to both a channel &amp; a network, whether to append suffixes to the name to avoid conflicts                                                 |
 | studios.channelSuffix     | String   | false    | When returning a channel name that also corresponds to a network, will be appended to the name. WARNING: spaces between the name &amp; suffix will not be automatically added |
