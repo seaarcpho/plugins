@@ -7,7 +7,7 @@ export type DeepPartial<T> = {
 export interface StudioSettings {
   /**
    * If a studio name is both a channel and a network, whether to use the channel
-   * or the network for the data returned
+   * or the network for the data returned. Overridden by 'channelSuffix' & 'networkSuffix'
    */
   channelPriority: boolean;
   /**
@@ -17,11 +17,13 @@ export interface StudioSettings {
   uniqueNames: boolean;
   /**
    * Suffix to add to the studio name, when `channelPriority: true && uniqueNames: true`.
+   * When this already exists on the 'studioName', the plugin should only return a channel match.
    * Warning: will not automatically add a space between the name and this suffix
    */
   channelSuffix: string;
   /**
    * Suffix to add to the studio name, when `channelPriority: false && uniqueNames: true`.
+   * When this already exists on the 'studioName', the plugin should only return a network match.
    * Warning: will not automatically add a space between the name and this suffix
    */
   networkSuffix: string;

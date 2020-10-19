@@ -70,6 +70,10 @@ export const validateArgs = ({
     validatedArgs.studios.networkSuffix = " (Network)";
   }
 
+  if (validatedArgs.studios.channelSuffix === validatedArgs.studios.networkSuffix) {
+    return $throw(`"args.studios.channelSuffix" and "args.studios.networkSuffix" are identical, cannot run plugin`);
+  }
+
   if (
     !hasProp(validatedArgs.studios, "whitelist") ||
     isInvalidStringArray(validatedArgs.studios.whitelist)
@@ -120,6 +124,26 @@ export const normalizeStudioName = (ctx: MyValidatedStudioContext, name: string)
   return name
     .replace(ctx.args.studios.channelSuffix, "")
     .replace(ctx.args.studios.networkSuffix, "");
+};
+
+export type Preference = "none" | "channel" | "network";
+
+/**
+ * @param ctx - plugin context
+ * @param name - the input studio name
+ * @returns how to treat the studio: channel, network, or none (according to user args)
+ */
+export const getExtractionPreferenceFromName = (
+  ctx: MyValidatedStudioContext,
+  name: string
+): Preference => {
+  let preference: Preference = "none";
+  if (name.endsWith(ctx.args.studios.channelSuffix)) {
+    preference = "channel";
+  } else if (name.endsWith(ctx.args.studios.networkSuffix)) {
+    preference = "network";
+  }
+  return preference;
 };
 
 /**

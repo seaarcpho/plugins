@@ -9,8 +9,7 @@ const {
 
 describe("traxxx studio", () => {
   // eslint-disable-next-line mocha/no-setup-in-describe
-  ["studioCreated"].forEach((event) => {
-    // ["studioCreated", "studioCustom"].forEach((event) => {
+  ["studioCreated", "studioCustom"].forEach((event) => {
     describe(event, () => {
       describe("validate args", () => {
         // eslint-disable-next-line mocha/no-setup-in-describe

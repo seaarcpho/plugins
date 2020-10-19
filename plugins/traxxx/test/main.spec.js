@@ -2,7 +2,7 @@ const context = require("../../../context");
 const plugin = require("../main");
 const { expect } = require("chai");
 
-describe.only("tpdb", () => {
+describe("tpdb", () => {
   it("throws if no 'args'", async () => {
     let errored = false;
     try {

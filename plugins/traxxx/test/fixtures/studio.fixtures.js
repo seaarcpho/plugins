@@ -121,12 +121,30 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
+        },
+      },
+    },
+    errored: false,
+  },
+  // channelSuffix & networkSuffix
+  {
+    name: "when 'args.studios.networkSuffix' & 'args.studios.networkSuffix' are identical",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
           channelSuffix: "my suffix",
           networkSuffix: "my suffix",
         },
       },
     },
-    errored: false,
+    errorMessage: "cannot run plugin",
+    errored: true,
   },
   // whitelist
   {
@@ -138,8 +156,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: false,
         },
       },
@@ -155,8 +173,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: [1],
         },
       },
@@ -172,8 +190,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
         },
       },
@@ -190,8 +208,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: false,
         },
@@ -208,8 +226,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: [1],
         },
@@ -226,8 +244,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: ["name"],
         },
@@ -245,8 +263,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: ["name"],
           whitelistOverride: false,
@@ -264,8 +282,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: ["name"],
           whitelistOverride: [1],
@@ -283,8 +301,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: ["name"],
           whitelistOverride: ["name"],
@@ -303,8 +321,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: ["name"],
           whitelistOverride: ["name"],
@@ -323,8 +341,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: ["name"],
           whitelistOverride: ["name"],
@@ -343,8 +361,8 @@ export const validationFixtures = [
         studios: {
           channelPriority: true,
           uniqueNames: true,
-          channelSuffix: "my suffix",
-          networkSuffix: "my suffix",
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
           whitelist: ["name"],
           blacklist: ["name"],
           whitelistOverride: ["name"],
@@ -421,6 +439,16 @@ export const defaultArgsResultFixtures = [
     result: EvilAngelChannelUniqueNames,
   },
 ];
+
+const Gamma = {
+  name: "Gamma Entertainment",
+  description: "",
+  custom: {
+    traxxx_id: 1,
+    traxxx_type: "network",
+    url: "https://www.gammaentertainment.com",
+  },
+};
 
 export const genericResultFixtures = [
   // Dry
@@ -523,6 +551,213 @@ export const genericResultFixtures = [
         url: "https://www.evilangel.com",
       },
     },
+  },
+  // Specific channel
+  {
+    name: "when channel, returns channel name w/ suffix, when uniqueNames: true",
+    context: {
+      ...context,
+      studioName: "Evil Angel (Channel)",
+      args: { studios: { uniqueNames: true, channelPriority: true } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Channel)",
+      description: "",
+      parent: "Evil Angel (Network)",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name: "when channel, returns basic channel name, when uniqueNames: false",
+    context: {
+      ...context,
+      studioName: "Evil Angel (Channel)",
+      args: { studios: { uniqueNames: false, channelPriority: true } },
+    },
+    errored: false,
+    result: {
+      // No 'parent' in result on purpose, since no unique names,
+      // and they would conflict
+      name: "Evil Angel",
+      description: "",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name:
+      "when channel, returns channel name w/ suffix, when uniqueNames: true, channelPriority: false",
+    context: {
+      ...context,
+      studioName: "Evil Angel (Channel)",
+      args: { studios: { uniqueNames: true, channelPriority: false } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Channel)",
+      description: "",
+      parent: "Evil Angel (Network)",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name:
+      "when channel, returns basic channel name, when uniqueNames: false, channelPriority: false",
+    context: {
+      ...context,
+      studioName: "Evil Angel (Channel)",
+      args: { studios: { uniqueNames: false, channelPriority: false } },
+    },
+    errored: false,
+    result: {
+      // No 'parent' in result on purpose, since no unique names,
+      // and they would conflict
+      name: "Evil Angel",
+      description: "",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  // Specific network
+  {
+    name: "when network, returns network name w/ suffix, when uniqueNames: true",
+    context: {
+      ...context,
+      studioName: "Evil Angel (Network)",
+      args: { studios: { uniqueNames: true, channelPriority: true } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Network)",
+      description:
+        "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+      parent: "Gamma Entertainment",
+      custom: {
+        traxxx_id: 28,
+        traxxx_type: "network",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name: "when network, returns basic network name, when uniqueNames: false",
+    context: {
+      ...context,
+      studioName: "Evil Angel (Network)",
+      args: { studios: { uniqueNames: false, channelPriority: true } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel",
+      description:
+        "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+      parent: "Gamma Entertainment",
+      custom: {
+        traxxx_id: 28,
+        traxxx_type: "network",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name:
+      "when network, returns network name w/ suffix, when uniqueNames: true, channelPriority: false",
+    context: {
+      ...context,
+      studioName: "Evil Angel (Network)",
+      args: { studios: { uniqueNames: true, channelPriority: false } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Network)",
+      description:
+        "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+      parent: "Gamma Entertainment",
+      custom: {
+        traxxx_id: 28,
+        traxxx_type: "network",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name:
+      "when network, returns basic network name, when uniqueNames: false, channelPriority: false",
+    context: {
+      ...context,
+      studioName: "Evil Angel (Network)",
+      args: { studios: { uniqueNames: false, channelPriority: false } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel",
+      description:
+        "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+      parent: "Gamma Entertainment",
+      custom: {
+        traxxx_id: 28,
+        traxxx_type: "network",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  // Only network
+  {
+    name: "only network, returns network name w/ suffix, when uniqueNames: true",
+    context: {
+      ...context,
+      studioName: "Gamma",
+      args: { studios: { uniqueNames: true, channelPriority: true } },
+    },
+    errored: false,
+    result: Gamma,
+  },
+  {
+    name: "only network, returns basic network name, when uniqueNames: false",
+    context: {
+      ...context,
+      studioName: "Gamma",
+      args: { studios: { uniqueNames: false, channelPriority: true } },
+    },
+    errored: false,
+    result: Gamma,
+  },
+  {
+    name:
+      "only network, returns network name w/ suffix, when uniqueNames: true, channelPriority: false",
+    context: {
+      ...context,
+      studioName: "Gamma",
+      args: { studios: { uniqueNames: true, channelPriority: false } },
+    },
+    errored: false,
+    result: Gamma,
+  },
+  {
+    name:
+      "only network, returns basic network name, when uniqueNames: false, channelPriority: false",
+    context: {
+      ...context,
+      studioName: "Gamma",
+      args: { studios: { uniqueNames: false, channelPriority: false } },
+    },
+    errored: false,
+    result: Gamma,
   },
   // Prop suppression > blacklist
   {
