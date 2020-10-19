@@ -1,7 +1,24 @@
-import { DeepPartial, MyStudioArgs, MyStudioContext, MyValidatedStudioContext } from "./types";
+import {
+  DeepPartial,
+  MyStudioArgs,
+  MyStudioContext,
+  MyValidatedStudioContext,
+  StudioSettings,
+} from "./types";
 
 export const hasProp = (target: unknown, prop: string): boolean => {
   return target && typeof target === "object" && Object.hasOwnProperty.call(target, prop);
+};
+
+const DEFAULT_STUDIO_SETTINGS: StudioSettings = {
+  channelPriority: true,
+  uniqueNames: true,
+  channelSuffix: " (Channel)",
+  networkSuffix: " (Network)",
+  whitelist: [],
+  blacklist: [],
+  whitelistOverride: [],
+  blacklistOverride: [],
 };
 
 /**
@@ -29,7 +46,11 @@ export const validateArgs = ({
   }
 
   if (!validatedArgs.studios || typeof validatedArgs.studios !== "object") {
-    return $throw(`Missing arg "studios", cannot run plugin`);
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.channelPriority, setting to default: `,
+      DEFAULT_STUDIO_SETTINGS
+    );
+    validatedArgs.studios = DEFAULT_STUDIO_SETTINGS;
   } else {
     // Copy object
     validatedArgs.studios = { ...validatedArgs.studios };
@@ -42,68 +63,86 @@ export const validateArgs = ({
     !hasProp(validatedArgs.studios, "channelPriority") ||
     typeof validatedArgs.studios.channelPriority !== "boolean"
   ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.channelPriority, setting to default: "true"`);
-    validatedArgs.studios.channelPriority = true;
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.channelPriority, setting to default: "${DEFAULT_STUDIO_SETTINGS.channelPriority}"`
+    );
+    validatedArgs.studios.channelPriority = DEFAULT_STUDIO_SETTINGS.channelPriority;
   }
 
   if (
     !hasProp(validatedArgs.studios, "uniqueNames") ||
     typeof validatedArgs.studios.uniqueNames !== "boolean"
   ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.uniqueNames, setting to default: "true"`);
-    validatedArgs.studios.uniqueNames = true;
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.uniqueNames, setting to default: "${DEFAULT_STUDIO_SETTINGS.uniqueNames}"`
+    );
+    validatedArgs.studios.uniqueNames = DEFAULT_STUDIO_SETTINGS.uniqueNames;
   }
 
   if (
     !hasProp(validatedArgs.studios, "channelSuffix") ||
     typeof validatedArgs.studios.channelSuffix !== "string"
   ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.channelSuffix", setting to default: " (Channel)"`);
-    validatedArgs.studios.channelSuffix = " (Channel)";
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.channelSuffix", setting to default: "${DEFAULT_STUDIO_SETTINGS.channelPriority}"`
+    );
+    validatedArgs.studios.channelSuffix = DEFAULT_STUDIO_SETTINGS.channelSuffix;
   }
 
   if (
     !hasProp(validatedArgs.studios, "networkSuffix") ||
     typeof validatedArgs.studios.networkSuffix !== "string"
   ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.networkSuffix, setting to default: " (Network)"`);
-    validatedArgs.studios.networkSuffix = " (Network)";
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.networkSuffix, setting to default: "${DEFAULT_STUDIO_SETTINGS.networkSuffix}"`
+    );
+    validatedArgs.studios.networkSuffix = DEFAULT_STUDIO_SETTINGS.networkSuffix;
   }
 
   if (validatedArgs.studios.channelSuffix === validatedArgs.studios.networkSuffix) {
-    return $throw(`"args.studios.channelSuffix" and "args.studios.networkSuffix" are identical, cannot run plugin`);
+    return $throw(
+      `"args.studios.channelSuffix" and "args.studios.networkSuffix" are identical, cannot run plugin`
+    );
   }
 
   if (
     !hasProp(validatedArgs.studios, "whitelist") ||
     isInvalidStringArray(validatedArgs.studios.whitelist)
   ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.whitelist, setting to default: "[]"`);
-    validatedArgs.studios.whitelist = [];
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.whitelist, setting to default: "${JSON.stringify(DEFAULT_STUDIO_SETTINGS.whitelist)}"`
+    );
+    validatedArgs.studios.whitelist = DEFAULT_STUDIO_SETTINGS.whitelist;
   }
 
   if (
     !hasProp(validatedArgs.studios, "blacklist") ||
     isInvalidStringArray(validatedArgs.studios.blacklist)
   ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.blacklist, setting to default: "[]"`);
-    validatedArgs.studios.blacklist = [];
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.blacklist, setting to default: "${JSON.stringify(DEFAULT_STUDIO_SETTINGS.blacklist)}"`
+    );
+    validatedArgs.studios.blacklist = DEFAULT_STUDIO_SETTINGS.blacklist;
   }
 
   if (
     !hasProp(validatedArgs.studios, "whitelistOverride") ||
     isInvalidStringArray(validatedArgs.studios.whitelistOverride)
   ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.whitelistOverride, setting to default: "[]"`);
-    validatedArgs.studios.whitelistOverride = [];
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.whitelistOverride, setting to default: "${JSON.stringify(DEFAULT_STUDIO_SETTINGS.whitelistOverride)}"`
+    );
+    validatedArgs.studios.whitelistOverride = DEFAULT_STUDIO_SETTINGS.whitelistOverride;
   }
 
   if (
     !hasProp(validatedArgs.studios, "blacklistOverride") ||
     isInvalidStringArray(validatedArgs.studios.blacklistOverride)
   ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.blacklistOverride, setting to default: "[]"`);
-    validatedArgs.studios.blacklistOverride = [];
+    $log(
+      `[TRAXXX] MSG: Missing "args.studios.blacklistOverride, setting to default: "${JSON.stringify(DEFAULT_STUDIO_SETTINGS.blacklistOverride)}"`
+    );
+    validatedArgs.studios.blacklistOverride = DEFAULT_STUDIO_SETTINGS.blacklistOverride;
   }
 
   // At the end of this function, validatedArgs will have type MyStudioArgs

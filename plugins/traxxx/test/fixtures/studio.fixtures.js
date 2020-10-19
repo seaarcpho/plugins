@@ -11,13 +11,23 @@ export const validationFixtures = [
     errorMessage: "cannot run plugin",
   },
   {
-    name: "when no 'args.studios'",
+    name: "when no 'args.dry'",
     context: {
       ...context,
       studioName: "fake",
       args: {},
     },
-    errored: true,
+    errored: false,
+    errorMessage: "cannot run plugin",
+  },
+  {
+    name: "when no 'args.studios'",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: { dry: true },
+    },
+    errored: false,
     errorMessage: "cannot run plugin",
   },
   // channelPriority
