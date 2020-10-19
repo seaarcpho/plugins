@@ -1,0 +1,79 @@
+{
+  "name": "traxxx",
+  "version": "0.1.0",
+  "authors": ["leadwolf"],
+  "description": "Scrape data from traxxx",
+  "pluginEvents": ["studioCreated", "studioCustom"],
+  "arguments": [
+    {
+      "name": "dry",
+      "type": "Boolean",
+      "required": false,
+      "default": false,
+      "description": "Whether to commit data changes"
+    },
+    {
+      "name": "studios",
+      "type": "Object",
+      "required": true,
+      "default": {},
+      "description": "Configuration for studio events"
+    },
+    {
+      "name": "studios.channelPriority",
+      "type": "Boolean",
+      "required": false,
+      "default": true,
+      "description": "When the studio type is unknown, and the name corresponds to both a channel & a network, whether to prefer the channel or the network"
+    },
+    {
+      "name": "studios.uniqueNames",
+      "type": "Boolean",
+      "required": false,
+      "default": true,
+      "description": "When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts"
+    },
+    {
+      "name": "studios.channelSuffix",
+      "type": "String",
+      "required": false,
+      "default": " (Channel)",
+      "description": "When returning a channel name that also corresponds to a network, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added"
+    },
+    {
+      "name": "studios.networkSuffix",
+      "type": "String",
+      "required": false,
+      "default": " (Network)",
+      "description": "When returning a network name that also corresponds to a channel, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added"
+    },
+    {
+      "name": "studios.whitelist",
+      "type": "String[]",
+      "required": false,
+      "default": [],
+      "description": "Array of data fields to pick (possible values: 'name', 'description', 'parent')"
+    },
+    {
+      "name": "studios.blacklist",
+      "type": "String[]",
+      "required": false,
+      "default": [],
+      "description": "Array of data fields to omit (for values see whitelist)"
+    },
+    {
+      "name": "studios.whitelistOverride",
+      "type": "String[]",
+      "required": false,
+      "default": [],
+      "description": "Array of data fields to pick, when values already exist from a piped plugin (WARNING: not the same thing as existing values of the scene) (for values see whitelist)"
+    },
+    {
+      "name": "studios.blacklistOverride",
+      "type": "String[]",
+      "required": false,
+      "default": [],
+      "description": "Array of data fields to omit, when values already exist from a a piped plugin (WARNING: not the same thing as existing values of the scene) (for values see whitelist)"
+    }
+  ]
+}
