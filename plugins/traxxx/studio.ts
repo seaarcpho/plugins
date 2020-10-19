@@ -19,8 +19,10 @@ export class ChannelExtractor {
   /**
    * @param ctx - plugin context
    * @param input - extractor input
-   * @param input.network - extractor input
-   * @param input.network - extractor input
+   * @param input.channel - the matched channel
+   * @param input.network - the matched network
+   * @param input.preference - if should return channel/network, or according
+   * to user args
    */
   constructor(
     ctx: MyValidatedStudioContext,
@@ -59,17 +61,6 @@ export class ChannelExtractor {
       return {};
     }
 
-    let suffix: string = "";
-    if (this.preference === "channel") {
-      suffix = this.ctx.args.studios.channelSuffix;
-    } else if (this.preference === "network") {
-      suffix = this.ctx.args.studios.networkSuffix;
-    } else if (this.channel && this.network) {
-      suffix = this.ctx.args.studios.channelPriority
-        ? this.ctx.args.studios.channelSuffix
-        : this.ctx.args.studios.networkSuffix;
-    }
-
     const baseName = this.getPreferredEntity()?.name;
     if (!baseName) {
       return {};
@@ -79,6 +70,17 @@ export class ChannelExtractor {
       this.channel?.name !== this.network?.name || !this.ctx.args.studios.uniqueNames;
     if (ignoreNameConflicts) {
       return { name: baseName };
+    }
+
+    let suffix: string = "";
+    if (this.preference === "channel") {
+      suffix = this.ctx.args.studios.channelSuffix;
+    } else if (this.preference === "network") {
+      suffix = this.ctx.args.studios.networkSuffix;
+    } else if (this.channel && this.network) {
+      suffix = this.ctx.args.studios.channelPriority
+        ? this.ctx.args.studios.channelSuffix
+        : this.ctx.args.studios.networkSuffix;
     }
 
     return { name: `${baseName}${suffix}` };
@@ -125,80 +127,91 @@ export class ChannelExtractor {
 export default async (initialContext: MyStudioContext): Promise<StudioOutput> => {
   const { $log, $throw, studioName } = initialContext;
 
-  try {
-    const validatedArgs = validateArgs(initialContext);
-    if (validatedArgs) {
-      initialContext.args = validatedArgs;
+  async function main() {
+    try {
+      const validatedArgs = validateArgs(initialContext);
+      if (validatedArgs) {
+        initialContext.args = validatedArgs;
+      }
+    } catch (err) {
+      $throw(err);
+      return {};
     }
+
+    // Can assert all properties exist, since we just validated them above
+    const ctx = initialContext as MyValidatedStudioContext;
+    const args = ctx.args;
+
+    const api = new Api(ctx);
+
+    const preference = getExtractionPreferenceFromName(ctx, studioName);
+    const slugifiedName = slugify(normalizeStudioName(ctx, studioName));
+
+    ctx.$log(`[TRAXXX] MSG: Trying to match "${studioName}" as "${slugifiedName}"`);
+    if (preference !== "none") {
+      ctx.$log(`[TRAXXX] MSG: Identified as ${preference} from current name`);
+    }
+
+    const searchPromises: Promise<EntityResult.Entity | undefined>[] = [];
+
+    // We still need to search for both channels & networks, even if
+    // we know the type, so that we can tell if there would be name conflicts
+    searchPromises.push(
+      api
+        .getChannel(slugifiedName)
+        .then((res) => res.data.entity)
+        .catch((err) => {
+          $log(`[TRAXXX] WARN: ${err.message}`);
+          $log(`[TRAXXX] WARN: Could not find/fetch channel "${studioName}"`);
+          return undefined;
+        })
+    );
+    searchPromises.push(
+      api
+        .getNetwork(slugifiedName)
+        .then((res) => res.data.entity)
+        .catch((err) => {
+          $log(`[TRAXXX] WARN: ${err.message}`);
+          $log(`[TRAXXX] WARN: Could not find/fetch network "${studioName}"`);
+          return undefined;
+        })
+    );
+
+    const [channel, network] = await Promise.all(searchPromises);
+
+    if (!channel && !network) {
+      $log(`[TRAXXX] WARN: Could not find channel or network "${studioName}" in TRAXXX`);
+      return {};
+    }
+
+    const channelExtractor = new ChannelExtractor(ctx, {
+      channel,
+      network,
+      preference,
+    });
+
+    const result: StudioOutput = {
+      ...channelExtractor.getName(),
+      ...channelExtractor.getDescription(),
+      ...channelExtractor.getParent(),
+      custom: channelExtractor.getCustom(),
+    };
+
+    if (args.dry) {
+      $log("[TRAXXX] MSG: Is 'dry' mode, would've returned:");
+      $log(result);
+      return {};
+    }
+
+    return result;
+  }
+
+  try {
+    return main();
   } catch (err) {
+    $log(err);
+    $log(`[TRAXXX] ERR: Plugin failed`);
     $throw(err);
     return {};
   }
-
-  // Can assert all properties exist, since we just validated them above
-  const ctx = initialContext as MyValidatedStudioContext;
-  const args = ctx.args;
-
-  const api = new Api(ctx);
-
-  const preference = getExtractionPreferenceFromName(ctx, studioName);
-  const slugifiedName = slugify(normalizeStudioName(ctx, studioName));
-
-  ctx.$log(`[TRAXXX] MSG: Trying to match "${studioName}" as "${slugifiedName}"`);
-  if (preference !== "none") {
-    ctx.$log(`[TRAXXX] MSG: Identified as ${preference} from current name`);
-  }
-
-  const searchPromises: Promise<EntityResult.Entity | undefined>[] = [];
-
-  // We still need to search for both channels & networks, even if
-  // we know the type, so that we can tell if there would be name conflicts
-  searchPromises.push(
-    api
-      .getChannel(slugifiedName)
-      .then((res) => res.data.entity)
-      .catch((err) => {
-        $log(`[TRAXXX] ERR: ${err.message}`);
-        $log(`[TRAXXX] ERR: Could not find/fetch channel "${studioName}"`);
-        return undefined;
-      })
-  );
-  searchPromises.push(
-    api
-      .getNetwork(slugifiedName)
-      .then((res) => res.data.entity)
-      .catch((err) => {
-        $log(`[TRAXXX] ERR: ${err.message}`);
-        $log(`[TRAXXX] ERR: Could not find/fetch network "${studioName}"`);
-        return undefined;
-      })
-  );
-
-  const [channel, network] = await Promise.all(searchPromises);
-
-  if (!channel && !network) {
-    $log(`[TRAXXX] ERR: Could not find channel or network "${studioName}" in TRAXXX`);
-    return {};
-  }
-
-  const channelExtractor = new ChannelExtractor(ctx, {
-    channel,
-    network,
-    preference,
-  });
-
-  const result: StudioOutput = {
-    ...channelExtractor.getName(),
-    ...channelExtractor.getDescription(),
-    ...channelExtractor.getParent(),
-    custom: channelExtractor.getCustom(),
-  };
-
-  if (args.dry) {
-    $log("[TRAXXX] MSG: Is 'dry' mode, would've returned:");
-    $log(result);
-    return {};
-  }
-
-  return result;
 };

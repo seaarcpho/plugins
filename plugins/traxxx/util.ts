@@ -157,7 +157,7 @@ function lowercase(str: string): string {
 /**
  * @param ctx - plugin context
  * @param name - the studio name from pv
- * @returns the studio name, without our suffixes
+ * @returns the studio name, without our plugin suffixes
  */
 export const normalizeStudioName = (ctx: MyValidatedStudioContext, name: string): string => {
   return name
@@ -165,6 +165,10 @@ export const normalizeStudioName = (ctx: MyValidatedStudioContext, name: string)
     .replace(ctx.args.studios.networkSuffix, "");
 };
 
+/**
+ * What type of data should be returned. Either channel, network,
+ * according to user preference (when conflict), or whatever is found.
+ */
 export type Preference = "none" | "channel" | "network";
 
 /**
@@ -194,7 +198,7 @@ export const stripAccents = (str: string): string =>
 
 /**
  * @param str - the studio name
- * @returns the slugified version of the name
+ * @returns the slugified version of the name for traxxx
  */
 export const slugify = (str: string): string => {
   // Newline for every operation for readability
@@ -237,7 +241,8 @@ export const propExistsInData = ({ data }: MyValidatedStudioContext, prop: strin
  *
  * @param ctx - plugin context
  * @param prop - the property to check
- * @returns if the property should not be returned
+ * @returns if the property should not be returned because it already exists in data, and
+ * it is override blacklisted
  */
 export const isOverrideBlacklisted = (ctx: MyValidatedStudioContext, prop: string): boolean => {
   if (!propExistsInData(ctx, prop)) {
@@ -253,7 +258,7 @@ export const isOverrideBlacklisted = (ctx: MyValidatedStudioContext, prop: strin
 /**
  * @param ctx - plugin context
  * @param prop - the property to check
- * @returns if the property should not be returned
+ * @returns if the property should not be returned from the plugin
  */
 export const suppressProp = (ctx: MyValidatedStudioContext, prop: string): boolean => {
   return isBlacklisted(ctx, prop) || isOverrideBlacklisted(ctx, prop);

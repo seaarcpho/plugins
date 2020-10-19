@@ -8,6 +8,10 @@ This plugin retrieves data from Traxxx.
     * `name` : name of the studio
     * `description` : description of the studio
     * `parent`: the parent channel/network
+    * `custom` : custom fields:
+        * `traxxx_id` : the matched id
+        * `traxxx_type` : the type of channel/network
+        * `url` : the url of the studio
 
 
 - In Traxxx, studios can either be channels or networks. Think of a tree: studios with children are networks, and studios with no children are channels.
