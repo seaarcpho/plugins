@@ -1,71 +1,7 @@
 import { StudioOutput } from "../../types/studio";
 import { Api, EntityResult } from "./api";
-import { MyStudioContext, MyValidatedStudioContext, DeepPartial, MyStudioArgs } from "./types";
-import { normalizeStudioName, slugify } from "./util";
-
-export const validateArgs = ({
-  args,
-  $throw,
-  $log,
-  studioName,
-}: MyStudioContext): MyStudioArgs | void => {
-  let validatedArgs: DeepPartial<MyStudioArgs> | undefined;
-  if (args && typeof args === "object") {
-    // Copy object
-    validatedArgs = { ...args };
-  }
-
-  if (!studioName || typeof studioName !== "string") {
-    return $throw(`Missing "studioName", cannot run plugin`);
-  }
-
-  if (!validatedArgs || typeof validatedArgs !== "object") {
-    return $throw(`Missing args, cannot run plugin`);
-  }
-
-  if (!validatedArgs.studios || typeof validatedArgs.studios !== "object") {
-    return $throw(`Missing arg "studios", cannot run plugin`);
-  } else {
-    // Copy object
-    validatedArgs.studios = { ...validatedArgs.studios };
-  }
-
-  if (
-    !Object.hasOwnProperty.call(validatedArgs.studios, "channelPriority") ||
-    typeof validatedArgs.studios.channelPriority !== "boolean"
-  ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.channelPriority, setting to default: "true"`);
-    validatedArgs.studios.channelPriority = true;
-  }
-
-  if (
-    !Object.hasOwnProperty.call(validatedArgs.studios, "uniqueNames") ||
-    typeof validatedArgs.studios.uniqueNames !== "boolean"
-  ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.uniqueNames, setting to default: "true"`);
-    validatedArgs.studios.uniqueNames = true;
-  }
-
-  if (
-    !Object.hasOwnProperty.call(validatedArgs.studios, "channelSuffix") ||
-    typeof validatedArgs.studios.channelSuffix !== "string"
-  ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.channelSuffix", setting to default: " (Channel)"`);
-    validatedArgs.studios.channelSuffix = " (Channel)";
-  }
-
-  if (
-    !Object.hasOwnProperty.call(validatedArgs.studios, "networkSuffix") ||
-    typeof validatedArgs.studios.networkSuffix !== "string"
-  ) {
-    $log(`[TRAXXX] MSG: Missing "args.studios.networkSuffix, setting to default: " (Network)"`);
-    validatedArgs.studios.networkSuffix = " (Network)";
-  }
-
-  // At the end of this function, validatedArgs will have type MyStudioArgs
-  // since we merged defaults
-  return validatedArgs as MyStudioArgs;
-};
+import { MyStudioContext, MyValidatedStudioContext } from "./types";
+import { normalizeStudioName, slugify, suppressProp, validateArgs } from "./util";
 
 export class ChannelExtractor {
   ctx: MyValidatedStudioContext;
@@ -87,6 +23,10 @@ export class ChannelExtractor {
   }
 
   getName(): Partial<{ name: string }> {
+    if (suppressProp(this.ctx, "name")) {
+      return {};
+    }
+
     const suffix = this.ctx.args.studios.channelPriority
       ? this.ctx.args.studios.channelSuffix
       : this.ctx.args.studios.networkSuffix;
@@ -106,10 +46,18 @@ export class ChannelExtractor {
   }
 
   getDescription(): Partial<{ description: string }> {
+    if (suppressProp(this.ctx, "description")) {
+      return {};
+    }
+
     return { description: this.getPreferredEntity()?.description || "" };
   }
 
   getParent(): Partial<{ parent: string }> {
+    if (suppressProp(this.ctx, "parent")) {
+      return {};
+    }
+
     const parentName = this.getPreferredEntity()?.parent?.name;
     if (!parentName) {
       return {};

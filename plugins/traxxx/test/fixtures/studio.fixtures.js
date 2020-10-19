@@ -20,6 +20,7 @@ export const validationFixtures = [
     errored: true,
     errorMessage: "cannot run plugin",
   },
+  // channelPriority
   {
     name: "when 'args.studios.channelPriority' is missing",
     context: {
@@ -47,6 +48,7 @@ export const validationFixtures = [
     },
     errored: false,
   },
+  // uniqueNames
   {
     name: "when 'args.studios.uniqueNames' is missing",
     context: {
@@ -71,6 +73,284 @@ export const validationFixtures = [
       ...context,
       studioName: "fake",
       args: { studios: { channelPriority: true, uniqueNames: true } },
+    },
+    errored: false,
+  },
+  // channelSuffix
+  {
+    name: "when 'args.studios.channelSuffix' is not a string",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: { studios: { channelPriority: true, uniqueNames: true, channelSuffix: false } },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.channelSuffix' is a string",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: { studios: { channelPriority: true, uniqueNames: true, channelSuffix: "my suffix" } },
+    },
+    errored: false,
+  },
+  // networkSuffix
+  {
+    name: "when 'args.studios.networkSuffix' is not a string",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: false,
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.networkSuffix' is a string",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+        },
+      },
+    },
+    errored: false,
+  },
+  // whitelist
+  {
+    name: "when 'args.studios.whitelist' is not an array",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: false,
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.whitelist' is not an array of strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: [1],
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.whitelist' is an array of strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+        },
+      },
+    },
+    errored: false,
+  },
+  // blacklist
+  {
+    name: "when 'args.studios.whitelist' is not an array",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: false,
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.blacklist' is not an array of strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: [1],
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.blacklist' is an array of strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: ["name"],
+        },
+      },
+    },
+    errored: false,
+  },
+  // whitelistOverride
+  {
+    name: "when 'args.studios.whitelistOverride' is not an array",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: ["name"],
+          whitelistOverride: false,
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.whitelistOverride' is not an array of strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: ["name"],
+          whitelistOverride: [1],
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.whitelistOverride' is an array of strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: ["name"],
+          whitelistOverride: ["name"],
+        },
+      },
+    },
+    errored: false,
+  },
+  // blacklistOverride
+  {
+    name: "when 'args.studios.blacklistOverride' is not an array",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: ["name"],
+          whitelistOverride: ["name"],
+          blacklistOverride: false,
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.blacklistOverride' is not an array of strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: ["name"],
+          whitelistOverride: ["name"],
+          blacklistOverride: [1],
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.blacklistOverride' is an array of strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my suffix",
+          networkSuffix: "my suffix",
+          whitelist: ["name"],
+          blacklist: ["name"],
+          whitelistOverride: ["name"],
+          blacklistOverride: ["name"],
+        },
+      },
     },
     errored: false,
   },
@@ -143,6 +423,7 @@ export const defaultArgsResultFixtures = [
 ];
 
 export const genericResultFixtures = [
+  // Dry
   {
     name: "returns nothing with fake studio, when dry: true",
     context: {
@@ -163,6 +444,7 @@ export const genericResultFixtures = [
     errored: false,
     result: {},
   },
+  // Name checks
   {
     name: "returns channel name w/ suffix, when uniqueNames: true",
     context: {
@@ -238,6 +520,142 @@ export const genericResultFixtures = [
       custom: {
         traxxx_id: 28,
         traxxx_type: "network",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  // Prop suppression > blacklist
+  {
+    name: "returns all properties with no whitelist/blacklist...",
+    context: {
+      ...context,
+      studioName: "Evil Angel",
+      args: { studios: { uniqueNames: true, channelPriority: true } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Channel)",
+      description: "",
+      parent: "Evil Angel (Network)",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name: "does not return name when blacklisted",
+    context: {
+      ...context,
+      studioName: "Evil Angel",
+      args: { studios: { uniqueNames: true, channelPriority: true, blacklist: ["name"] } },
+    },
+    errored: false,
+    result: {
+      description: "",
+      parent: "Evil Angel (Network)",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name: "does not return description when blacklisted",
+    context: {
+      ...context,
+      studioName: "Evil Angel",
+      args: { studios: { uniqueNames: true, channelPriority: true, blacklist: ["description"] } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Channel)",
+      parent: "Evil Angel (Network)",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  // Prop suppression > whitelist
+  {
+    name: "returns only name when whitelisted",
+    context: {
+      ...context,
+      studioName: "Evil Angel",
+      args: { studios: { uniqueNames: true, channelPriority: true, whitelist: ["name"] } },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Channel)",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name: "returns only description when whitelisted",
+    context: {
+      ...context,
+      studioName: "Evil Angel",
+      args: { studios: { uniqueNames: true, channelPriority: true, whitelist: ["description"] } },
+    },
+    errored: false,
+    result: {
+      description: "",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  // Prop suppression > previous plugin
+  {
+    name: "does not return name when in data",
+    context: {
+      ...context,
+      studioName: "Evil Angel",
+      args: { studios: { uniqueNames: true, channelPriority: true, blacklistOverride: ["name"] } },
+      data: {
+        name: "dummy name",
+      },
+    },
+    errored: false,
+    result: {
+      description: "",
+      parent: "Evil Angel (Network)",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
+        url: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name: "does not return description when in data",
+    context: {
+      ...context,
+      studioName: "Evil Angel",
+      args: {
+        studios: { uniqueNames: true, channelPriority: true, blacklistOverride: ["description"] },
+      },
+      data: {
+        description: "dummy description",
+      },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Channel)",
+      parent: "Evil Angel (Network)",
+      custom: {
+        traxxx_id: 291,
+        traxxx_type: "channel",
         url: "https://www.evilangel.com",
       },
     },

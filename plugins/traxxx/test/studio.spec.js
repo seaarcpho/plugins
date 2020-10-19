@@ -7,15 +7,15 @@ const {
   genericResultFixtures,
 } = require("./fixtures/studio.fixtures");
 
-describe.only("traxxx", () => {
+describe("traxxx studio", () => {
   // eslint-disable-next-line mocha/no-setup-in-describe
   ["studioCreated"].forEach((event) => {
     // ["studioCreated", "studioCustom"].forEach((event) => {
     describe(event, () => {
       describe("validate args", () => {
         // eslint-disable-next-line mocha/no-setup-in-describe
-        validationFixtures.forEach((fixture) => {
-          it(fixture.name, async () => {
+        validationFixtures.forEach((fixture, fixtureIdx) => {
+          it(`[${fixtureIdx}] ${fixture.name}`, async () => {
             let errored = false;
             try {
               await plugin({
@@ -36,8 +36,8 @@ describe.only("traxxx", () => {
 
       describe("default args", () => {
         // eslint-disable-next-line mocha/no-setup-in-describe
-        defaultArgsResultFixtures.forEach((fixture) => {
-          it(fixture.name, async () => {
+        defaultArgsResultFixtures.forEach((fixture, fixtureIdx) => {
+          it(`[${fixtureIdx}] ${fixture.name}`, async () => {
             let errored = false;
             let result;
 
@@ -59,10 +59,10 @@ describe.only("traxxx", () => {
         });
       });
 
-      describe.only("non unique names", () => {
+      describe("other tests", () => {
         // eslint-disable-next-line mocha/no-setup-in-describe
-        genericResultFixtures.forEach((fixture) => {
-          it(fixture.name, async () => {
+        genericResultFixtures.forEach((fixture, fixtureIdx) => {
+          it(`[${fixtureIdx}] ${fixture.name}`, async () => {
             let errored = false;
             let result;
 

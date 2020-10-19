@@ -25,6 +25,24 @@ export interface StudioSettings {
    * Warning: will not automatically add a space between the name and this suffix
    */
   networkSuffix: string;
+  /**
+   * Array of properties to allow returning. If non empty, blacklist will be ignored.
+   */
+  whitelist: string[];
+  /**
+   * Array of properties to prevent returning
+   */
+  blacklist: string[];
+  /**
+   * Array of properties to allow returning, even if a previous plugin
+   * already returned those properties
+   */
+  whitelistOverride: string[];
+  /**
+   * Array of properties to prevent returning when the previous plugin
+   * already returned those properties
+   */
+  blacklistOverride: string[];
 }
 
 export interface MyStudioArgs {
