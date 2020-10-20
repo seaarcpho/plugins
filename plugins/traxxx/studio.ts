@@ -163,11 +163,11 @@ export class ChannelExtractor {
     return { parent: parentName };
   }
 
-  getCustom(): Partial<{ traxxx_id: number; traxxx_type: string; url: string }> {
+  getCustom(): Partial<{ "Traxxx Id": number; "Traxxx Type": string; Homepage: string }> {
     return {
-      traxxx_id: this.getPreferredEntity()?.id,
-      traxxx_type: this.getPreferredEntity()?.type,
-      url: this.getPreferredEntity()?.url,
+      ["Traxxx Id"]: this.getPreferredEntity()?.id,
+      ["Traxxx Type"]: this.getPreferredEntity()?.type,
+      Homepage: this.getPreferredEntity()?.url,
     };
   }
 }
