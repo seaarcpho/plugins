@@ -15,6 +15,8 @@ This plugin retrieves data from Traxxx.
 * The plugin returns the following properties:
     * `name` : name of the studio
     * `description` : description of the studio
+    * `thumbnail` : thumbnail of the studio
+    * `aliases` : aliases of the studio
     * `parent`: the parent channel/network
     * `custom` : custom fields:
         * `Traxxx Id` : the matched id
@@ -31,6 +33,7 @@ In this case, when `args.studios.uniqueNames` is `true`, the name will be append
 
 - The plugin supports being piped data. This means, if you have a studio plugin `A` that runs before this plugin `B`, you can make this plugin NOT overwrite properties that plugin `A` already returned values for.  
 **WARNING**: this is not the same as values that already exist for the studio. Example: you manually entered a description in the web UI and then run the plugin. If the plugin finds a channel/network with a description, that will become the new one.
+
 
 ### Arguments
 

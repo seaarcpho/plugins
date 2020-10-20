@@ -136,9 +136,9 @@ export const getExtractionPreferenceFromName = (
   name: string
 ): Preference => {
   let preference: Preference = "none";
-  if (name.endsWith(ctx.args.studios.channelSuffix)) {
+  if (ctx.args.studios.channelSuffix && name.endsWith(ctx.args.studios.channelSuffix)) {
     preference = "channel";
-  } else if (name.endsWith(ctx.args.studios.networkSuffix)) {
+  } else if (ctx.args.studios.networkSuffix && name.endsWith(ctx.args.studios.networkSuffix)) {
     preference = "network";
   }
   return preference;
