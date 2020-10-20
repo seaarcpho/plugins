@@ -10,13 +10,13 @@ export namespace EntityResult {
     slug: string;
     type: string;
     independent: boolean;
-    aliases?: any;
+    aliases: string[] | null;
     logo: string;
     thumbnail: string;
     favicon: string;
     parent: Entity | null;
-    children: Entity[];
-    tags: string[];
+    children: Entity[] | null;
+    tags: string[] | null;
   }
 
   export interface Result {

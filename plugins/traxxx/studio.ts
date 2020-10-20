@@ -98,27 +98,6 @@ export class ChannelExtractor {
     return { description: this.getPreferredEntity()?.description || "" };
   }
 
-  getParent(): Partial<{ parent: string }> {
-    if (suppressProp(this.ctx, "parent")) {
-      return {};
-    }
-
-    const parentName = this.getPreferredEntity()?.parent?.name;
-    if (!parentName) {
-      return {};
-    }
-
-    if (this.getPreferredEntity()?.name === parentName) {
-      if (this.ctx.args.studios.uniqueNames) {
-        return { parent: `${parentName}${this.ctx.args.studios.networkSuffix}` };
-      }
-      this.ctx.$log(`[TRAXXX] MSG: Cannot return parent name, would conflict with current name`);
-      return {};
-    }
-
-    return { parent: parentName };
-  }
-
   async getThumbnail(): Promise<Partial<{ thumbnail: string }>> {
     if (suppressProp(this.ctx, "thumbnail")) {
       return {};
@@ -146,6 +125,42 @@ export class ChannelExtractor {
     return {
       thumbnail,
     };
+  }
+
+  getAliases(): Partial<{ aliases: string[] }> {
+    if (suppressProp(this.ctx, "aliases")) {
+      return {};
+    }
+
+    const aliases = this.getPreferredEntity()?.aliases || [];
+    if (!aliases.length) {
+      return {};
+    }
+
+    return {
+      aliases,
+    };
+  }
+
+  getParent(): Partial<{ parent: string }> {
+    if (suppressProp(this.ctx, "parent")) {
+      return {};
+    }
+
+    const parentName = this.getPreferredEntity()?.parent?.name;
+    if (!parentName) {
+      return {};
+    }
+
+    if (this.getPreferredEntity()?.name === parentName) {
+      if (this.ctx.args.studios.uniqueNames) {
+        return { parent: `${parentName}${this.ctx.args.studios.networkSuffix}` };
+      }
+      this.ctx.$log(`[TRAXXX] MSG: Cannot return parent name, would conflict with current name`);
+      return {};
+    }
+
+    return { parent: parentName };
   }
 
   getCustom(): Partial<{ traxxx_id: number; traxxx_type: string; url: string }> {
@@ -227,6 +242,7 @@ export default async (initialContext: MyStudioContext): Promise<StudioOutput> =>
       ...channelExtractor.getName(),
       ...channelExtractor.getDescription(),
       ...(await channelExtractor.getThumbnail()),
+      ...channelExtractor.getAliases(),
       ...channelExtractor.getParent(),
       custom: channelExtractor.getCustom(),
     };

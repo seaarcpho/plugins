@@ -52,7 +52,7 @@
       "type": "String[]",
       "required": false,
       "default": [],
-      "description": "Array of data fields to pick (possible values: 'name', 'description', 'thumbnail', 'parent')"
+      "description": "Array of data fields to pick (possible values: `'name', 'description', 'thumbnail', 'aliases', 'parent'`)"
     },
     {
       "name": "studios.blacklist",

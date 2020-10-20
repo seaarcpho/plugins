@@ -14,14 +14,14 @@
     },
     {
       "name": "whitelist",
-      "type": "Array<String>",
+      "type": "String[]",
       "required": false,
       "default": [],
       "description": "Array of data fields to pick (possible values: 'nationality', 'zodiac', 'aliases', 'height', 'weight', 'avatar', 'bornOn', 'labels', 'hair color', 'eye color', 'ethnicity', 'birthplace', 'measurements')"
     },
     {
       "name": "blacklist",
-      "type": "Array<String>",
+      "type": "String[]",
       "required": false,
       "default": [],
       "description": "Array of data fields to omit (for values see whitelist)"

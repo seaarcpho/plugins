@@ -461,6 +461,7 @@ const Gamma = {
   name: "Gamma Entertainment",
   description: "",
   thumbnail: DUMMY_IMAGE_ID,
+  aliases: ["gammaentertainment"],
   custom: {
     traxxx_id: 1,
     traxxx_type: "network",
