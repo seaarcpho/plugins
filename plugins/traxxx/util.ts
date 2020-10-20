@@ -121,27 +121,27 @@ export const normalizeStudioName = (ctx: MyValidatedStudioContext, name: string)
 };
 
 /**
- * What type of data should be returned. Either channel, network,
- * according to user preference (when conflict), or whatever is found.
+ * What type of entity should be returned. Either channel, network, or default:
+ * according to user preference (when conflict), or whatever is found (no conflict).
  */
-export type Preference = "none" | "channel" | "network";
+export type EntityPreference = "none" | "channel" | "network";
 
 /**
  * @param ctx - plugin context
  * @param name - the input studio name
  * @returns how to treat the studio: channel, network, or none (according to user args)
  */
-export const getExtractionPreferenceFromName = (
+export const getEntityPreferenceFromName = (
   ctx: MyValidatedStudioContext,
   name: string
-): Preference => {
-  let preference: Preference = "none";
+): EntityPreference => {
+  let entityPreference: EntityPreference = "none";
   if (ctx.args.studios.channelSuffix && name.endsWith(ctx.args.studios.channelSuffix)) {
-    preference = "channel";
+    entityPreference = "channel";
   } else if (ctx.args.studios.networkSuffix && name.endsWith(ctx.args.studios.networkSuffix)) {
-    preference = "network";
+    entityPreference = "network";
   }
-  return preference;
+  return entityPreference;
 };
 
 /**

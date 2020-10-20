@@ -2,9 +2,9 @@ import { StudioOutput } from "../../types/studio";
 import { Api, buildImageUrls, EntityResult } from "./api";
 import { MyStudioContext, MyValidatedStudioContext } from "./types";
 import {
-  getExtractionPreferenceFromName,
+  getEntityPreferenceFromName,
   normalizeStudioName,
-  Preference,
+  EntityPreference,
   slugify,
   suppressProp,
   validateArgs,
@@ -14,39 +14,39 @@ export class ChannelExtractor {
   ctx: MyValidatedStudioContext;
   channel?: EntityResult.Entity;
   network?: EntityResult.Entity;
-  preference: Preference;
+  entityPreference: EntityPreference;
 
   /**
    * @param ctx - plugin context
    * @param input - extractor input
    * @param input.channel - the matched channel
    * @param input.network - the matched network
-   * @param input.preference - if should return channel/network, or according
-   * to user args
+   * @param input.entityPreference - if should return channel/network, or default: according
+   * to user args (when conflict), or whatever is found (no conflict).
    */
   constructor(
     ctx: MyValidatedStudioContext,
     {
       channel,
       network,
-      preference,
+      entityPreference,
     }: {
       channel?: EntityResult.Entity;
       network?: EntityResult.Entity;
-      preference: Preference;
+      entityPreference: EntityPreference;
     }
   ) {
     this.ctx = ctx;
     this.channel = channel;
     this.network = network;
-    this.preference = preference;
+    this.entityPreference = entityPreference;
   }
 
   getPreferredEntity(): EntityResult.Entity | undefined {
-    if (this.preference === "channel") {
+    if (this.entityPreference === "channel") {
       return this.channel;
     }
-    if (this.preference === "network") {
+    if (this.entityPreference === "network") {
       return this.network;
     }
     if (this.channel && this.network) {
@@ -69,9 +69,9 @@ export class ChannelExtractor {
     }
 
     let suffix: string = "";
-    if (this.preference === "channel") {
+    if (this.entityPreference === "channel") {
       suffix = this.ctx.args.studios.channelSuffix;
-    } else if (this.preference === "network") {
+    } else if (this.entityPreference === "network") {
       suffix = this.ctx.args.studios.networkSuffix;
     } else if (this.channel && this.network) {
       suffix = this.ctx.args.studios.channelPriority
@@ -192,12 +192,12 @@ export default async (initialContext: MyStudioContext): Promise<StudioOutput> =>
 
     const api = new Api(ctx);
 
-    const preference = getExtractionPreferenceFromName(ctx, studioName);
+    const entityPreference = getEntityPreferenceFromName(ctx, studioName);
     const slugifiedName = slugify(normalizeStudioName(ctx, studioName));
 
     ctx.$log(`[TRAXXX] MSG: Trying to match "${studioName}" as "${slugifiedName}"`);
-    if (preference !== "none") {
-      ctx.$log(`[TRAXXX] MSG: Identified as ${preference} from current name`);
+    if (entityPreference !== "none") {
+      ctx.$log(`[TRAXXX] MSG: Identified as ${entityPreference} from current name`);
     }
 
     const searchPromises: Promise<EntityResult.Entity | undefined>[] = [];
@@ -235,7 +235,7 @@ export default async (initialContext: MyStudioContext): Promise<StudioOutput> =>
     const channelExtractor = new ChannelExtractor(ctx, {
       channel,
       network,
-      preference,
+      entityPreference,
     });
 
     const result: StudioOutput = {
