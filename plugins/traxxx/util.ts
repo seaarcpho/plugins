@@ -59,88 +59,74 @@ export const validateArgs = ({
   const isInvalidStringArray = (arr: unknown): boolean =>
     !Array.isArray(arr) || !arr.every((prop) => typeof prop === "string");
 
-  if (
-    !hasProp(validatedArgs.studios, "channelPriority") ||
-    typeof validatedArgs.studios.channelPriority !== "boolean"
-  ) {
+  if (typeof validatedArgs.studios.channelPriority !== "boolean") {
     $log(
       `[TRAXXX] MSG: Missing "args.studios.channelPriority, setting to default: "${DEFAULT_STUDIO_SETTINGS.channelPriority}"`
     );
     validatedArgs.studios.channelPriority = DEFAULT_STUDIO_SETTINGS.channelPriority;
   }
 
-  if (
-    !hasProp(validatedArgs.studios, "uniqueNames") ||
-    typeof validatedArgs.studios.uniqueNames !== "boolean"
-  ) {
+  if (typeof validatedArgs.studios.uniqueNames !== "boolean") {
     $log(
       `[TRAXXX] MSG: Missing "args.studios.uniqueNames, setting to default: "${DEFAULT_STUDIO_SETTINGS.uniqueNames}"`
     );
     validatedArgs.studios.uniqueNames = DEFAULT_STUDIO_SETTINGS.uniqueNames;
   }
 
-  if (
-    !hasProp(validatedArgs.studios, "channelSuffix") ||
-    typeof validatedArgs.studios.channelSuffix !== "string"
-  ) {
+  if (typeof validatedArgs.studios.channelSuffix !== "string") {
     $log(
       `[TRAXXX] MSG: Missing "args.studios.channelSuffix", setting to default: "${DEFAULT_STUDIO_SETTINGS.channelPriority}"`
     );
     validatedArgs.studios.channelSuffix = DEFAULT_STUDIO_SETTINGS.channelSuffix;
   }
 
-  if (
-    !hasProp(validatedArgs.studios, "networkSuffix") ||
-    typeof validatedArgs.studios.networkSuffix !== "string"
-  ) {
+  if (typeof validatedArgs.studios.networkSuffix !== "string") {
     $log(
       `[TRAXXX] MSG: Missing "args.studios.networkSuffix, setting to default: "${DEFAULT_STUDIO_SETTINGS.networkSuffix}"`
     );
     validatedArgs.studios.networkSuffix = DEFAULT_STUDIO_SETTINGS.networkSuffix;
   }
 
+  // One suffix can be an empty string, but both cannot be at the same time.
+  // They cannot have the same value in general, otherwise it would not fix the conflict
   if (validatedArgs.studios.channelSuffix === validatedArgs.studios.networkSuffix) {
     return $throw(
       `"args.studios.channelSuffix" and "args.studios.networkSuffix" are identical, cannot run plugin`
     );
   }
 
-  if (
-    !hasProp(validatedArgs.studios, "whitelist") ||
-    isInvalidStringArray(validatedArgs.studios.whitelist)
-  ) {
+  if (isInvalidStringArray(validatedArgs.studios.whitelist)) {
     $log(
-      `[TRAXXX] MSG: Missing "args.studios.whitelist, setting to default: "${JSON.stringify(DEFAULT_STUDIO_SETTINGS.whitelist)}"`
+      `[TRAXXX] MSG: Missing or invalid "args.studios.whitelist, setting to default: "${JSON.stringify(
+        DEFAULT_STUDIO_SETTINGS.whitelist
+      )}"`
     );
     validatedArgs.studios.whitelist = DEFAULT_STUDIO_SETTINGS.whitelist;
   }
 
-  if (
-    !hasProp(validatedArgs.studios, "blacklist") ||
-    isInvalidStringArray(validatedArgs.studios.blacklist)
-  ) {
+  if (isInvalidStringArray(validatedArgs.studios.blacklist)) {
     $log(
-      `[TRAXXX] MSG: Missing "args.studios.blacklist, setting to default: "${JSON.stringify(DEFAULT_STUDIO_SETTINGS.blacklist)}"`
+      `[TRAXXX] MSG: Missing or invalid "args.studios.blacklist, setting to default: "${JSON.stringify(
+        DEFAULT_STUDIO_SETTINGS.blacklist
+      )}"`
     );
     validatedArgs.studios.blacklist = DEFAULT_STUDIO_SETTINGS.blacklist;
   }
 
-  if (
-    !hasProp(validatedArgs.studios, "whitelistOverride") ||
-    isInvalidStringArray(validatedArgs.studios.whitelistOverride)
-  ) {
+  if (isInvalidStringArray(validatedArgs.studios.whitelistOverride)) {
     $log(
-      `[TRAXXX] MSG: Missing "args.studios.whitelistOverride, setting to default: "${JSON.stringify(DEFAULT_STUDIO_SETTINGS.whitelistOverride)}"`
+      `[TRAXXX] MSG: Missing or invalid "args.studios.whitelistOverride, setting to default: "${JSON.stringify(
+        DEFAULT_STUDIO_SETTINGS.whitelistOverride
+      )}"`
     );
     validatedArgs.studios.whitelistOverride = DEFAULT_STUDIO_SETTINGS.whitelistOverride;
   }
 
-  if (
-    !hasProp(validatedArgs.studios, "blacklistOverride") ||
-    isInvalidStringArray(validatedArgs.studios.blacklistOverride)
-  ) {
+  if (isInvalidStringArray(validatedArgs.studios.blacklistOverride)) {
     $log(
-      `[TRAXXX] MSG: Missing "args.studios.blacklistOverride, setting to default: "${JSON.stringify(DEFAULT_STUDIO_SETTINGS.blacklistOverride)}"`
+      `[TRAXXX] MSG: Missing or invalid "args.studios.blacklistOverride, setting to default: "${JSON.stringify(
+        DEFAULT_STUDIO_SETTINGS.blacklistOverride
+      )}"`
     );
     validatedArgs.studios.blacklistOverride = DEFAULT_STUDIO_SETTINGS.blacklistOverride;
   }

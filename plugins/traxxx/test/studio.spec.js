@@ -77,7 +77,9 @@ describe("traxxx studio", () => {
             }
 
             expect(errored).to.equal(fixture.errored);
-            expect(result).to.deep.equal(fixture.result);
+            if (!fixture.errored) {
+              expect(result).to.deep.equal(fixture.result);
+            }
           });
         });
       });

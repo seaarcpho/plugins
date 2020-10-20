@@ -514,6 +514,18 @@ export const genericResultFixtures = [
     },
   },
   {
+    name: "throws when expect name conflict, but suffixes are empty strings",
+    context: {
+      ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
+      studioName: "Evil Angel",
+      args: {
+        studios: { uniqueNames: true, channelPriority: true, channelSuffix: "", networkSuffix: "" },
+      },
+    },
+    errored: true,
+  },
+  {
     name: "returns basic channel name, when uniqueNames: false",
     context: {
       ...context,
