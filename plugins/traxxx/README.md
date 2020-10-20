@@ -19,9 +19,11 @@ This plugin retrieves data from Traxxx.
     * `aliases` : aliases of the studio
     * `parent`: the parent channel/network
     * `custom` : custom fields:
-        * `Traxxx Id` : the matched id
-        * `Traxxx Type` : the type of channel/network
+        * `Traxxx Id` : the matched id (for use by plugins)
+        * `Traxxx Type` : the type of channel/network (for use by plugins)
         * `Homepage` : the Homepage of the studio
+
+> Note: studio custom fields are not yet accessible in the interface.
 
 
 - In Traxxx, studios can either be channels or networks. Think of a tree: studios with children are networks, and studios with no children are channels.
@@ -32,23 +34,24 @@ In this case, when `args.studios.uniqueNames` is `true`, the name will be append
 - If the plugin receives a studio name that already has the same suffix as in the args, it will only try to search and return the data for that type indicated by the suffix.
 
 - The plugin supports being piped data. This means, if you have a studio plugin `A` that runs before this plugin `B`, you can make this plugin NOT overwrite properties that plugin `A` already returned values for.  
-**WARNING**: this is not the same as values that already exist for the studio. Example: you manually entered a description in the web UI and then run the plugin. If the plugin finds a channel/network with a description, that will become the new one.
+**WARNING**: this is not the same as values that already exist for the studio. Example: you manually entered a description in the web UI and then run the plugin. If the plugin finds a channel/network with a description, that will become the new one.  
+Example: plugin `A` returns `custom.myField: 'a string'`. and plugin `B` *would* also return `custom.myField: 'another string'`. If `studios.whitelistOverride` is non empty, plugin `B` will return that field only if `myField` is in `studios.whitelistOverride`. Otherwise, if `studios.blacklistOverride` is non empty, plugin `B` will return that field only if `myField` is **not** in `studios.blacklistOverride`. Finally, if neither of these two lists are used, the field will be returned.
 
 
 ### Arguments
 
-| Name                      | Type     | Required | Description                                                                                                                                                               |
-| ------------------------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dry                       | Boolean  | false    | Whether to commit data changes                                                                                                                                            |
-| studios                   | Object   | false    | Configuration for studio events                                                                                                                                           |
-| studios.channelPriority   | Boolean  | false    | When the studio type is unknown, and the name corresponds to both a channel & a network, whether to prefer the channel or the network                                     |
-| studios.uniqueNames       | Boolean  | false    | When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts                                                 |
-| studios.channelSuffix     | String   | false    | When returning a channel name that also corresponds to a network, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added |
-| studios.networkSuffix     | String   | false    | When returning a network name that also corresponds to a channel, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added |
-| studios.whitelist         | String[] | false    | Array of data fields to pick (possible values: `'name', 'description', 'thumbnail', 'aliases', 'parent'`)                                                                 |
-| studios.blacklist         | String[] | false    | Array of data fields to omit (for values see whitelist)                                                                                                                   |
-| studios.whitelistOverride | String[] | false    | Array of data fields to pick, when values already exist from a piped plugin (WARNING: not the same thing as existing values of the scene) (for values see whitelist)      |
-| studios.blacklistOverride | String[] | false    | Array of data fields to omit, when values already exist from a a piped plugin (WARNING: not the same thing as existing values of the scene) (for values see whitelist)    |
+| Name                      | Type     | Required | Description                                                                                                                                                                                                                                                                                   |
+| ------------------------- | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dry                       | Boolean  | false    | Whether to commit data changes                                                                                                                                                                                                                                                                |
+| studios                   | Object   | false    | Configuration for studio events                                                                                                                                                                                                                                                               |
+| studios.channelPriority   | Boolean  | false    | When the studio type is unknown, and the name corresponds to both a channel & a network, whether to prefer the channel or the network                                                                                                                                                         |
+| studios.uniqueNames       | Boolean  | false    | When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts. The suffixes obviously cannot be the smae                                                                                                                          |
+| studios.channelSuffix     | String   | false    | When `studios.uniqueNames` is active returning a **channel** name that also corresponds to a network, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added                                                                                 |
+| studios.networkSuffix     | String   | false    | When `studios.uniqueNames` is active and returning a **network** name that also corresponds to a channel, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added                                                                             |
+| studios.whitelist         | String[] | false    | Array of data fields to pick. When non empty, only the fields listed will be returned. Possible values: [`'name', 'description', 'thumbnail', 'aliases', 'parent'`].                                                                                                                          |
+| studios.blacklist         | String[] | false    | Array of data fields to omit. Used **only** when `whitelist` is empty. When non empty, only the fields **not** listed will be returned. (for values see `whitelist`)                                                                                                                          |
+| studios.whitelistOverride | String[] | false    | Array of data fields to pick, when values already exist from a piped plugin. Acts exactly the same as `whitelist`, but used **only** when the field has been returned by a previous plugin. (**WARNING**: not the same thing as existing values of the scene) (for values see `whitelist`)    |
+| studios.blacklistOverride | String[] | false    | Array of data fields to omit, when values already exist from a a piped plugin. Acts exactly the same as `blacklist`, but used **only** when the field has been returned by a previous plugin.  (**WARNING**: not the same thing as existing values of the scene) (for values see `whitelist`) |
 
 ### Example installation with default arguments
 
