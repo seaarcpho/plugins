@@ -2,16 +2,6 @@ import { AxiosResponse, AxiosInstance } from "axios";
 import { Context } from "../../types/plugin";
 
 export namespace EntityResult {
-  export interface Parent {
-    id: number;
-    name: string;
-    url: string;
-    description: string;
-    slug: string;
-    type: string;
-    parent: Entity | null;
-  }
-
   export interface Entity {
     id: number;
     name: string;
@@ -19,7 +9,12 @@ export namespace EntityResult {
     description: string | null;
     slug: string;
     type: string;
-    parent: Parent | null;
+    independent: boolean;
+    aliases?: any;
+    logo: string;
+    thumbnail: string;
+    favicon: string;
+    parent: Entity | null;
     children: Entity[];
     tags: string[];
   }
@@ -56,3 +51,19 @@ export class Api {
     return this.axios.get<EntityResult.Result>(`/networks/${idOrSlug}`);
   }
 }
+
+export const buildImageUrls = (
+  entity: EntityResult.Entity
+): {
+  logo: string | undefined;
+  thumbnail: string | undefined;
+  favicon: string | undefined;
+} => {
+  const baseUrl = "https://traxxx.me/img/logos/";
+
+  return {
+    logo: entity.logo ? `${baseUrl}${entity.logo}` : undefined,
+    thumbnail: entity.thumbnail ? `${baseUrl}${entity.thumbnail}` : undefined,
+    favicon: entity.favicon ? `${baseUrl}${entity.favicon}` : undefined,
+  };
+};

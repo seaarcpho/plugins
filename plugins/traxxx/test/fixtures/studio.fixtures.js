@@ -384,9 +384,12 @@ export const validationFixtures = [
   },
 ];
 
+const DUMMY_IMAGE_ID = "dummy_thumb_id";
+
 const EvilAngelChannelUniqueNames = {
   name: "Evil Angel (Channel)",
   description: "",
+  thumbnail: DUMMY_IMAGE_ID,
   parent: "Evil Angel (Network)",
   custom: {
     traxxx_id: 291,
@@ -410,6 +413,7 @@ export const defaultArgsResultFixtures = [
     name: "does find simple studio",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: {} },
     },
@@ -420,6 +424,7 @@ export const defaultArgsResultFixtures = [
     name: "does find simple studio, no spaces",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "EvilAngel",
       args: { studios: {} },
     },
@@ -430,6 +435,7 @@ export const defaultArgsResultFixtures = [
     name: "does find simple studio, multiple spaces",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "  Evil  Angel  ",
       args: { studios: {} },
     },
@@ -440,6 +446,7 @@ export const defaultArgsResultFixtures = [
     name: "does find simple studio, with accents",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Évïl Ângel",
       args: {
         studios: {},
@@ -453,6 +460,7 @@ export const defaultArgsResultFixtures = [
 const Gamma = {
   name: "Gamma Entertainment",
   description: "",
+  thumbnail: DUMMY_IMAGE_ID,
   custom: {
     traxxx_id: 1,
     traxxx_type: "network",
@@ -487,6 +495,7 @@ export const genericResultFixtures = [
     name: "returns channel name w/ suffix, when uniqueNames: true",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: { uniqueNames: true, channelPriority: true } },
     },
@@ -494,6 +503,7 @@ export const genericResultFixtures = [
     result: {
       name: "Evil Angel (Channel)",
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
         traxxx_id: 291,
@@ -506,6 +516,7 @@ export const genericResultFixtures = [
     name: "returns basic channel name, when uniqueNames: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: { uniqueNames: false, channelPriority: true } },
     },
@@ -515,6 +526,7 @@ export const genericResultFixtures = [
       // and they would conflict
       name: "Evil Angel",
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       custom: {
         traxxx_id: 291,
         traxxx_type: "channel",
@@ -526,6 +538,7 @@ export const genericResultFixtures = [
     name: "returns network name w/ suffix, when uniqueNames: true, channelPriority: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: { uniqueNames: true, channelPriority: false } },
     },
@@ -534,6 +547,7 @@ export const genericResultFixtures = [
       name: "Evil Angel (Network)",
       description:
         "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
         traxxx_id: 28,
@@ -546,6 +560,7 @@ export const genericResultFixtures = [
     name: "returns basic network name, when uniqueNames: false, channelPriority: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: { uniqueNames: false, channelPriority: false } },
     },
@@ -554,6 +569,7 @@ export const genericResultFixtures = [
       name: "Evil Angel",
       description:
         "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
         traxxx_id: 28,
@@ -567,6 +583,7 @@ export const genericResultFixtures = [
     name: "when channel, returns channel name w/ suffix, when uniqueNames: true",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Channel)",
       args: { studios: { uniqueNames: true, channelPriority: true } },
     },
@@ -574,6 +591,7 @@ export const genericResultFixtures = [
     result: {
       name: "Evil Angel (Channel)",
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
         traxxx_id: 291,
@@ -586,6 +604,7 @@ export const genericResultFixtures = [
     name: "when channel, returns basic channel name, when uniqueNames: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Channel)",
       args: { studios: { uniqueNames: false, channelPriority: true } },
     },
@@ -595,6 +614,7 @@ export const genericResultFixtures = [
       // and they would conflict
       name: "Evil Angel",
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       custom: {
         traxxx_id: 291,
         traxxx_type: "channel",
@@ -607,6 +627,7 @@ export const genericResultFixtures = [
       "when channel, returns channel name w/ suffix, when uniqueNames: true, channelPriority: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Channel)",
       args: { studios: { uniqueNames: true, channelPriority: false } },
     },
@@ -614,6 +635,7 @@ export const genericResultFixtures = [
     result: {
       name: "Evil Angel (Channel)",
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
         traxxx_id: 291,
@@ -627,6 +649,7 @@ export const genericResultFixtures = [
       "when channel, returns basic channel name, when uniqueNames: false, channelPriority: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Channel)",
       args: { studios: { uniqueNames: false, channelPriority: false } },
     },
@@ -636,6 +659,7 @@ export const genericResultFixtures = [
       // and they would conflict
       name: "Evil Angel",
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       custom: {
         traxxx_id: 291,
         traxxx_type: "channel",
@@ -648,6 +672,7 @@ export const genericResultFixtures = [
     name: "when network, returns network name w/ suffix, when uniqueNames: true",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Network)",
       args: { studios: { uniqueNames: true, channelPriority: true } },
     },
@@ -656,6 +681,8 @@ export const genericResultFixtures = [
       name: "Evil Angel (Network)",
       description:
         "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
         traxxx_id: 28,
@@ -668,6 +695,7 @@ export const genericResultFixtures = [
     name: "when network, returns basic network name, when uniqueNames: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Network)",
       args: { studios: { uniqueNames: false, channelPriority: true } },
     },
@@ -676,6 +704,8 @@ export const genericResultFixtures = [
       name: "Evil Angel",
       description:
         "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
         traxxx_id: 28,
@@ -689,6 +719,7 @@ export const genericResultFixtures = [
       "when network, returns network name w/ suffix, when uniqueNames: true, channelPriority: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Network)",
       args: { studios: { uniqueNames: true, channelPriority: false } },
     },
@@ -697,6 +728,8 @@ export const genericResultFixtures = [
       name: "Evil Angel (Network)",
       description:
         "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
         traxxx_id: 28,
@@ -710,6 +743,7 @@ export const genericResultFixtures = [
       "when network, returns basic network name, when uniqueNames: false, channelPriority: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Network)",
       args: { studios: { uniqueNames: false, channelPriority: false } },
     },
@@ -718,6 +752,8 @@ export const genericResultFixtures = [
       name: "Evil Angel",
       description:
         "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
+
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
         traxxx_id: 28,
@@ -731,6 +767,7 @@ export const genericResultFixtures = [
     name: "only network, returns network name w/ suffix, when uniqueNames: true",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Gamma",
       args: { studios: { uniqueNames: true, channelPriority: true } },
     },
@@ -741,6 +778,7 @@ export const genericResultFixtures = [
     name: "only network, returns basic network name, when uniqueNames: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Gamma",
       args: { studios: { uniqueNames: false, channelPriority: true } },
     },
@@ -752,6 +790,7 @@ export const genericResultFixtures = [
       "only network, returns network name w/ suffix, when uniqueNames: true, channelPriority: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Gamma",
       args: { studios: { uniqueNames: true, channelPriority: false } },
     },
@@ -763,6 +802,7 @@ export const genericResultFixtures = [
       "only network, returns basic network name, when uniqueNames: false, channelPriority: false",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Gamma",
       args: { studios: { uniqueNames: false, channelPriority: false } },
     },
@@ -774,6 +814,7 @@ export const genericResultFixtures = [
     name: "returns all properties with no whitelist/blacklist...",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: { uniqueNames: true, channelPriority: true } },
     },
@@ -781,6 +822,7 @@ export const genericResultFixtures = [
     result: {
       name: "Evil Angel (Channel)",
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
         traxxx_id: 291,
@@ -793,12 +835,14 @@ export const genericResultFixtures = [
     name: "does not return name when blacklisted",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: { uniqueNames: true, channelPriority: true, blacklist: ["name"] } },
     },
     errored: false,
     result: {
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
         traxxx_id: 291,
@@ -811,12 +855,14 @@ export const genericResultFixtures = [
     name: "does not return description when blacklisted",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: { uniqueNames: true, channelPriority: true, blacklist: ["description"] } },
     },
     errored: false,
     result: {
       name: "Evil Angel (Channel)",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
         traxxx_id: 291,
@@ -865,6 +911,7 @@ export const genericResultFixtures = [
     name: "does not return name when in data",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: { studios: { uniqueNames: true, channelPriority: true, blacklistOverride: ["name"] } },
       data: {
@@ -874,6 +921,7 @@ export const genericResultFixtures = [
     errored: false,
     result: {
       description: "",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
         traxxx_id: 291,
@@ -886,6 +934,7 @@ export const genericResultFixtures = [
     name: "does not return description when in data",
     context: {
       ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
       args: {
         studios: { uniqueNames: true, channelPriority: true, blacklistOverride: ["description"] },
@@ -897,6 +946,7 @@ export const genericResultFixtures = [
     errored: false,
     result: {
       name: "Evil Angel (Channel)",
+      thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
         traxxx_id: 291,

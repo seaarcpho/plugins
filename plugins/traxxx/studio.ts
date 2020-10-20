@@ -1,5 +1,5 @@
 import { StudioOutput } from "../../types/studio";
-import { Api, EntityResult } from "./api";
+import { Api, buildImageUrls, EntityResult } from "./api";
 import { MyStudioContext, MyValidatedStudioContext } from "./types";
 import {
   getExtractionPreferenceFromName,
@@ -56,11 +56,7 @@ export class ChannelExtractor {
     return this.channel || this.network;
   }
 
-  getName(): Partial<{ name: string }> {
-    if (suppressProp(this.ctx, "name")) {
-      return {};
-    }
-
+  private _getName(): Partial<{ name: string }> {
     const baseName = this.getPreferredEntity()?.name;
     if (!baseName) {
       return {};
@@ -84,6 +80,14 @@ export class ChannelExtractor {
     }
 
     return { name: `${baseName}${suffix}` };
+  }
+
+  public getName(): Partial<{ name: string }> {
+    if (suppressProp(this.ctx, "name")) {
+      return {};
+    }
+
+    return this._getName();
   }
 
   getDescription(): Partial<{ description: string }> {
@@ -113,6 +117,35 @@ export class ChannelExtractor {
     }
 
     return { parent: parentName };
+  }
+
+  async getThumbnail(): Promise<Partial<{ thumbnail: string }>> {
+    if (suppressProp(this.ctx, "thumbnail")) {
+      return {};
+    }
+
+    const entity = this.getPreferredEntity();
+    if (!entity) {
+      return {};
+    }
+
+    const imageUrls = buildImageUrls(entity);
+
+    if (!imageUrls.thumbnail) {
+      return {};
+    }
+
+    const thumbnail = this.ctx.args.dry
+      ? `_would_have_created_${imageUrls.thumbnail}`
+      : await this.ctx.$createImage(
+          imageUrls.thumbnail,
+          this._getName().name || this.ctx.studioName,
+          true
+        );
+
+    return {
+      thumbnail,
+    };
   }
 
   getCustom(): Partial<{ traxxx_id: number; traxxx_type: string; url: string }> {
@@ -193,6 +226,7 @@ export default async (initialContext: MyStudioContext): Promise<StudioOutput> =>
     const result: StudioOutput = {
       ...channelExtractor.getName(),
       ...channelExtractor.getDescription(),
+      ...(await channelExtractor.getThumbnail()),
       ...channelExtractor.getParent(),
       custom: channelExtractor.getCustom(),
     };
