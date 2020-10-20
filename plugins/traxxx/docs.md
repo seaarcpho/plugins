@@ -7,6 +7,8 @@ This plugin retrieves data from Traxxx.
 * The plugin returns the following properties:
     * `name` : name of the studio
     * `description` : description of the studio
+    * `thumbnail` : thumbnail of the studio
+    * `aliases` : aliases of the studio
     * `parent`: the parent channel/network
     * `custom` : custom fields:
         * `traxxx_id` : the matched id
