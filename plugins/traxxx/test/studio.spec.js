@@ -6,7 +6,7 @@ const {
   genericResultFixtures,
 } = require("./fixtures/studio.fixtures");
 
-describe.only("traxxx studio", () => {
+describe("traxxx studio", () => {
   // eslint-disable-next-line mocha/no-setup-in-describe
   ["studioCreated", "studioCustom"].forEach((event) => {
     describe(event, () => {
