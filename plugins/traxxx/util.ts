@@ -56,36 +56,27 @@ export const validateArgs = ({
     validatedArgs.studios = { ...validatedArgs.studios };
   }
 
-  const isInvalidStringArray = (arr: unknown): boolean =>
-    !Array.isArray(arr) || !arr.every((prop) => typeof prop === "string");
+  const studios = validatedArgs.studios;
 
-  if (typeof validatedArgs.studios.channelPriority !== "boolean") {
-    $log(
-      `[TRAXXX] MSG: Missing "args.studios.channelPriority, setting to default: "${DEFAULT_STUDIO_SETTINGS.channelPriority}"`
-    );
-    validatedArgs.studios.channelPriority = DEFAULT_STUDIO_SETTINGS.channelPriority;
-  }
-
-  if (typeof validatedArgs.studios.uniqueNames !== "boolean") {
-    $log(
-      `[TRAXXX] MSG: Missing "args.studios.uniqueNames, setting to default: "${DEFAULT_STUDIO_SETTINGS.uniqueNames}"`
-    );
-    validatedArgs.studios.uniqueNames = DEFAULT_STUDIO_SETTINGS.uniqueNames;
-  }
-
-  if (typeof validatedArgs.studios.channelSuffix !== "string") {
-    $log(
-      `[TRAXXX] MSG: Missing "args.studios.channelSuffix", setting to default: "${DEFAULT_STUDIO_SETTINGS.channelPriority}"`
-    );
-    validatedArgs.studios.channelSuffix = DEFAULT_STUDIO_SETTINGS.channelSuffix;
-  }
-
-  if (typeof validatedArgs.studios.networkSuffix !== "string") {
-    $log(
-      `[TRAXXX] MSG: Missing "args.studios.networkSuffix, setting to default: "${DEFAULT_STUDIO_SETTINGS.networkSuffix}"`
-    );
-    validatedArgs.studios.networkSuffix = DEFAULT_STUDIO_SETTINGS.networkSuffix;
-  }
+  [
+    { prop: "channelPriority", type: "boolean" },
+    { prop: "uniqueNames", type: "boolean" },
+    { prop: "channelSuffix", type: "string" },
+    { prop: "networkSuffix", type: "string" },
+  ].forEach((propCheck) => {
+    if (!hasProp(studios, propCheck.prop)) {
+      $log(
+        `[TRAXXX] MSG: Missing "args.studios.${propCheck.prop}", setting to default: "${
+          DEFAULT_STUDIO_SETTINGS[propCheck.prop]
+        }"`
+      );
+      studios[propCheck.prop] = DEFAULT_STUDIO_SETTINGS[propCheck.prop];
+    } else if (typeof studios[propCheck.prop] !== propCheck.type) {
+      return $throw(
+        `[TRAXXX] MSG: "args.studios.${propCheck.prop}" is not a ${propCheck.type}, cannot run plugin"`
+      );
+    }
+  });
 
   // One suffix can be an empty string, but both cannot be at the same time.
   // They cannot have the same value in general, otherwise it would not fix the conflict
@@ -95,41 +86,19 @@ export const validateArgs = ({
     );
   }
 
-  if (isInvalidStringArray(validatedArgs.studios.whitelist)) {
-    $log(
-      `[TRAXXX] MSG: Missing or invalid "args.studios.whitelist, setting to default: "${JSON.stringify(
-        DEFAULT_STUDIO_SETTINGS.whitelist
-      )}"`
-    );
-    validatedArgs.studios.whitelist = DEFAULT_STUDIO_SETTINGS.whitelist;
-  }
-
-  if (isInvalidStringArray(validatedArgs.studios.blacklist)) {
-    $log(
-      `[TRAXXX] MSG: Missing or invalid "args.studios.blacklist, setting to default: "${JSON.stringify(
-        DEFAULT_STUDIO_SETTINGS.blacklist
-      )}"`
-    );
-    validatedArgs.studios.blacklist = DEFAULT_STUDIO_SETTINGS.blacklist;
-  }
-
-  if (isInvalidStringArray(validatedArgs.studios.whitelistOverride)) {
-    $log(
-      `[TRAXXX] MSG: Missing or invalid "args.studios.whitelistOverride, setting to default: "${JSON.stringify(
-        DEFAULT_STUDIO_SETTINGS.whitelistOverride
-      )}"`
-    );
-    validatedArgs.studios.whitelistOverride = DEFAULT_STUDIO_SETTINGS.whitelistOverride;
-  }
-
-  if (isInvalidStringArray(validatedArgs.studios.blacklistOverride)) {
-    $log(
-      `[TRAXXX] MSG: Missing or invalid "args.studios.blacklistOverride, setting to default: "${JSON.stringify(
-        DEFAULT_STUDIO_SETTINGS.blacklistOverride
-      )}"`
-    );
-    validatedArgs.studios.blacklistOverride = DEFAULT_STUDIO_SETTINGS.blacklistOverride;
-  }
+  ["whitelist", "blacklist", "whitelistOverride", "blacklistOverride"].forEach((arrayProp) => {
+    const arr = studios[arrayProp];
+    if (!hasProp(studios, arrayProp)) {
+      $log(
+        `[TRAXXX] MSG: Missing "args.studios.${arrayProp}", setting to default: "${DEFAULT_STUDIO_SETTINGS[arrayProp]}"`
+      );
+      studios[arrayProp] = DEFAULT_STUDIO_SETTINGS[arrayProp];
+    } else if (!Array.isArray(arr) || !arr.every((prop) => typeof prop === "string")) {
+      return $throw(
+        `[TRAXXX] MSG: "args.studios.${arrayProp}" does not only contain strings, cannot run plugin"`
+      );
+    }
+  });
 
   // At the end of this function, validatedArgs will have type MyStudioArgs
   // since we merged defaults

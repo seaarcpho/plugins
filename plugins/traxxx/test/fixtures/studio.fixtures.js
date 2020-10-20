@@ -18,7 +18,6 @@ export const validationFixtures = [
       args: {},
     },
     errored: false,
-    errorMessage: "cannot run plugin",
   },
   {
     name: "when no 'args.studios'",
@@ -28,7 +27,6 @@ export const validationFixtures = [
       args: { dry: true },
     },
     errored: false,
-    errorMessage: "cannot run plugin",
   },
   // channelPriority
   {
@@ -47,7 +45,8 @@ export const validationFixtures = [
       studioName: "fake",
       args: { studios: { channelPriority: "not a boolean" } },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.channelPriority' is a boolean",
@@ -64,7 +63,7 @@ export const validationFixtures = [
     context: {
       ...context,
       studioName: "fake",
-      args: { studios: { uniqueNames: "not a boolean" } },
+      args: { studios: { channelPriority: true } },
     },
     errored: false,
   },
@@ -75,7 +74,8 @@ export const validationFixtures = [
       studioName: "fake",
       args: { studios: { channelPriority: true, uniqueNames: "not a boolean" } },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.uniqueNames' is a boolean",
@@ -94,7 +94,8 @@ export const validationFixtures = [
       studioName: "fake",
       args: { studios: { channelPriority: true, uniqueNames: true, channelSuffix: false } },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.channelSuffix' is a string",
@@ -120,7 +121,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.networkSuffix' is a string",
@@ -153,8 +155,41 @@ export const validationFixtures = [
         },
       },
     },
-    errorMessage: "cannot run plugin",
     errored: true,
+    errorMessage: "cannot run plugin",
+  },
+  {
+    name: "when 'args.studios.networkSuffix' & 'args.studios.networkSuffix' are both empty strings",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "",
+          networkSuffix: "",
+        },
+      },
+    },
+    errored: true,
+    errorMessage: "cannot run plugin",
+  },
+  {
+    name: "when only one suffix is an empty string",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "",
+          networkSuffix: "my suffix",
+        },
+      },
+    },
+    errored: false,
   },
   // whitelist
   {
@@ -172,7 +207,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.whitelist' is not an array of strings",
@@ -189,7 +225,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.whitelist' is an array of strings",
@@ -225,7 +262,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.blacklist' is not an array of strings",
@@ -243,7 +281,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.blacklist' is an array of strings",
@@ -281,7 +320,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.whitelistOverride' is not an array of strings",
@@ -300,7 +340,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.whitelistOverride' is an array of strings",
@@ -340,7 +381,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.blacklistOverride' is not an array of strings",
@@ -360,7 +402,8 @@ export const validationFixtures = [
         },
       },
     },
-    errored: false,
+    errored: true,
+    errorMessage: "cannot run plugin",
   },
   {
     name: "when 'args.studios.blacklistOverride' is an array of strings",
