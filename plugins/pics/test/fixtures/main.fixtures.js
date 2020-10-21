@@ -1,10 +1,9 @@
 import baseContext from "../../../../context";
-
-const LOCAL_IMAGE_ID = "local_image";
+import path from 'path';
 
 const context = {
   ...baseContext,
-  $createLocalImage: () => LOCAL_IMAGE_ID,
+  $createLocalImage: (path) => path,
 };
 
 export const basicFixtures = [
@@ -54,6 +53,7 @@ export const basicFixtures = [
 ];
 
 export const actorFixtures = [
+  // thumbnail
   {
     name: "Should find a thumbnail",
     context: {
@@ -66,7 +66,22 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: LOCAL_IMAGE_ID,
+      thumbnail: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+    },
+  },
+  {
+    name: "Should find another thumbnail",
+    context: {
+      ...context,
+      actorName: "002",
+      args: {
+        actors: {
+          path_thumb: "./plugins/pics/test/fixtures",
+        },
+      },
+    },
+    result: {
+      thumbnail: path.resolve("./plugins/pics/test/fixtures/image002.gif"),
     },
   },
   {
@@ -82,8 +97,9 @@ export const actorFixtures = [
     },
     result: {},
   },
+  // hero
   {
-    name: "Should find a thumbnail 2",
+    name: "Should find hero",
     context: {
       ...context,
       actorName: "001",
@@ -94,14 +110,88 @@ export const actorFixtures = [
       },
     },
     result: {
-      hero: LOCAL_IMAGE_ID,
+      hero: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
     },
   },
   {
-    name: "Should find no image 2",
+    name: "Should not find hero",
     context: {
       ...context,
       actorName: "003",
+      args: {
+        actors: {
+          path_hero: "./plugins/pics/test/fixtures",
+        },
+      },
+    },
+    result: {},
+  },
+  // Deep
+  // Deep > thumbnail
+  {
+    name: "deep: Should find a thumbnail",
+    context: {
+      ...context,
+      actorName: "005",
+      args: {
+        actors: {
+          path_thumb: "./plugins/pics/test/fixtures",
+        },
+      },
+    },
+    result: {
+      thumbnail: path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
+    },
+  },
+  {
+    name: "deep: Should find another thumbnail",
+    context: {
+      ...context,
+      actorName: "006",
+      args: {
+        actors: {
+          path_thumb: "./plugins/pics/test/fixtures",
+        },
+      },
+    },
+    result: {
+      thumbnail: path.resolve("./plugins/pics/test/fixtures/deep/image006.gif"),
+    },
+  },
+  {
+    name: "deep: Should find no image",
+    context: {
+      ...context,
+      actorName: "007",
+      args: {
+        actors: {
+          path_thumb: "./plugins/pics/test/fixtures",
+        },
+      },
+    },
+    result: {},
+  },
+  // Deep > hero
+  {
+    name: "deep: Should find hero",
+    context: {
+      ...context,
+      actorName: "005",
+      args: {
+        actors: {
+          path_hero: "./plugins/pics/test/fixtures",
+        },
+      },
+    },
+    result: {
+      hero: path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
+    },
+  },
+  {
+    name: "deep: Should not find hero",
+    context: {
+      ...context,
+      actorName: "007",
       args: {
         actors: {
           path_hero: "./plugins/pics/test/fixtures",
@@ -125,7 +215,7 @@ export const sceneFixtures = [
       },
     },
     result: {
-      thumbnail: LOCAL_IMAGE_ID,
+      thumbnail: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
     },
   },
   {
@@ -157,7 +247,7 @@ export const movieFixtures = [
       },
     },
     result: {
-      backCover: LOCAL_IMAGE_ID,
+      backCover: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
     },
   },
   {
@@ -186,7 +276,7 @@ export const movieFixtures = [
       },
     },
     result: {
-      frontCover: LOCAL_IMAGE_ID,
+      frontCover: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
     },
   },
   {
@@ -215,7 +305,7 @@ export const movieFixtures = [
       },
     },
     result: {
-      spineCover: LOCAL_IMAGE_ID,
+      spineCover: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
     },
   },
   {
@@ -246,7 +336,7 @@ export const studioFixtures = [
       },
     },
     result: {
-      thumbnail: LOCAL_IMAGE_ID,
+      thumbnail: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
     },
   },
   {

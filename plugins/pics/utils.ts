@@ -26,24 +26,42 @@ export async function scanFolder<T = { [imageProp: string]: string }>(
 
   ctx.$log(`[PICS]: MSG: Trying to find ${prop} pictures of ${query} in ${path}`);
 
-  const files = ctx.$fs.readdirSync(path);
-  const matchingFile = files.find((name) => name.toLowerCase().includes(query.toLowerCase()));
+  let didFindRes = false;
+  let res: T | null = null;
 
-  if (!matchingFile || !IMAGE_EXTENSIONS.includes(ctx.$path.extname(matchingFile))) {
+  await ctx.$walk({
+    dir: path,
+    extensions: IMAGE_EXTENSIONS,
+    exclude: [],
+    cb: async (imagePath) => {
+      if (didFindRes) {
+        return;
+      }
+
+      const isMatchingFile = imagePath.toLowerCase().includes(query.toLowerCase());
+      if (!isMatchingFile) {
+        return;
+      }
+
+      ctx.$log(`[PICS] MSG: Found ${prop} picture for ${query}`);
+
+      const image = ctx.args?.dry
+        ? `_would_have_created_image_${imagePath}`
+        : await ctx.$createLocalImage(imagePath, query, true);
+
+      res = ({
+        [prop]: image,
+      } as any) as T;
+      didFindRes = true;
+    },
+  });
+
+  if (!res) {
     ctx.$log(`[PICS]: MSG: No ${prop} pictures of ${query} in ${path}`);
     return {};
   }
 
-  ctx.$log(`[PICS] MSG: Found ${prop} picture for ${query}`);
-  const imagePath = ctx.$path.join(path, matchingFile);
-
-  const image = ctx.args?.dry
-    ? `_would_have_created_image_${imagePath}`
-    : await ctx.$createLocalImage(imagePath, query, true);
-
-  return {
-    [prop]: image,
-  };
+  return res;
 }
 
 export const buildScrapeDefinitions = (
