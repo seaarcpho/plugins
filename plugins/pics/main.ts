@@ -1,55 +1,120 @@
 import { ActorContext, ActorOutput } from "../../types/actor";
+import { MovieContext, MovieOutput } from "../../types/movie";
+import { SceneContext } from "../../types/scene";
+import { StudioContext } from "../../types/studio";
+import { MyContext } from "../pics/types";
+import { executeScape, ScrapeMapping } from "./utils";
 
-interface MyContext extends ActorContext {
-  args: {
-    path_thumb?: string;
-    path_alt?: string;
-    path_avatar?: string;
-    path_hero?: string;
-  };
+interface ScrapeEventDefinition {
+  queryProp: string;
+  events: string[];
+  argPathsObjProp: string;
+  scrapeMappings: ScrapeMapping[];
 }
 
-module.exports = async ({
-  args,
-  $throw,
-  $log,
-  actorName,
-  $createLocalImage,
-  $fs,
-  $path,
-}: MyContext): Promise<ActorOutput> => {
-  if (!actorName) $throw("Uh oh. You shouldn't use the plugin for this type of event");
+const eventScrapers: ScrapeEventDefinition[] = [
+  {
+    events: ["actorCreated", "actorCustom"],
+    queryProp: "actorName",
+    argPathsObjProp: "actors",
+    scrapeMappings: [
+      {
+        argProp: "path_thumb",
+        outputProp: "thumbnail",
+      },
+      {
+        argProp: "path_alt",
+        outputProp: "altThumbnail",
+      },
+      {
+        argProp: "path_avatar",
+        outputProp: "avatar",
+      },
+      {
+        argProp: "path_hero",
+        outputProp: "hero",
+      },
+    ],
+  },
+  {
+    events: ["sceneCreated", "sceneCustom"],
+    queryProp: "sceneName",
+    argPathsObjProp: "scenes",
+    scrapeMappings: [
+      {
+        argProp: "path_thumb",
+        outputProp: "thumbnail",
+      },
+    ],
+  },
+  {
+    events: ["movieCustom"],
+    queryProp: "movieName",
+    argPathsObjProp: "movies",
+    scrapeMappings: [
+      {
+        argProp: "path_back_cover",
+        outputProp: "backCover",
+      },
+      {
+        argProp: "path_front_cover",
+        outputProp: "frontCover",
+      },
+      {
+        argProp: "path_spine_cover",
+        outputProp: "spineCover",
+      },
+    ],
+  },
+  {
+    events: ["studioCreated", "studioCustom"],
+    queryProp: "studioName",
+    argPathsObjProp: "studios",
+    scrapeMappings: [
+      {
+        argProp: "path_thumb",
+        outputProp: "thumbnail",
+      },
+    ],
+  },
+];
 
-  const exts = [".jpg", ".png", ".jpeg", ".gif"];
-
-  async function scanFolder(partial: string | undefined, prop: string) {
-    if (!partial) {
-      $log(`No ${prop} path defined`);
-      return {};
-    }
-
-    const path = $path.resolve(partial);
-
-    $log(`Trying to find ${prop} pictures of ${actorName} in ${path}`);
-
-    const files = $fs.readdirSync(path);
-    const hit = files.find((name) => name.toLowerCase().includes(actorName.toLowerCase()));
-
-    if (hit && exts.some((ext) => hit.endsWith(ext))) {
-      $log(`Found ${prop} picture for ${actorName}`);
-      var image = await $createLocalImage($path.join(path, hit), actorName, true);
-      return {
-        [prop]: image,
-      };
-    }
-
+module.exports = async (
+  ctx: (ActorContext | SceneContext | MovieContext | StudioContext) & MyContext
+): Promise<ActorOutput | MovieOutput | undefined> => {
+  const eventScraperDefinition = eventScrapers.find((scraper) =>
+    scraper.events.includes(ctx.event)
+  );
+  if (!eventScraperDefinition) {
+    ctx.$throw(
+      "[PICS] ERR: Uh oh. You shouldn't use the plugin for this type of event, cannot run plugin"
+    );
     return {};
   }
 
-  return {
-    ...((await scanFolder(args?.path_thumb, "thumbnail")) as { thumbnail: string }),
-    ...((await scanFolder(args?.path_alt, "altThumbnail")) as { altThumbnail: string }),
-    ...((await scanFolder(args?.path_avatar, "avatar")) as { avatar: string }),
-    ...((await scanFolder(args?.path_hero, "hero")) as { hero: string }),
-  } as ActorOutput;
+  const query = ctx[eventScraperDefinition.queryProp] as string | undefined;
+  if (!query) {
+    ctx.$throw(
+      `[PICS] ERR: Did not receive name to search for. Expected a string from ${eventScraperDefinition.queryProp}`
+    );
+    return {};
+  }
+
+  const pathsObj = ctx.args?.[eventScraperDefinition.argPathsObjProp];
+  if (!pathsObj) {
+    ctx.$throw(
+      `[PICS] ERR: Arguments did not contain object with paths to search for. Expected "args.${eventScraperDefinition.argPathsObjProp}"`
+    );
+    return {}; // return for type compatibility
+  }
+
+  const result = await executeScape(ctx, query, pathsObj, eventScraperDefinition.scrapeMappings);
+
+  if (ctx.args?.dry) {
+    ctx.$log("[PICS] MSG: Is 'dry' mode, would've returned:");
+    ctx.$log(result);
+    return {};
+  }
+
+  return result;
 };

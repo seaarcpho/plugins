@@ -43,3 +43,7 @@ export interface Context<Data = unknown> {
 export interface CustomFieldsOutput {
   custom?: any;
 }
+
+export type DeepPartial<T> = {
+  [P in keyof T]: DeepPartial<T[P]> | undefined;
+};

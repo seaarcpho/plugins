@@ -1,53 +1,115 @@
-const context = require("../../../context");
 const plugin = require("../main");
 const { expect } = require("chai");
+const {
+  actorFixtures,
+  movieFixtures,
+  studioFixtures,
+  sceneFixtures,
+  basicFixtures,
+} = require("./fixtures/main.fixtures");
 
-describe("adultempire", () => {
-  it("Should find a thumbnail", async () => {
-    const result = await plugin({
-      ...context,
-      actorName: "001",
-      args: {
-        path_thumb: "./plugins/profile_pics/test/fixtures",
-      },
+describe("pics", () => {
+  describe("basic", () => {
+    // eslint-disable-next-line mocha/no-setup-in-describe
+    basicFixtures.forEach((fixture, fixtureIndex) => {
+      it(`[${fixtureIndex}] ${fixture.name}`, async () => {
+        let errored = false;
+
+        try {
+          await plugin({
+            ...fixture.context,
+          });
+        } catch (err) {
+          if (fixture.errorMessage) {
+            expect(err.message.includes(fixture.errorMessage)).to.be.true;
+          }
+          errored = true;
+        }
+
+        if (fixture.errored) {
+          expect(errored).to.equal(fixture.errored);
+        }
+      });
     });
-    expect(result).to.be.an("object");
-    expect(result.thumbnail).to.be.a("string");
   });
 
-  it("Should find no image", async () => {
-    const result = await plugin({
-      ...context,
-      actorName: "003",
-      args: {
-        path_thumb: "./plugins/profile_pics/test/fixtures",
-      },
+  // eslint-disable-next-line mocha/no-setup-in-describe
+  ["actorCreated", "actorCustom"].forEach((event) => {
+    describe(event, () => {
+      // eslint-disable-next-line mocha/no-setup-in-describe
+      actorFixtures.forEach((fixture, fixtureIndex) => {
+        it(`[${fixtureIndex}] ${fixture.name}`, async () => {
+          const result = await plugin({
+            ...fixture.context,
+            event,
+          });
+
+          if (fixture.result) {
+            expect(result).to.be.an("object");
+            expect(result).to.deep.equal(fixture.result);
+          }
+        });
+      });
     });
-    expect(result).to.be.an("object");
-    expect(result.thumbnail).to.be.undefined;
   });
 
-  it("Should find a thumbnail 2", async () => {
-    const result = await plugin({
-      ...context,
-      actorName: "001",
-      args: {
-        path_hero: "./plugins/profile_pics/test/fixtures",
-      },
+  // eslint-disable-next-line mocha/no-setup-in-describe
+  ["sceneCreated", "sceneCustom"].forEach((event) => {
+    describe(event, () => {
+      // eslint-disable-next-line mocha/no-setup-in-describe
+      sceneFixtures.forEach((fixture, fixtureIndex) => {
+        it(`[${fixtureIndex}] ${fixture.name}`, async () => {
+          const result = await plugin({
+            ...fixture.context,
+            event,
+          });
+
+          if (fixture.result) {
+            expect(result).to.be.an("object");
+            expect(result).to.deep.equal(fixture.result);
+          }
+        });
+      });
     });
-    expect(result).to.be.an("object");
-    expect(result.hero).to.be.a("string");
   });
 
-  it("Should find no image 2", async () => {
-    const result = await plugin({
-      ...context,
-      actorName: "003",
-      args: {
-        path_hero: "./plugins/profile_pics/test/fixtures",
-      },
+  // eslint-disable-next-line mocha/no-setup-in-describe
+  ["movieCustom"].forEach((event) => {
+    describe(event, () => {
+      // eslint-disable-next-line mocha/no-setup-in-describe
+      movieFixtures.forEach((fixture, fixtureIndex) => {
+        it(`[${fixtureIndex}] ${fixture.name}`, async () => {
+          const result = await plugin({
+            ...fixture.context,
+            event,
+          });
+
+          if (fixture.result) {
+            expect(result).to.be.an("object");
+            expect(result).to.deep.equal(fixture.result);
+          }
+        });
+      });
     });
-    expect(result).to.be.an("object");
-    expect(result.hero).to.be.undefined;
+  });
+
+  // eslint-disable-next-line mocha/no-setup-in-describe
+  ["studioCreated", "studioCustom"].forEach((event) => {
+    describe(event, () => {
+      // eslint-disable-next-line mocha/no-setup-in-describe
+      studioFixtures.forEach((fixture, fixtureIndex) => {
+        it(`[${fixtureIndex}] ${fixture.name}`, async () => {
+          const result = await plugin({
+            ...fixture.context,
+            event,
+          });
+
+          if (fixture.result) {
+            expect(result).to.be.an("object");
+            expect(result).to.deep.equal(fixture.result);
+          }
+        });
+      });
+    });
   });
 });
