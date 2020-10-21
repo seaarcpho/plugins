@@ -95,7 +95,12 @@ export class ChannelExtractor {
       return {};
     }
 
-    return { description: this.getPreferredEntity()?.description || "" };
+    const description = this.getPreferredEntity()?.description;
+    if (!description) {
+      return {};
+    }
+
+    return { description };
   }
 
   async getThumbnail(): Promise<Partial<{ thumbnail: string }>> {
