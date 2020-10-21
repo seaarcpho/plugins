@@ -137,13 +137,20 @@ export class ChannelExtractor {
       return {};
     }
 
-    const aliases = this.getPreferredEntity()?.aliases || [];
-    if (!aliases.length) {
+    const ourAliases = this.getPreferredEntity()?.aliases || [];
+    if (!ourAliases.length) {
       return {};
     }
 
+    const previousAliases = this.ctx.data.aliases;
+    if (previousAliases?.length && this.ctx.args.studios.mergeAliases) {
+      return {
+        aliases: [...previousAliases, ...ourAliases],
+      };
+    }
+
     return {
-      aliases,
+      aliases: ourAliases,
     };
   }
 

@@ -21,4 +21,5 @@ module.exports = {
   $readline: require("readline"),
   $loader: require("ora"),
   $cwd: process.cwd(),
+  data: {}
 };

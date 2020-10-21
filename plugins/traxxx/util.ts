@@ -19,6 +19,7 @@ const DEFAULT_STUDIO_SETTINGS: StudioSettings = {
   blacklist: [],
   whitelistOverride: [],
   blacklistOverride: [],
+  mergeAliases: true,
 };
 
 /**
@@ -63,6 +64,7 @@ export const validateArgs = ({
     { prop: "uniqueNames", type: "boolean" },
     { prop: "channelSuffix", type: "string" },
     { prop: "networkSuffix", type: "string" },
+    { prop: "mergeAliases", type: "boolean" },
   ].forEach((propCheck) => {
     if (!hasProp(studios, propCheck.prop)) {
       $log(

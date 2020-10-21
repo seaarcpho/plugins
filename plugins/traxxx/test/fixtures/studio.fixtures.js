@@ -191,6 +191,58 @@ export const validationFixtures = [
     },
     errored: false,
   },
+  // mergeAliases
+  {
+    name: "when 'args.studios.mergeAliases' is missing",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
+        },
+      },
+    },
+    errored: false,
+  },
+  {
+    name: "when 'args.studios.mergeAliases' is not a boolean",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
+          mergeAliases: "str",
+        },
+      },
+    },
+    errored: true,
+    errorMessage: "cannot run plugin",
+  },
+  {
+    name: "when 'args.studios.mergeAliases' is a boolean",
+    context: {
+      ...context,
+      studioName: "fake",
+      args: {
+        studios: {
+          channelPriority: true,
+          uniqueNames: true,
+          channelSuffix: "my channel suffix",
+          networkSuffix: "my network suffix",
+          mergeAliases: false,
+        },
+      },
+    },
+    errored: false,
+  },
   // whitelist
   {
     name: "when 'args.studios.whitelist' is not an array",
@@ -431,7 +483,6 @@ const DUMMY_IMAGE_ID = "dummy_thumb_id";
 
 const EvilAngelChannelUniqueNames = {
   name: "Evil Angel (Channel)",
-  description: "",
   thumbnail: DUMMY_IMAGE_ID,
   parent: "Evil Angel (Network)",
   custom: {
@@ -502,7 +553,6 @@ export const defaultArgsResultFixtures = [
 
 const Gamma = {
   name: "Gamma Entertainment",
-  description: "",
   thumbnail: DUMMY_IMAGE_ID,
   aliases: ["gammaentertainment"],
   custom: {
@@ -546,7 +596,6 @@ export const genericResultFixtures = [
     errored: false,
     result: {
       name: "Evil Angel (Channel)",
-      description: "",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
@@ -581,7 +630,6 @@ export const genericResultFixtures = [
       // No 'parent' in result on purpose, since no unique names,
       // and they would conflict
       name: "Evil Angel",
-      description: "",
       thumbnail: DUMMY_IMAGE_ID,
       custom: {
         "Traxxx Id": 291,
@@ -646,7 +694,6 @@ export const genericResultFixtures = [
     errored: false,
     result: {
       name: "Evil Angel (Channel)",
-      description: "",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
@@ -669,7 +716,6 @@ export const genericResultFixtures = [
       // No 'parent' in result on purpose, since no unique names,
       // and they would conflict
       name: "Evil Angel",
-      description: "",
       thumbnail: DUMMY_IMAGE_ID,
       custom: {
         "Traxxx Id": 291,
@@ -690,7 +736,6 @@ export const genericResultFixtures = [
     errored: false,
     result: {
       name: "Evil Angel (Channel)",
-      description: "",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
@@ -714,7 +759,6 @@ export const genericResultFixtures = [
       // No 'parent' in result on purpose, since no unique names,
       // and they would conflict
       name: "Evil Angel",
-      description: "",
       thumbnail: DUMMY_IMAGE_ID,
       custom: {
         "Traxxx Id": 291,
@@ -865,6 +909,76 @@ export const genericResultFixtures = [
     errored: false,
     result: Gamma,
   },
+  // aliases
+  {
+    name: "merges aliases when mergeAliases: true",
+    context: {
+      ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
+      studioName: "Gamma",
+      args: { studios: { uniqueNames: true, channelPriority: false, mergeAliases: true } },
+      data: {
+        aliases: ["dummy alias"],
+      },
+    },
+    errored: false,
+    result: {
+      name: "Gamma Entertainment",
+      thumbnail: DUMMY_IMAGE_ID,
+      aliases: ["dummy alias", "gammaentertainment"],
+      custom: {
+        "Traxxx Id": 1,
+        "Traxxx Type": "network",
+        Homepage: "https://www.gammaentertainment.com",
+      },
+    },
+  },
+  {
+    name: "returns own aliases when no preexisting when mergeAliases: true",
+    context: {
+      ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
+      studioName: "Gamma",
+      args: { studios: { uniqueNames: true, channelPriority: false, mergeAliases: true } },
+      data: {
+        aliases: [],
+      },
+    },
+    errored: false,
+    result: {
+      name: "Gamma Entertainment",
+      thumbnail: DUMMY_IMAGE_ID,
+      aliases: ["gammaentertainment"],
+      custom: {
+        "Traxxx Id": 1,
+        "Traxxx Type": "network",
+        Homepage: "https://www.gammaentertainment.com",
+      },
+    },
+  },
+  {
+    name: "does not merge aliases when mergeAliases: false",
+    context: {
+      ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
+      studioName: "Gamma",
+      args: { studios: { uniqueNames: false, channelPriority: false, mergeAliases: false } },
+      data: {
+        aliases: ["dummy alias"],
+      },
+    },
+    errored: false,
+    result: {
+      name: "Gamma Entertainment",
+      thumbnail: DUMMY_IMAGE_ID,
+      aliases: ["gammaentertainment"],
+      custom: {
+        "Traxxx Id": 1,
+        "Traxxx Type": "network",
+        Homepage: "https://www.gammaentertainment.com",
+      },
+    },
+  },
   // Prop suppression > blacklist
   {
     name: "returns all properties with no whitelist/blacklist...",
@@ -877,7 +991,6 @@ export const genericResultFixtures = [
     errored: false,
     result: {
       name: "Evil Angel (Channel)",
-      description: "",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
@@ -897,7 +1010,6 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      description: "",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
@@ -954,7 +1066,6 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      description: "",
       custom: {
         "Traxxx Id": 291,
         "Traxxx Type": "channel",
@@ -962,21 +1073,21 @@ export const genericResultFixtures = [
       },
     },
   },
-  // Prop suppression > previous plugin
+  // Prop suppression > previous plugin > whitelistOverride
   {
-    name: "does not return name when in data",
+    name: "does return name when in data, in whitelistOverride",
     context: {
       ...context,
       $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel",
-      args: { studios: { uniqueNames: true, channelPriority: true, blacklistOverride: ["name"] } },
+      args: { studios: { uniqueNames: true, channelPriority: true, whitelistOverride: ["name"] } },
       data: {
         name: "dummy name",
       },
     },
     errored: false,
     result: {
-      description: "",
+      name: "Evil Angel (Channel)",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
@@ -987,7 +1098,34 @@ export const genericResultFixtures = [
     },
   },
   {
-    name: "does not return description when in data",
+    name: "does does return description when in data, not in whitelistOverride",
+    context: {
+      ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
+      studioName: "Evil Angel",
+      args: {
+        studios: { uniqueNames: true, channelPriority: true, whitelistOverride: ["name"] },
+      },
+      data: {
+        name: "dummy name",
+        description: "dummy description",
+      },
+    },
+    errored: false,
+    result: {
+      name: "Evil Angel (Channel)",
+      thumbnail: DUMMY_IMAGE_ID,
+      parent: "Evil Angel (Network)",
+      custom: {
+        "Traxxx Id": 291,
+        "Traxxx Type": "channel",
+        Homepage: "https://www.evilangel.com",
+      },
+    },
+  },
+  // Prop suppression > previous plugin > blacklistOverride
+  {
+    name: "does not return description when in data, in blacklistOverride",
     context: {
       ...context,
       $createImage: () => DUMMY_IMAGE_ID,
@@ -1002,6 +1140,28 @@ export const genericResultFixtures = [
     errored: false,
     result: {
       name: "Evil Angel (Channel)",
+      thumbnail: DUMMY_IMAGE_ID,
+      parent: "Evil Angel (Network)",
+      custom: {
+        "Traxxx Id": 291,
+        "Traxxx Type": "channel",
+        Homepage: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name: "does not return name when in data, in blacklistOverride",
+    context: {
+      ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
+      studioName: "Evil Angel",
+      args: { studios: { uniqueNames: true, channelPriority: true, blacklistOverride: ["name"] } },
+      data: {
+        name: "dummy name",
+      },
+    },
+    errored: false,
+    result: {
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {

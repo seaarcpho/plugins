@@ -28,6 +28,10 @@ export interface StudioSettings {
    */
   networkSuffix: string;
   /**
+   * If returning aliases, whether to merge or override the aliases from a previous plugin
+   */
+  mergeAliases: boolean;
+  /**
    * Array of properties to allow returning. If non empty, blacklist will be ignored.
    */
   whitelist: string[];

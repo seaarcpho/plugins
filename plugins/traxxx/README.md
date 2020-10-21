@@ -48,6 +48,7 @@ Example: plugin `A` returns `custom.myField: 'a string'`. and plugin `B` *would*
 | studios.uniqueNames       | Boolean  | false    | When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts. The suffixes obviously cannot be the smae                                                                                                                          |
 | studios.channelSuffix     | String   | false    | When `studios.uniqueNames` is active returning a **channel** name that also corresponds to a network, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added                                                                                 |
 | studios.networkSuffix     | String   | false    | When `studios.uniqueNames` is active and returning a **network** name that also corresponds to a channel, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added                                                                             |
+| studios.mergeAliases      | Boolean  | false    | When the previous plugin returned aliases, if our plugins aliases should be merged with them or not                                                                                                                                                                                           |
 | studios.whitelist         | String[] | false    | Array of data fields to pick. When non empty, only the fields listed will be returned. Possible values: [`'name', 'description', 'thumbnail', 'aliases', 'parent'`].                                                                                                                          |
 | studios.blacklist         | String[] | false    | Array of data fields to omit. Used **only** when `whitelist` is empty. When non empty, only the fields **not** listed will be returned. (for values see `whitelist`)                                                                                                                          |
 | studios.whitelistOverride | String[] | false    | Array of data fields to pick, when values already exist from a piped plugin. Acts exactly the same as `whitelist`, but used **only** when the field has been returned by a previous plugin. (**WARNING**: not the same thing as existing values of the scene) (for values see `whitelist`)    |
@@ -70,6 +71,7 @@ Example: plugin `A` returns `custom.myField: 'a string'`. and plugin `B` *would*
             "uniqueNames": true,
             "channelSuffix": " (Channel)",
             "networkSuffix": " (Network)",
+            "mergeAliases": true,
             "whitelist": [],
             "blacklist": [],
             "whitelistOverride": [],
@@ -105,6 +107,7 @@ plugins:
           uniqueNames: true
           channelSuffix: " (Channel)"
           networkSuffix: " (Network)"
+          mergeAliases: true
           whitelist: []
           blacklist: []
           whitelistOverride: []

@@ -31,7 +31,7 @@
       "type": "Boolean",
       "required": false,
       "default": true,
-      "description": "When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts. The suffixes obviously cannot be the smae"
+      "description": "When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts. The suffixes obviously cannot be the same"
     },
     {
       "name": "studios.channelSuffix",
@@ -46,6 +46,13 @@
       "required": false,
       "default": " (Network)",
       "description": "When `studios.uniqueNames` is active and returning a **network** name that also corresponds to a channel, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added"
+    },
+    {
+      "name": "studios.mergeAliases",
+      "type": "Boolean",
+      "required": false,
+      "default": true,
+      "description": "When the previous plugin returned aliases, if our plugins aliases should be merged with them or override them"
     },
     {
       "name": "studios.whitelist",
