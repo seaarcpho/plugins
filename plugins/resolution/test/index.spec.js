@@ -2,7 +2,7 @@ const context = require("../../../context");
 const plugin = require("../main");
 const { expect } = require("chai");
 
-describe.only("resolution", () => {
+describe("resolution", () => {
   it("Should fail", () => {
     let errord = false;
     try {
