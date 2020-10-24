@@ -127,7 +127,7 @@ describe("resolution", () => {
   it("Should not return anything", () => {
     let errord = false;
     try {
-      const result = plugin({
+      plugin({
         ...context,
         scenePath: "/videos/Avi Love [800p].mp4",
         scene: {
