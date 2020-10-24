@@ -8,11 +8,11 @@ const {
 
 describe("traxxx studio", () => {
   // eslint-disable-next-line mocha/no-setup-in-describe
-  ["studioCreated", "studioCustom"].slice(0, 1).forEach((event) => {
+  ["studioCreated", "studioCustom"].forEach((event) => {
     describe(event, () => {
       describe("validate args", () => {
         // eslint-disable-next-line mocha/no-setup-in-describe
-        validationFixtures.slice(0, 1).forEach((fixture, fixtureIdx) => {
+        validationFixtures.forEach((fixture, fixtureIdx) => {
           it(`[${fixtureIdx}] ${fixture.name}`, async () => {
             let errored = false;
             try {
