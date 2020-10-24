@@ -6,21 +6,22 @@ const {
   genericResultFixtures,
 } = require("./fixtures/studio.fixtures");
 
-describe.only("traxxx studio", () => {
+describe("traxxx studio", () => {
   // eslint-disable-next-line mocha/no-setup-in-describe
   ["studioCreated", "studioCustom"].slice(0, 1).forEach((event) => {
     describe(event, () => {
       describe("validate args", () => {
         // eslint-disable-next-line mocha/no-setup-in-describe
-        validationFixtures.forEach((fixture, fixtureIdx) => {
+        validationFixtures.slice(0, 1).forEach((fixture, fixtureIdx) => {
           it(`[${fixtureIdx}] ${fixture.name}`, async () => {
             let errored = false;
             try {
               await plugin({
-                event,
                 ...fixture.context,
+                event,
               });
             } catch (error) {
+              console.error(error);
               if (fixture.errorMessage) {
                 expect(error.message.includes(fixture.errorMessage)).to.be.true;
               }
@@ -41,8 +42,8 @@ describe.only("traxxx studio", () => {
 
             try {
               result = await plugin({
-                event,
                 ...fixture.context,
+                event,
               });
             } catch (error) {
               if (fixture.errorMessage) {
@@ -66,8 +67,8 @@ describe.only("traxxx studio", () => {
 
             try {
               result = await plugin({
-                event,
                 ...fixture.context,
+                event,
               });
             } catch (error) {
               if (fixture.errorMessage) {
