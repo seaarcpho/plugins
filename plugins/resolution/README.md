@@ -6,13 +6,14 @@ Add resolution labels to a scene
 
 ### Arguments
 
-| Name        | Type     | Required | Description               |
-| ----------- | -------- | -------- | ------------------------- |
-| resolutions | number[] | false    | Resolutions to match with |
+| Name        | Type     | Required | Description                                                                                         |
+| ----------- | -------- | -------- | --------------------------------------------------------------------------------------------------- |
+| resolutions | number[] | false    | Resolutions to match against the scene's path, when the scene's metadata has not yet been extracted |
 
 ### Example installation with default arguments
 
 `config.json`
+
 ```json
 ---
 {
@@ -39,6 +40,7 @@ Add resolution labels to a scene
 ```
 
 `config.yaml`
+
 ```yaml
 ---
 plugins:
@@ -52,6 +54,6 @@ plugins:
       - resolution
     sceneCustom:
       - resolution
-
 ---
+
 ```

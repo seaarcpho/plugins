@@ -13,7 +13,7 @@
       "type": "number[]",
       "required": false,
       "default": [],
-      "description": "Resolutions to match with"
+      "description": "Resolutions to match against the scene's path, when the scene's metadata has not yet been extracted"
     }
   ]
 }

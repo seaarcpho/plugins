@@ -84,4 +84,62 @@ describe("resolution", () => {
     });
     expect(result).to.deep.equal({});
   });
+
+  it("Should find 720p and merge", () => {
+    const result = plugin({
+      ...context,
+      scenePath: "test",
+      scene: {
+        meta: {
+          dimensions: {
+            height: 720,
+          },
+        },
+      },
+      data: {
+        labels: ["test", "test2"],
+      },
+    });
+    expect(result).to.deep.equal({
+      labels: ["test", "test2", "720p"],
+    });
+  });
+
+  it("Should find 800p from path and merge", () => {
+    const result = plugin({
+      ...context,
+      scenePath: "/videos/Avi Love [800p].mp4",
+      scene: {
+        meta: {},
+      },
+      args: {
+        resolutions: [200, 800],
+      },
+      data: {
+        labels: ["test", "test2"],
+      },
+    });
+    expect(result).to.deep.equal({
+      labels: ["test", "test2", "800p"],
+    });
+  });
+
+  it("Should not return anything", () => {
+    let errord = false;
+    try {
+      const result = plugin({
+        ...context,
+        scenePath: "/videos/Avi Love [800p].mp4",
+        scene: {
+          meta: {},
+        },
+        args: {
+          resolutions: ["xyz", 800],
+        },
+      });
+    } catch (error) {
+      errord = true;
+    }
+    expect(errord).to.be.true;
+  });
 });
