@@ -21,7 +21,6 @@ describe("traxxx studio", () => {
                 event,
               });
             } catch (error) {
-              console.error(error);
               if (fixture.errorMessage) {
                 expect(error.message.includes(fixture.errorMessage)).to.be.true;
               }
