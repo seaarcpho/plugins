@@ -57,5 +57,8 @@
   "bugs": {
     "url": "https://github.com/boi123212321/porn-vault-plugins/issues"
   },
-  "homepage": "https://github.com/boi123212321/porn-vault-plugins#readme"
+  "homepage": "https://github.com/boi123212321/porn-vault-plugins#readme",
+  "nyc": {
+    "exclude": "**/*.spec.js"
+  }
 }
