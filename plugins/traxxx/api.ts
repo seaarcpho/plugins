@@ -74,7 +74,7 @@ export class Api {
           if (_err.response?.status === 404) {
             this.ctx.$log(`[TRAXXX] MSG: "${idOrSlug}" does not exist as a channel`);
           } else {
-            this.ctx.$log(`[TRAXXX] ERR: ${err.message}`);
+            this.ctx.$throw(err);
           }
           return undefined;
         })
@@ -87,7 +87,7 @@ export class Api {
           if (_err.response?.status === 404) {
             this.ctx.$log(`[TRAXXX] MSG: "${idOrSlug}" does not exist as a network`);
           } else {
-            this.ctx.$log(`[TRAXXX] ERR: ${err.message}`);
+            this.ctx.$throw(err);
           }
           return undefined;
         })
