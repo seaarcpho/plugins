@@ -81,7 +81,9 @@ export class ChannelExtractor {
     }
 
     const ignoreNameConflicts =
-      this.channel?.name !== this.network?.name || !this.ctx.args.studios.uniqueNames;
+      this.channel?.name !== this.network?.name ||
+      (!this.ctx.args.studios.uniqueNames && this.entityPreference === "none");
+    // Only use 'uniqueNames' to ignore, when the studio name does not already have a suffix
     if (ignoreNameConflicts) {
       return { name: baseName };
     }
