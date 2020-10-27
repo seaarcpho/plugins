@@ -55,25 +55,19 @@ export class ChannelExtractor {
       }
     | undefined {
     const bothExist = !!this.channel && !!this.network;
+
     if (
       this.entityPreference === "channel" ||
-      (bothExist && this.ctx.args.studios.channelPriority)
+      (this.entityPreference === "none" &&
+        (!this.network || (bothExist && this.ctx.args.studios.channelPriority)))
     ) {
       return { type: "channel", entity: this.channel };
     }
     if (
       this.entityPreference === "network" ||
-      (bothExist && !this.ctx.args.studios.channelPriority)
+      (this.entityPreference === "none" &&
+        (!this.channel || (bothExist && !this.ctx.args.studios.channelPriority)))
     ) {
-      return { type: "network", entity: this.network };
-    }
-
-    // If no conflicts, and no preference, there should only by one type left
-    if (this.channel) {
-      return { type: "channel", entity: this.channel };
-    }
-
-    if (this.network) {
       return { type: "network", entity: this.network };
     }
 
@@ -194,8 +188,16 @@ export class ChannelExtractor {
     }
 
     // Otherwise, we have to check if the parent has a potential name conflict
+    const parentSlug = this.preferredEntity?.entity?.parent?.slug;
+    if (!parentSlug) {
+      this.ctx.$log(
+        `[TRAXXX] WARN: Parent did not have slug, cannot check for name conflict, will not return parent'`
+      );
+      return {};
+    }
+
     const { channel: parentAsChannel, network: parentAsNetwork } = await this.api.getAllEntities(
-      parentName
+      parentSlug
     );
 
     if (parentAsChannel?.name === parentAsNetwork?.name) {
@@ -264,9 +266,9 @@ export default async (initialContext: MyStudioContext): Promise<StudioOutput> =>
     const result: StudioOutput = {
       ...channelExtractor.getName(),
       ...channelExtractor.getDescription(),
-      ...(await channelExtractor.getThumbnail().catch(() => ({}))),
+      ...(await channelExtractor.getThumbnail()),
       ...channelExtractor.getAliases(),
-      ...(await channelExtractor.getParent().catch(() => ({}))),
+      ...(await channelExtractor.getParent()),
       custom: channelExtractor.getCustom(),
     };
 
