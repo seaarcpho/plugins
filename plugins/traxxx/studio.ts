@@ -15,6 +15,7 @@ export class ChannelExtractor {
   channel?: EntityResult.Entity;
   network?: EntityResult.Entity;
   entityPreference: EntityPreference;
+  api: Api;
 
   /**
    * @param ctx - plugin context
@@ -37,6 +38,7 @@ export class ChannelExtractor {
     }
   ) {
     this.ctx = ctx;
+    this.api = new Api(ctx);
     this.channel = channel;
     this.network = network;
     this.entityPreference = entityPreference;
@@ -154,7 +156,7 @@ export class ChannelExtractor {
     };
   }
 
-  getParent(): Partial<{ parent: string }> {
+  async getParent(): Promise<Partial<{ parent: string }>> {
     if (suppressProp(this.ctx, "parent")) {
       return {};
     }
@@ -168,7 +170,19 @@ export class ChannelExtractor {
       if (this.ctx.args.studios.uniqueNames) {
         return { parent: `${parentName}${this.ctx.args.studios.networkSuffix}` };
       }
-      this.ctx.$log(`[TRAXXX] MSG: Cannot return parent name, would conflict with current name`);
+      this.ctx.$log(`[TRAXXX] WARN: Cannot return parent name, would conflict with current name`);
+      return {};
+    }
+
+    const { channel: parentAsChannel, network: parentAsNetwork } = await this.api.getAllEntities(
+      parentName
+    );
+
+    if (parentAsChannel?.name === parentAsNetwork?.name) {
+      if (this.ctx.args.studios.uniqueNames) {
+        return { parent: `${parentName}${this.ctx.args.studios.networkSuffix}` };
+      }
+      this.ctx.$log(`[TRAXXX] WARN: Cannot return parent name, would conflict other parent's other type'`);
       return {};
     }
 
@@ -212,32 +226,7 @@ export default async (initialContext: MyStudioContext): Promise<StudioOutput> =>
       ctx.$log(`[TRAXXX] MSG: Identified as ${entityPreference} from current name`);
     }
 
-    const searchPromises: Promise<EntityResult.Entity | undefined>[] = [];
-
-    // We still need to search for both channels & networks, even if
-    // we know the type, so that we can tell if there would be name conflicts
-    searchPromises.push(
-      api
-        .getChannel(slugifiedName)
-        .then((res) => res.data.entity)
-        .catch((err) => {
-          $log(`[TRAXXX] WARN: ${err.message}`);
-          $log(`[TRAXXX] WARN: Could not find/fetch channel "${studioName}"`);
-          return undefined;
-        })
-    );
-    searchPromises.push(
-      api
-        .getNetwork(slugifiedName)
-        .then((res) => res.data.entity)
-        .catch((err) => {
-          $log(`[TRAXXX] WARN: ${err.message}`);
-          $log(`[TRAXXX] WARN: Could not find/fetch network "${studioName}"`);
-          return undefined;
-        })
-    );
-
-    const [channel, network] = await Promise.all(searchPromises);
+    const { channel, network } = await api.getAllEntities(slugifiedName);
 
     if (!channel && !network) {
       $log(`[TRAXXX] WARN: Could not find channel or network "${studioName}" in TRAXXX`);
@@ -253,9 +242,9 @@ export default async (initialContext: MyStudioContext): Promise<StudioOutput> =>
     const result: StudioOutput = {
       ...channelExtractor.getName(),
       ...channelExtractor.getDescription(),
-      ...(await channelExtractor.getThumbnail()),
+      ...(await channelExtractor.getThumbnail().catch(() => ({}))),
       ...channelExtractor.getAliases(),
-      ...channelExtractor.getParent(),
+      ...(await channelExtractor.getParent().catch(() => ({}))),
       custom: channelExtractor.getCustom(),
     };
 
