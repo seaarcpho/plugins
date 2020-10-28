@@ -36,32 +36,28 @@ function timeConverter(timestamp) {
  * @returns {string} return the string with all of the unwanted characters removed from the string
  */
 function stripStr(str, keepDate = false) {
+  try { 
+    if (str !== undefined) {
+      str = str.toString();
+      str = str.toLowerCase().replace("'", "");
+      str = str.toLowerCase().replace(/P.O.V./gi, "pov");
+      if (!keepDate) {
+        str = str.toLowerCase().replace(/\b0+/g, "");
+      }
   
-  if (str !== undefined) {
-    str = str.toString();
-    str = str.toLowerCase().replace("'", "");
-    str = str.toLowerCase().replace(/P.O.V./gi, "pov");
-    if (!keepDate) {
-      str = str.toLowerCase().replace(/\b0+/g, "");
+      str = str.replace(/[^a-zA-Z0-9'/\\,(){}]/g, " ");
+  
+      str = str.replace(/  +/g, " ");
+      return str;
+    } else {
+      return str;
     }
 
-    str = str.replace(/[^a-zA-Z0-9'/\\,(){}]/g, " ");
-
-    str = str.replace(/  +/g, " ");
-    return str;
-  } else {
-    str = str
-    str = str.replace("'", "");
-    str = str.replace(/P.O.V./gi, "pov");
-    if (!keepDate) {
-      str = str.replace(/\b0+/g, "");
-    }
-
-    str = str.replace(/[^a-zA-Z0-9'/\\,(){}]/g, " ");
-
-    str = str.replace(/  +/g, " ");
-    return str;
+  } catch (error) {
+    console.log(error)
   }
+
+ 
 
   
 }

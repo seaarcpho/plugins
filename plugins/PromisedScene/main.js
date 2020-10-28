@@ -300,7 +300,10 @@ module.exports = async ({
   // -------------------------------------------------------------
 
   function escapeRegExp(string) {
-    return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+    if (string !== undefined) {
+      return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+    }
+    return;
   }
 
   /**
@@ -699,20 +702,23 @@ module.exports = async ({
 
           if (matchTitle !== undefined) {
             // lets remove the actors from the scenename and the searched title -- We should already know this
-
+            //$log("removing actors name from comparison strings...")
             for (let j = 0; j < actor.length; j++) {
               if (actor[j] !== undefined) {
+                
                 searchedTitle = searchedTitle.replace(actor[j].toString().toLowerCase(), "");
-
+                
+                
                 matchTitle = matchTitle.replace(actor[j].toString().toLowerCase(), "").trim();
               }     
             }
 
             // lets remove the Studio from the scenename and the searched title -- We should already know this
-
+            //$log("removing studio name from comparison strings...")
             if (studio[0] !== undefined) {
+              
               searchedTitle = searchedTitle.replace(studio[0].toString().toLowerCase(), "");
-
+              
               searchedTitle = searchedTitle.replace(
                 studio[0].toString().toLowerCase().replace(" ", ""),
                 ""
@@ -721,23 +727,26 @@ module.exports = async ({
               matchTitle = matchTitle.replace(studio[0].toString().toLowerCase(), "").trim();
             }
 
-          
-            $log(
-              `     SRCH: Trying to match TPD title: ` +
-                matchTitle.trim() +
-                " --with--> " +
-                searchedTitle.trim()
-            );
-
-            matchTitle = new RegExp(escapeRegExp(matchTitle.trim()), "i");
-
-            if (searchedTitle !== undefined) {
-              if (searchedTitle.trim().match(matchTitle)) {
-                correctSceneIdx = idx;
-
-                break;
+            if (matchTitle.trim() !== "") {
+              $log(
+                `     SRCH: Trying to match TPD title: ` +
+                  matchTitle.trim() +
+                  " --with--> " +
+                  searchedTitle.trim()
+              );
+  
+              matchTitle = new RegExp(matchTitle.trim(), "i");
+  
+              if (searchedTitle !== undefined) {
+                if (searchedTitle.trim().match(matchTitle)) {
+                  correctSceneIdx = idx;
+  
+                  break;
+                }
               }
+
             }
+            
           }
         }
       }
@@ -773,7 +782,7 @@ module.exports = async ({
 
         let line = lines.shift();
         while (!foundDupScene && line) {
-          if (!line || !util.stripStr(JSON.parse(line).name)) {
+          if (!line || !util.stripStr(JSON.parse(line).name || JSON.parse(line).$$deleted)) {
             line = lines.shift();
             continue;
           }
@@ -826,9 +835,13 @@ module.exports = async ({
       result.releaseDate = new Date(tpdbSceneSearchData.date).getTime();
     }
 
+    if (tpdbSceneSearchData.tags !== "") {
+      result.labels = tpdbSceneSearchData.tags.map((l) => l.tag);
+    }
+
     if (
       tpdbSceneSearchData.background.large !== "" &&
-      tpdbSceneSearchData.background.large !== "https://cdn.metadataapi.net/default.png"
+      !tpdbSceneSearchData.background.large.includes("default.png")
     ) {
       result.thumbnail = tpdbSceneSearchData.background.large;
     }
@@ -1106,7 +1119,7 @@ module.exports = async ({
         // Will return any of the values found
         const questionAsync = util.createQuestionPrompter($inquirer, testingStatus, $log);
 
-        $log("====  Final Entry =====");
+        $log("====  Object Final Entry =====");
 
         for (const property in grabResults) {
           if (
