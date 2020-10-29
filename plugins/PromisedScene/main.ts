@@ -8,6 +8,7 @@ import {
   stripStr,
   timeConverter,
   DeepPartial,
+  ignoreDbLine,
 } from "./util";
 
 const levenshtein = require("./levenshtein.js");
@@ -134,7 +135,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       .readFileSync(args.source_settings.Actors, "utf8")
       .split("\n")
       .forEach((line) => {
-        if (!line) {
+        if (ignoreDbLine(line)) {
           return;
         }
 
@@ -226,7 +227,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       .readFileSync(args.source_settings.Studios, "utf8")
       .split("\n")
       .forEach((line) => {
-        if (!line) {
+        if (ignoreDbLine(line)) {
           return;
         }
 
@@ -667,17 +668,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     aggressiveSearch = false
   ): Promise<SceneOutput | TitleObj[] | undefined> {
     const res = await tpdbApi.parseScene(parseQuery);
-    $log(
-      `Scene search url: ${res.config.url}?parse=${encodeURIComponent(parseQuery)}`
-    );
+    $log(`Scene search url: ${res.config.url}?parse=${encodeURIComponent(parseQuery)}`);
 
     // checking the status of the link or site, will escape if the site is down
 
-    if (
-      res.status !== 200 ||
-      !res.data ||
-      testMode?.testSiteUnavailable
-    ) {
+    if (res.status !== 200 || !res.data || testMode?.testSiteUnavailable) {
       $log(" ERR: TPDB API query failed");
 
       if (testMode?.status && !testMode?.testSiteUnavailable) {
@@ -726,46 +721,53 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
           let searchedTitle = stripStr(sceneName).toString().toLowerCase();
 
-          let matchTitle = stripStr(allTitles[sceneIdx].title).toString().toLowerCase();
-
-          // lets remove the actors from the scenename and the searched title -- We should already know this
-
-          for (let j = 0; j < actor.length; j++) {
-            searchedTitle = searchedTitle.replace(actor[j].toString().toLowerCase(), "");
-
-            matchTitle = matchTitle.replace(actor[j].toString().toLowerCase(), "").trim();
-          }
-
-          // lets remove the Studio from the scenename and the searched title -- We should already know this
-
-          if (studio[0] !== undefined) {
-            searchedTitle = searchedTitle.replace(studio[0].toString().toLowerCase(), "");
-
-            searchedTitle = searchedTitle.replace(
-              studio[0].toString().toLowerCase().replace(" ", ""),
-              ""
-            );
-
-            matchTitle = matchTitle.replace(studio[0].toString().toLowerCase(), "").trim();
+          let matchTitle;
+          if (stripStr(allTitles[sceneIdx].title) !== "") {
+            matchTitle = stripStr(allTitles[sceneIdx].title).toString().toLowerCase();
           }
 
           // Only Run a match if there is a searched title to execute a match on
 
           if (matchTitle !== undefined) {
-            $log(
-              `     SRCH: Trying to match TPD title: ` +
-                matchTitle.toString().trim() +
-                " --with--> " +
-                searchedTitle.toString().trim()
-            );
+            // lets remove the actors from the scenename and the searched title -- We should already know this
+            //$log("removing actors name from comparison strings...")
+            for (let j = 0; j < actor.length; j++) {
+              if (actor[j] !== undefined) {
+                searchedTitle = searchedTitle.replace(actor[j].toString().toLowerCase(), "");
 
-            const matchTitleRegex = new RegExp(escapeRegExp(matchTitle.toString().trim()), "i");
+                matchTitle = matchTitle.replace(actor[j].toString().toLowerCase(), "").trim();
+              }
+            }
 
-            if (searchedTitle !== undefined) {
-              if (searchedTitle.toString().trim().match(matchTitleRegex)) {
-                correctSceneIdx = sceneIdx;
+            // lets remove the Studio from the scenename and the searched title -- We should already know this
+            //$log("removing studio name from comparison strings...")
+            if (studio[0] !== undefined) {
+              searchedTitle = searchedTitle.replace(studio[0].toString().toLowerCase(), "");
 
-                break;
+              searchedTitle = searchedTitle.replace(
+                studio[0].toString().toLowerCase().replace(" ", ""),
+                ""
+              );
+
+              matchTitle = matchTitle.replace(studio[0].toString().toLowerCase(), "").trim();
+            }
+
+            if (matchTitle.trim() !== "") {
+              $log(
+                `     SRCH: Trying to match TPD title: ` +
+                  matchTitle.trim() +
+                  " --with--> " +
+                  searchedTitle.trim()
+              );
+
+              matchTitle = new RegExp(matchTitle.trim(), "i");
+
+              if (searchedTitle !== undefined) {
+                if (searchedTitle.trim().match(matchTitle)) {
+                  correctSceneIdx = sceneIdx;
+
+                  break;
+                }
               }
             }
           }
@@ -803,7 +805,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
         let line = lines.shift();
         while (!foundDupScene && line) {
-          if (!line || !stripStr(JSON.parse(line).name.toString())) {
+          if (ignoreDbLine(line) || !stripStr(JSON.parse(line).name.toString())) {
             line = lines.shift();
             continue;
           }
@@ -856,9 +858,13 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       result.releaseDate = new Date(tpdbSceneSearchData.date).getTime();
     }
 
+    if (tpdbSceneSearchData.tags?.length) {
+      result.labels = tpdbSceneSearchData.tags.map((l) => l.tag);
+    }
+
     if (
       tpdbSceneSearchData.background.large !== "" &&
-      tpdbSceneSearchData.background.large !== "https://cdn.metadataapi.net/default.png"
+      !tpdbSceneSearchData.background.large.includes("default.png")
     ) {
       result.thumbnail = tpdbSceneSearchData.background.large;
     }
@@ -878,43 +884,6 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     $log(" Returning the results");
 
     return result;
-  }
-
-  /**
-   * Grabs a list of all the searchable Studios or websites available in TPDB
-   *
-   * @returns either an array of all the Porn Database hosted sites, or no data
-   */
-  async function grabSites(): Promise<string[]> {
-    try {
-      const siteListRes = await tpdbApi.getSites();
-      $log(`MSG: Grabbing all available Studios on Metadataapi: ${siteListRes.config.url}`);
-
-      if (
-        siteListRes.status !== 200 ||
-        !siteListRes.data ||
-        (testMode?.testSiteUnavailable !== undefined && testMode?.testSiteUnavailable)
-      ) {
-        $log(" ERR: TPDB site Not Available OR the API query failed");
-
-        if (testMode?.status && !testMode?.testSiteUnavailable) {
-          $log("!! This will impact the test if it was not expecting a failure !!");
-        }
-
-        return [];
-      }
-
-      const siteListResult = siteListRes.data;
-
-      // loops through all of the sites and grabs the "shortname" for the Studio or website
-
-      const allSites = siteListResult.data.map((el) => el.short_name);
-
-      return allSites;
-    } catch (err) {
-      $log("Error returning results from TPD...", err);
-      return [];
-    }
   }
 
   /**
@@ -940,37 +909,37 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     ) {
       // Grabs the searchable sites in TPM
 
-      const studioShortNames = await grabSites();
+      // const studioShortNames = await grabSites();
 
-      let doesSiteExist;
+      // let doesSiteExist;
 
-      let compareHighScore = 5000;
+      // let compareHighScore = 5000;
 
-      for (const studioName of studioShortNames) {
-        const siteNoSpaces = new RegExp(escapeRegExp(studioName), "gi");
+      // for (const studioName of studioShortNames) {
+      //   const siteNoSpaces = new RegExp(escapeRegExp(studioName), "gi");
 
-        const studioWithNoSpaces = searchStudio.toString().replace(/ /gi, "");
+      //   const studioWithNoSpaces = searchStudio.toString().replace(/ /gi, "");
 
-        const foundStudioInAPI = studioWithNoSpaces.match(siteNoSpaces);
+      //   const foundStudioInAPI = studioWithNoSpaces.match(siteNoSpaces);
 
-        if (foundStudioInAPI !== null) {
-          const levenFound = levenshtein(foundStudioInAPI.toString(), searchStudio.toString());
+      //   if (foundStudioInAPI !== null) {
+      //     const levenFound = levenshtein(foundStudioInAPI.toString(), searchStudio.toString());
 
-          if (levenFound < compareHighScore) {
-            compareHighScore = levenFound;
-            doesSiteExist = foundStudioInAPI;
-          }
-        }
-      }
+      //     if (levenFound < compareHighScore) {
+      //       compareHighScore = levenFound;
+      //       doesSiteExist = foundStudioInAPI;
+      //     }
+      //   }
+      // }
 
-      if (!doesSiteExist) {
-        $log(
-          " ERR: This Studio does not exist in ThePornDatabase.  No searches are possible with this Studio / Network"
-        );
+      // if (!doesSiteExist) {
+      //   $log(
+      //     " ERR: This Studio does not exist in ThePornDatabase.  No searches are possible with this Studio / Network"
+      //   );
 
-        const manualInfo = await makeChoices();
-        return manualInfo;
-      }
+      //   const manualInfo = await makeChoices();
+      //   return manualInfo;
+      // }
 
       $log(":::::MSG: Checking TPDB for Data Extraction");
 
@@ -1047,7 +1016,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
             return {};
           }
 
-          $log("====  Final Entry =====");
+          $log("====  Object Final Entry =====");
 
           applyStudioAndActors(goGetIt, actor, studio);
           logResultObject(goGetIt);

@@ -67,8 +67,8 @@ export function stripStr(str: string, keepDate: boolean = false): string {
  * @param string - the string to escape
  * @returns the string to be used to create a RegExp
  */
-export function escapeRegExp(string: string): string {
-  return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+export function escapeRegExp(string: string | undefined): string {
+  return string?.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&") ?? ""; // $& means the whole matched string
 }
 
 /**
@@ -98,4 +98,26 @@ export const createQuestionPrompter = (
   };
 
   return questionAsync;
+};
+
+/**
+ * 
+ * @param line - line from the db
+ * @returns if the line should not be used
+ */
+export const ignoreDbLine = (line: string | undefined): boolean => {
+  if (!line) {
+    return true;
+  }
+
+  try {
+    const parsed = JSON.parse(line);
+    if (parsed.$$deleted) {
+      return true;
+    }
+  } catch (err) {
+    return true;
+  }
+
+  return false;
 };
