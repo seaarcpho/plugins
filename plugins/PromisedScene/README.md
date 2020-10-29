@@ -25,7 +25,7 @@ Ask questions and make sure scene parsing is correct
   "plugins": {
     "register": {
       "PromisedScene": {
-        "path": "./plugins/PromisedScene/main.js",
+        "path": "./plugins/PromisedScene/main.ts",
         "args": {
           "parseActor": true,
           "parseStudio": true,
@@ -58,7 +58,7 @@ Ask questions and make sure scene parsing is correct
 plugins:
   register:
     PromisedScene:
-      path: ./plugins/PromisedScene/main.js
+      path: ./plugins/PromisedScene/main.ts
       args:
         parseActor: true
         parseStudio: true
