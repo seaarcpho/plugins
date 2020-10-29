@@ -1,4 +1,8 @@
-import { Context } from "./../types/plugin";
+import { Context } from "../../types/plugin";
+
+export type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>;
+};
 
 export const ManualTouchChoices = {
   MANUAL_ENTER: "Enter scene details manually, straight into the porn-vault",

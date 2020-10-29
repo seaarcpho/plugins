@@ -1,5 +1,5 @@
-import { SceneContext, SceneOutput } from "../types/scene";
-import { TPDBApi } from "./api";
+import { SceneContext, SceneOutput } from "../../types/scene";
+import { Api } from "./api";
 import {
   createQuestionPrompter,
   escapeRegExp,
@@ -7,38 +7,39 @@ import {
   ManualTouchChoices,
   stripStr,
   timeConverter,
+  DeepPartial,
 } from "./util";
 
 const levenshtein = require("./levenshtein.js");
 interface MyContext extends SceneContext {
-  args?: {
-    parseActor?: boolean;
-    parseStudio?: boolean;
-    ManualTouch?: boolean;
-    SceneDuplicationCheck?: boolean;
-    source_settings?: {
-      Actors?: string;
-      Studios?: string;
-      Scenes?: string;
+  args: DeepPartial<{
+    parseActor: boolean;
+    parseStudio: boolean;
+    ManualTouch: boolean;
+    SceneDuplicationCheck: boolean;
+    source_settings: {
+      Actors: string;
+      Studios: string;
+      Scenes: string;
     };
-  };
-  testMode?: {
-    questionAnswers?: {
-      enterInfoSearch?: string;
-      enterMovie?: string;
-      enterOneActorName?: string;
-      enterSceneDate?: string;
-      enterSceneTitle?: string;
-      enterStudioName?: string;
-      movieTitle?: string;
-      manualDescription?: string;
-      manualActors?: string;
-      multipleChoice?: string;
+  }>;
+  testMode: DeepPartial<{
+    questionAnswers: {
+      enterInfoSearch: string;
+      enterMovie: string;
+      enterOneActorName: string;
+      enterSceneDate: string;
+      enterSceneTitle: string;
+      enterStudioName: string;
+      movieTitle: string;
+      manualDescription: string;
+      manualActors: string;
+      multipleChoice: string;
     };
-    CorrectImportInfo?: string;
-    testSiteUnavailable?: boolean;
-    status?: boolean;
-  };
+    CorrectImportInfo: string;
+    testSiteUnavailable: boolean;
+    status: boolean;
+  }>;
 }
 
 interface TitleObj {
@@ -63,20 +64,20 @@ function applyStudioAndActors(
   }
 }
 
-module.exports = async ({
-  event,
-  $throw,
-  $fs,
-  $moment,
-  $log,
-  $axios,
-  testMode,
-  sceneName,
-  scenePath,
-  args,
-  $inquirer,
-  $createImage,
-}: MyContext): Promise<SceneOutput> => {
+module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
+  const {
+    event,
+    $throw,
+    $fs,
+    $moment,
+    $log,
+    testMode,
+    sceneName,
+    scenePath,
+    args,
+    $inquirer,
+    $createImage,
+  } = ctx;
   // Array Variable that will be returned
   const result: SceneOutput = {};
 
@@ -116,7 +117,7 @@ module.exports = async ({
     $throw(" ERR: Missing SceneDuplicationCheck in plugin args");
   }
 
-  const tpdbApi = new TPDBApi($axios);
+  const tpdbApi = new Api(ctx);
 
   $log(` MSG: STARTING to analyze scene: ${scenePath}`);
   // -------------------ACTOR Parse
@@ -665,16 +666,16 @@ module.exports = async ({
     parseQuery: string,
     aggressiveSearch = false
   ): Promise<SceneOutput | TitleObj[] | undefined> {
-    const tpdbSceneSearchRes = await tpdbApi.parseScene(parseQuery);
+    const res = await tpdbApi.parseScene(parseQuery);
     $log(
-      `Scene search url: ${tpdbSceneSearchRes.config.url}?parse=${encodeURIComponent(parseQuery)}`
+      `Scene search url: ${res.config.url}?parse=${encodeURIComponent(parseQuery)}`
     );
 
     // checking the status of the link or site, will escape if the site is down
 
     if (
-      tpdbSceneSearchRes.status !== 200 ||
-      !tpdbSceneSearchRes.data ||
+      res.status !== 200 ||
+      !res.data ||
       testMode?.testSiteUnavailable
     ) {
       $log(" ERR: TPDB API query failed");
@@ -688,7 +689,7 @@ module.exports = async ({
     }
 
     // Grab the content data of the fed link
-    const sceneSearchResult = tpdbSceneSearchRes.data;
+    const sceneSearchResult = res.data;
 
     // setting the scene index to an invalid value by default
     let correctSceneIdx = -1;

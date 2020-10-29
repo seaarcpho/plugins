@@ -1,31 +1,28 @@
-import Axios from "axios";
+import { AxiosInstance, AxiosResponse } from "axios";
 
-import { SceneSearchResult } from "../types/scene";
-import { SiteListResult } from "../types/sites";
+import { SceneResult, SiteResult } from "../types";
+import { Context } from "./../../../types/plugin";
 
-const BASE = "https://api.metadataapi.net/api";
+export class Api {
+  ctx: Context;
+  axios: AxiosInstance;
 
-export const ENDPOINTS = {
-  SITES: `${BASE}/sites`,
-  SCENES: `${BASE}/scenes`,
-};
-
-export class TPDBApi {
-  axios: typeof Axios;
-
-  constructor(axios: typeof Axios) {
-    this.axios = axios;
+  constructor(ctx: Context) {
+    this.ctx = ctx;
+    this.axios = ctx.$axios.create({
+      baseURL: "https://api.metadataapi.net/api",
+    });
   }
 
-  async getSites() {
-    return this.axios.get<SiteListResult>(ENDPOINTS.SITES);
-  }
-
-  async parseScene(parse: string) {
-    return this.axios.get<SceneSearchResult>(ENDPOINTS.SCENES, {
+  async parseScene(parse: string): Promise<AxiosResponse<SceneResult.SceneListResult>> {
+    return this.axios.get<SceneResult.SceneListResult>("/scenes", {
       params: {
         parse,
       },
     });
+  }
+
+  async getSites(): Promise<AxiosResponse<SiteResult.SiteListResult>> {
+    return this.axios.get<SiteResult.SiteListResult>("/sites");
   }
 }
