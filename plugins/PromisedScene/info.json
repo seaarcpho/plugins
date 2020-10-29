@@ -1,0 +1,58 @@
+{
+  "name": "PromisedScene",
+  "version": "0.1.0",
+  "authors": ["Ch00nassid a.k.a: DGs.Ch00"],
+  "description": "Ask questions and make sure scene parsing is correct",
+  "pluginEvents": ["sceneCreated", "sceneCustom"],
+  "arguments": [
+		{
+		  "name": "parseActor",
+		  "type": "Boolean",
+		  "required": true,
+		  "default": true,
+		  "description": "Try to find the Actor name in your database within the scenePath string"
+		},
+		{
+		  "name": "parseStudio",
+		  "type": "Boolean",
+		  "required": true,
+		  "default": true,
+		  "description": "Try to find the Studio name in your database within the scenePath string"
+		},
+		{
+		  "name": "ManualTouch",
+		  "type": "Boolean",
+		  "required": true,
+		  "default": true,
+		  "description": "If true, will ask questions to manually answer and fill in details.  If false, will agressivly search and automatically populate the vault."
+		},
+		{
+		  "name": "SceneDuplicationCheck",
+		  "type": "Boolean",
+		  "required": true,
+		  "default": true,
+		  "description": "Will notify you of a possible duplicate title that is being imported.  Will not currently stop / correct anything"
+		},
+		{
+		  "name": "source_settings.Actors",
+		  "type": "String",
+		  "required": true,
+		  "default": "./library/actors.db",
+		  "description": "finds the DB file for Actors to determine which actors are currently in your collection"
+		},
+		{
+		  "name": "source_settings.Studios",
+		  "type": "String",
+		  "required": true,
+		  "default": "./library/studios.db",
+		  "description": "finds the DB file for Studios to determine which Studios are currently in your collection"
+		},
+		{
+		  "name": "source_settings.Scenes",
+		  "type": "String",
+		  "required": true,
+		  "default": "./library/scenes.db",
+		  "description": "finds the DB file for Scenes to determine which Scenes are currently in your collection"
+		}
+	]
+}
