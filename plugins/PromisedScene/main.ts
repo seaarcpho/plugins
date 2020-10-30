@@ -14,28 +14,6 @@ import {
   timeConverter,
 } from "./util";
 
-function applyStudioAndActors(
-  result: { actors?: string[]; studio?: string } | undefined,
-  userOrDbActors: string[],
-  userOrDbStudio: string | undefined
-): void {
-  if (!result) {
-    return;
-  }
-
-  if (
-    (!result.actors || !result.actors.length) &&
-    Array.isArray(userOrDbActors) &&
-    userOrDbActors.length
-  ) {
-    result.actors = userOrDbActors;
-  }
-  if (userOrDbStudio) {
-    // Always apply existing studio
-    result.studio = userOrDbStudio;
-  }
-}
-
 module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   const { event, $throw, $moment, $log, testMode, scenePath, args, $inquirer, $createImage } = ctx;
 
@@ -120,6 +98,8 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         searchResult.movie = userMovie;
       }
 
+      logResultObject(searchResult);
+
       if (!args?.ManualTouch) {
         return searchResult;
       }
@@ -154,6 +134,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }
     if (action === ManualTouchChoices.MANUAL_ENTER) {
       const res = await manualImport();
+      logResultObject(res);
       return res;
     }
     if (action === ManualTouchChoices.SEARCH) {
@@ -180,6 +161,8 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    * @param results - the result object
    */
   function logResultObject(results: SceneOutput): void {
+    $log("[PDS] MSG: ====  Final Entry =====");
+
     for (const property in results) {
       if (property === "releaseDate") {
         $log(`${property}: ${timeConverter(results[property] ?? 0)}`);
@@ -290,11 +273,6 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     if (askedStudio && askedStudio.trim()) {
       result.studio = askedStudio;
     }
-
-    $log("====  Final Entry =====");
-
-    applyStudioAndActors(result, searchActors, searchStudio);
-    logResultObject(result);
 
     return result;
   }
@@ -545,13 +523,20 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     studio: string;
     timestamp: number;
   }>): Promise<SceneOutput | null> {
-    async function mergeFinalResult(rawScene: SceneResult.SceneData): Promise<SceneOutput> {
+    async function mergeSearchResult(rawScene: SceneResult.SceneData): Promise<SceneOutput> {
       const sceneData = normalizeSceneResultData(rawScene);
 
-      $log("[PDS] MSG: ====  Final Entry =====");
-
-      applyStudioAndActors(sceneData, searchActors, studio);
-      logResultObject(sceneData);
+      if (
+        (!sceneData.actors || !sceneData.actors.length) &&
+        Array.isArray(actors) &&
+        actors.length
+      ) {
+        sceneData.actors = actors;
+      }
+      if (studio) {
+        // Always apply existing studio
+        sceneData.studio = studio;
+      }
 
       return sceneData;
     }
@@ -581,7 +566,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       Array.isArray(primarySceneSearchResult) &&
       primarySceneSearchResult.length === 1
     ) {
-      return mergeFinalResult(primarySceneSearchResult[0]);
+      return mergeSearchResult(primarySceneSearchResult[0]);
     }
 
     if (
@@ -603,7 +588,6 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
       answersList.push((new $inquirer.Separator() as any) as string);
       answersList.push("== None of the above == ");
-      answersList.push("== Manual Search == ");
 
       const { searchedTitles: multipleSitesAnswer } = await questionAsync<{
         searchedTitles: string;
@@ -636,7 +620,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         Array.isArray(secondarySceneSearchResult) &&
         secondarySceneSearchResult.length === 1
       ) {
-        return mergeFinalResult(secondarySceneSearchResult[0]);
+        return mergeSearchResult(secondarySceneSearchResult[0]);
       }
     }
 
