@@ -2,64 +2,47 @@ import { AxiosResponse } from "axios";
 
 import { SceneOutput } from "../../types/scene";
 import { Api } from "./api";
+import { parseActor, parseStudio, parseTimestamp } from "./parse";
 import { MyContext, SceneResult } from "./types";
 import {
   checkSceneExistsInDb,
   createQuestionPrompter,
-  escapeRegExp,
-  ignoreDbLine,
   isPositiveAnswer,
   ManualTouchChoices,
   matchSceneResultToSearch,
   normalizeSceneResultData,
-  stripStr,
   timeConverter,
 } from "./util";
 
-const levenshtein = require("./levenshtein.js");
-
 function applyStudioAndActors(
   result: { actors?: string[]; studio?: string } | undefined,
-  actors: string[],
-  studio: string | undefined
+  userOrDbActors: string[],
+  userOrDbStudio: string | undefined
 ): void {
   if (!result) {
     return;
   }
 
-  if ((!result.actors || !result.actors.length) && Array.isArray(actors) && actors.length) {
-    result.actors = actors;
+  if (
+    (!result.actors || !result.actors.length) &&
+    Array.isArray(userOrDbActors) &&
+    userOrDbActors.length
+  ) {
+    result.actors = userOrDbActors;
   }
-  if (studio) {
+  if (userOrDbStudio) {
     // Always apply existing studio
-    // TODO: Is this correct? Shouldn't TPDB be the source of truth ?
-    result.studio = studio;
+    result.studio = userOrDbStudio;
   }
-  // if (!result.studio && studio) {
-  //   result.studio = studio;
-  // }
 }
 
 module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
-  const {
-    event,
-    $throw,
-    $fs,
-    $moment,
-    $log,
-    testMode,
-    scenePath,
-    args,
-    $inquirer,
-    $createImage,
-  } = ctx;
+  const { event, $throw, $moment, $log, testMode, scenePath, args, $inquirer, $createImage } = ctx;
 
   /**
    * If makeChoices() was already run (for test mode only)
    */
   let didRunMakeChoices = false;
-
-  const cleanPathname = stripStr(scenePath.toString());
 
   // Making sure that the event that triggered is the correct event
   if (event !== "sceneCreated" && event !== "sceneCustom") {
@@ -91,245 +74,20 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   const tpdbApi = new Api(ctx);
 
   $log(`[PDS] MSG: STARTING to analyze scene: ${JSON.stringify(scenePath)}`);
-  // -------------------ACTOR Parse
 
-  // This is where the plugin attempts to check for Actors using the Actors.db
-
-  // creating a array to use for other functions
-  const allDbActors: string[] = [];
-  const parsedDbActors: string[] = [];
-
-  if (args?.parseActor && args?.source_settings?.Actors) {
-    $log(`[PDS] PARSE: Parsing Actors DB ==> ${args.source_settings.Actors}`);
-    $fs
-      .readFileSync(args.source_settings.Actors, "utf8")
-      .split("\n")
-      .forEach((line) => {
-        if (ignoreDbLine(line)) {
-          return;
-        }
-
-        const matchActor = new RegExp(escapeRegExp(JSON.parse(line).name), "i");
-
-        const actorLength = matchActor.toString().split(" ");
-
-        if (actorLength.length < 2) {
-          return;
-        }
-
-        const foundActorMatch = stripStr(scenePath).match(matchActor);
-
-        if (foundActorMatch !== null) {
-          allDbActors.push(JSON.parse(line).name);
-          return;
-        }
-
-        const allAliases: string[] = JSON.parse(line).aliases.toString().split(",");
-
-        allAliases.forEach((personAlias) => {
-          const aliasLength = personAlias.toString().split(" ");
-
-          if (aliasLength.length < 2) {
-            return;
-          }
-
-          let matchAliasActor = new RegExp(escapeRegExp(personAlias), "i");
-
-          let foundAliasActorMatch = stripStr(scenePath).match(matchAliasActor);
-
-          if (foundAliasActorMatch !== null) {
-            allDbActors.push("alias:" + JSON.parse(line).name);
-          } else {
-            const aliasNoSpaces = personAlias.toString().replace(" ", "");
-
-            matchAliasActor = new RegExp(escapeRegExp(aliasNoSpaces), "i");
-
-            foundAliasActorMatch = stripStr(scenePath).match(matchAliasActor);
-
-            if (foundAliasActorMatch !== null) {
-              allDbActors.push("alias:" + JSON.parse(line).name);
-            }
-          }
-        });
-      });
-
-    let actorHighScore = 5000;
-    if (allDbActors.length && Array.isArray(allDbActors)) {
-      allDbActors.forEach((person) => {
-        // This is a function that will see how many differences it will take to make the string match.
-        // The lowest amount of changes means that it is probably the closest match to what we need.
-        // lowest score wins :)
-        let foundAnAlias = false;
-        if (person.includes("alias:")) {
-          person = person.toString().replace("alias:", "").trim();
-          foundAnAlias = true;
-        }
-        const found = levenshtein(person.toString().toLowerCase(), cleanPathname);
-
-        if (found < actorHighScore) {
-          actorHighScore = found;
-
-          parsedDbActors.push(person);
-        }
-        if (foundAnAlias) {
-          $log(`[PDS] PARSE: SUCCESS Found Actor-Alias: ${JSON.stringify(person)}`);
-        } else {
-          $log(`[PDS] PARSE: SUCCESS Found Actor: ${JSON.stringify(person)}`);
-        }
-      });
-      $log(
-        `[PDS] PARSE: End of parse. Using "best match" Actor For Search: ${JSON.stringify(
-          parsedDbActors
-        )}`
-      );
-    }
-  }
-  // -------------------STUDIO Parse
-
-  // This is where the plugin attempts to check for Studios using the Studios.db
-
-  // creating a array to use for other functions
-
-  const allDbStudios: string[] = [];
-  let parsedDbStudio: string | undefined;
-
-  if (args?.parseStudio && args?.source_settings?.Studios) {
-    $log(`[PDS] PARSE: Parsing Studios DB ==> ${JSON.stringify(args.source_settings.Studios)}`);
-
-    $fs
-      .readFileSync(args.source_settings.Studios, "utf8")
-      .split("\n")
-      .forEach((line) => {
-        if (ignoreDbLine(line)) {
-          return;
-        }
-
-        if (!JSON.parse(line).name) {
-          return;
-        }
-        let matchStudio = new RegExp(escapeRegExp(JSON.parse(line).name), "i");
-
-        const foundStudioMatch = stripStr(scenePath).match(matchStudio);
-
-        if (foundStudioMatch !== null) {
-          allDbStudios.push(JSON.parse(line).name);
-        } else if (JSON.parse(line).name !== null) {
-          matchStudio = new RegExp(escapeRegExp(JSON.parse(line).name.replace(/ /g, "")), "i");
-
-          const foundStudioMatch = stripStr(scenePath).match(matchStudio);
-
-          if (foundStudioMatch !== null) {
-            allDbStudios.push(JSON.parse(line).name);
-          }
-        }
-
-        if (!JSON.parse(line).aliases) {
-          return;
-        }
-
-        const allStudioAliases = JSON.parse(line).aliases.toString().split(",");
-
-        allStudioAliases.forEach((studioAlias) => {
-          if (studioAlias) {
-            let matchAliasStudio = new RegExp(escapeRegExp(studioAlias), "i");
-
-            let foundAliasStudioMatch = stripStr(scenePath).match(matchAliasStudio);
-
-            if (foundAliasStudioMatch !== null) {
-              allDbStudios.push("alias:" + JSON.parse(line).name);
-            } else {
-              const aliasNoSpaces = studioAlias.toString().replace(" ", "");
-
-              matchAliasStudio = new RegExp(escapeRegExp(aliasNoSpaces), "i");
-
-              foundAliasStudioMatch = stripStr(scenePath).match(matchAliasStudio);
-
-              if (foundAliasStudioMatch !== null) {
-                allDbStudios.push("alias:" + JSON.parse(line).name);
-              }
-            }
-          }
-        });
-      });
-    // this is a debug option to se see how many studios were found by just doing a simple regex
-    // $log(GettingStudio);
-    let studioHighScore = 5000;
-    if (allDbStudios.length && Array.isArray(allDbStudios)) {
-      let foundStudioAnAlias = false;
-      let instanceFoundStudioAnAlias = false;
-      allDbStudios.forEach((stud) => {
-        if (stud.includes("alias:")) {
-          stud = stud.toString().replace("alias:", "").trim();
-          instanceFoundStudioAnAlias = true;
-        }
-
-        // This is a function that will see how many differences it will take to make the string match.
-        // The lowest amount of changes means that it is probably the closest match to what we need.
-        // lowest score wins :)
-        const found = levenshtein(stud.toString().toLowerCase(), cleanPathname);
-
-        if (found < studioHighScore) {
-          studioHighScore = found;
-
-          parsedDbStudio = stud;
-          foundStudioAnAlias = instanceFoundStudioAnAlias;
-        }
-        if (foundStudioAnAlias) {
-          $log(`[PDS] PARSE:\tSUCCESS: Found Studio-Alias: ${JSON.stringify(parsedDbStudio)}`);
-        } else {
-          $log(`[PDS] PARSE:\tSUCCESS: Found Studio: ${JSON.stringify(parsedDbStudio)}`);
-        }
-      });
-
-      $log(`[PDS] PARSE:\tUsing "best match" Studio For Search: ${JSON.stringify(parsedDbStudio)}`);
-    }
-  }
-  // Try to PARSE the SceneName and determine Date
-
-  const ddmmyyyy = stripStr(scenePath, true).match(/\d\d \d\d \d\d\d\d/);
-
-  const yyyymmdd = stripStr(scenePath, true).match(/\d\d\d\d \d\d \d\d/);
-
-  const yymmdd = stripStr(scenePath, true).match(/\d\d \d\d \d\d/);
-
-  let parsedTimestamp = Number.NaN;
-
-  $log("[PDS] PARSE: Parsing Date from ScenePath");
-  // $log(stripStr(scenePath, true));
-
-  if (yyyymmdd && yyyymmdd.length) {
-    const date = yyyymmdd[0].replace(" ", ".");
-
-    $log("[PDS] PARSE:\tSUCCESS: Found => yyyymmdd");
-
-    parsedTimestamp = $moment(date, "YYYY-MM-DD").valueOf();
-  } else if (ddmmyyyy && ddmmyyyy.length) {
-    const date = ddmmyyyy[0].replace(" ", ".");
-
-    $log("[PDS] PARSE:\tSUCCESS: Found => ddmmyyyy");
-
-    parsedTimestamp = $moment(date, "DD-MM-YYYY").valueOf();
-  } else if (yymmdd && yymmdd.length) {
-    const date = yymmdd[0].replace(" ", ".");
-
-    $log("[PDS] PARSE:\tSUCCESS: Found => yymmdd");
-
-    parsedTimestamp = $moment(date, "YY-MM-DD").valueOf();
-  } else {
-    $log("[PDS] PARSE:\tFAILED: Could not find a date in the ScenePath");
-  }
-
-  // Function that is called to convert a found date into a timestamp.
+  const parsedDbActor = parseActor(ctx);
+  const parsedDbStudio = parseStudio(ctx);
+  const parsedTimestamp = parseTimestamp(ctx);
 
   // After everything has completed parsing, I run a function that will perform all of the lookups against TPDB
 
   let searchTitle: string | undefined = "";
-  let searchActors = parsedDbActors;
-  let searchStudio = parsedDbStudio;
-  let searchTimestamp: number | undefined = parsedTimestamp;
+  let searchActors = parsedDbActor ? [parsedDbActor] : [];
+  let searchStudio = parsedDbStudio ?? undefined;
+  let searchTimestamp: number | undefined = parsedTimestamp ?? undefined;
   let userMovie: string | undefined;
 
-  if (!Array.isArray(parsedDbActors) || !parsedDbActors.length || !parsedDbStudio) {
+  if (!Array.isArray(searchActors) || !searchActors.length || !parsedDbStudio) {
     $log(
       "[PDS] ERR: Could not find a Studio or Actor in the SceneName for an initial search. Will prompt user for action"
     );
@@ -535,7 +293,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
     $log("====  Final Entry =====");
 
-    applyStudioAndActors(result, parsedDbActors, parsedDbStudio);
+    applyStudioAndActors(result, searchActors, searchStudio);
     logResultObject(result);
 
     return result;
@@ -743,8 +501,8 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       const matchedScene: SceneResult.SceneData | null = matchSceneResultToSearch(
         ctx,
         sceneList,
-        parsedDbActors,
-        parsedDbStudio
+        searchActors,
+        searchStudio
       );
 
       if (!matchedScene) {
@@ -792,14 +550,14 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
       $log("[PDS] MSG: ====  Final Entry =====");
 
-      applyStudioAndActors(sceneData, parsedDbActors, studio);
+      applyStudioAndActors(sceneData, searchActors, studio);
       logResultObject(sceneData);
 
       return sceneData;
     }
 
     const queries = [title, actors, studio];
-    if (timestamp) {
+    if (timestamp && !Number.isNaN(timestamp)) {
       queries.push(timeConverter(timestamp));
     }
     const initialQuery = queries.reduce(
