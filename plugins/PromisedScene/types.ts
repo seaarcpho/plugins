@@ -1,3 +1,5 @@
+import { SceneContext } from "../../types/scene";
+
 export namespace SceneResult {
   export interface Posters {
     large: string;
@@ -161,6 +163,12 @@ export namespace SceneResult {
     links: Links;
     meta: Meta;
   }
+
+  export interface SingleSceneResult {
+    data: SceneData;
+    links: Links;
+    meta: Meta;
+  }
 }
 
 export namespace SiteResult {
@@ -176,4 +184,39 @@ export namespace SiteResult {
   export interface SiteListResult {
     data: Data[];
   }
+}
+
+export type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>;
+};
+
+export interface MyContext extends SceneContext {
+  args: DeepPartial<{
+    parseActor: boolean;
+    parseStudio: boolean;
+    ManualTouch: boolean;
+    SceneDuplicationCheck: boolean;
+    source_settings: {
+      Actors: string;
+      Studios: string;
+      Scenes: string;
+    };
+  }>;
+  testMode: DeepPartial<{
+    questionAnswers: {
+      enterInfoSearch: string;
+      enterMovie: string;
+      enterOneActorName: string;
+      enterSceneDate: string;
+      enterSceneTitle: string;
+      enterStudioName: string;
+      movieTitle: string;
+      manualDescription: string;
+      manualActors: string;
+      multipleChoice: string;
+    };
+    CorrectImportInfo: string;
+    testSiteUnavailable: boolean;
+    status: boolean;
+  }>;
 }

@@ -1,8 +1,6 @@
 import { Context } from "../../types/plugin";
-
-export type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>;
-};
+import { SceneOutput } from "../../types/scene";
+import { MyContext, SceneResult } from "./types";
 
 export const ManualTouchChoices = {
   MANUAL_ENTER: "Enter scene details manually, straight into the porn-vault",
@@ -14,7 +12,7 @@ export const ManualTouchChoices = {
  * @param answer - string to compare
  * @returns if the answer is a positive confirmation (i.e. "yes")
  */
-export const isPositiveAnswer = (answer: string = ""): boolean =>
+export const isPositiveAnswer = (answer = ""): boolean =>
   ["y", "yes"].includes(answer.toLowerCase());
 
 /**
@@ -88,8 +86,11 @@ export const createQuestionPrompter = (
    */
   const questionAsync = async <T>(promptArgs: object): Promise<T | { [name: string]: string }> => {
     if (testingStatus) {
-      $log(`======TESTMODE ${promptArgs["name"]}====`);
-      $log(`======TESTMODE Answer: ${promptArgs["testAnswer"]}`);
+      $log(
+        `[PDS] TESTMODE: ${JSON.stringify(promptArgs["name"])} => ${JSON.stringify(
+          promptArgs["testAnswer"]
+        )}`
+      );
 
       return { [promptArgs["name"]]: promptArgs["testAnswer"] };
     }
@@ -101,7 +102,7 @@ export const createQuestionPrompter = (
 };
 
 /**
- * 
+ *
  * @param line - line from the db
  * @returns if the line should not be used
  */
@@ -112,12 +113,161 @@ export const ignoreDbLine = (line: string | undefined): boolean => {
 
   try {
     const parsed = JSON.parse(line);
-    if (parsed.$$deleted) {
-      return true;
-    }
+    return parsed.$$deleted;
   } catch (err) {
     return true;
   }
+};
 
-  return false;
+/**
+ * Tries find a scene whose title matches the "ctx.sceneName"
+ *
+ * @param ctx - plugin context
+ * @param sceneList - list of scenes to try to match
+ * @param knownActors - actors that we know are in the scene, that could be in the title
+ * @param studio - studio that we know the scene is from, that could be in the title
+ * @returns the matches scene or null
+ */
+export const matchSceneResultToSearch = (
+  ctx: MyContext,
+  sceneList: SceneResult.SceneData[],
+  knownActors: string[],
+  studio: string | undefined
+): SceneResult.SceneData | null => {
+  ctx.$log(`[PDS] SRCH: ${sceneList.length} results found`);
+
+  for (const scene of sceneList) {
+    // It is better to search just the title.  We already have the actor and studio.
+    let searchedTitle = stripStr(ctx.sceneName).toLowerCase();
+
+    let matchTitle = stripStr(scene.title || "").toLowerCase();
+    if (!matchTitle) {
+      continue;
+    }
+
+    // lets remove the actors from the scenename and the searched title -- We should already know this
+    //$log("removing actors name from comparison strings...")
+    for (const actor of knownActors) {
+      if (actor) {
+        searchedTitle = searchedTitle.replace(actor.toLowerCase(), "");
+        matchTitle = matchTitle.replace(actor.toLowerCase(), "");
+      }
+    }
+
+    // lets remove the Studio from the scenename and the searched title -- We should already know this
+    //$log("removing studio name from comparison strings...")
+    if (studio) {
+      searchedTitle = searchedTitle.replace(studio.toLowerCase(), "");
+      searchedTitle = searchedTitle.replace(studio.toLowerCase().replace(" ", ""), "");
+
+      matchTitle = matchTitle.replace(studio.toLowerCase(), "");
+    }
+
+    matchTitle = matchTitle.trim();
+    searchedTitle = searchedTitle.trim();
+
+    if (matchTitle) {
+      ctx.$log(
+        `[PDS] SRCH: Trying to match TPD title: ${JSON.stringify(
+          matchTitle
+        )} --with--> ${JSON.stringify(searchedTitle)}`
+      );
+
+      const matchTitleRegex = new RegExp(matchTitle, "i");
+
+      if (searchedTitle !== undefined) {
+        if (matchTitleRegex.test(searchedTitle)) {
+          return scene;
+        }
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
+ * @param sceneData - tpdb scene data
+ * @returns the data in a plugin scene output form
+ */
+export const normalizeSceneResultData = (sceneData: SceneResult.SceneData): SceneOutput => {
+  const result: SceneOutput = {};
+
+  if (sceneData.title) {
+    result.name = sceneData.title;
+  }
+
+  if (sceneData.description) {
+    result.description = sceneData.description;
+  }
+
+  if (sceneData.date) {
+    result.releaseDate = new Date(sceneData.date).getTime();
+  }
+
+  if (sceneData.tags?.length) {
+    result.labels = sceneData.tags.map((l) => l.tag);
+  }
+
+  if (sceneData.background.large && !sceneData.background.large.includes("default.png")) {
+    result.thumbnail = sceneData.background.large;
+  }
+
+  if (sceneData.performers) {
+    result.actors = sceneData.performers.map((p) => p.name);
+  }
+
+  if (sceneData.site.name) {
+    result.studio = sceneData.site.name;
+  }
+
+  return result;
+};
+
+/**
+ * Checks if the title already exists in the db
+ *
+ * @param ctx - plugin context
+ * @param sceneTitle - title to search
+ */
+export const checkSceneExistsInDb = (ctx: MyContext, sceneTitle: string | undefined): void => {
+  if (!sceneTitle || !ctx.args?.SceneDuplicationCheck || !ctx.args?.source_settings?.Scenes) {
+    return;
+  }
+
+  // Is there a duplicate scene already in the Database with that name?
+  let foundDupScene = false;
+  // If i decide to do anything with duplicate scenes, this variable on the next line will come into play
+  // let TheDupedScene = [];
+  const lines = ctx.$fs.readFileSync(ctx.args.source_settings.Scenes, "utf8").split("\n");
+
+  let line = lines.shift();
+  while (!foundDupScene && line) {
+    if (ignoreDbLine(line) || !stripStr(JSON.parse(line).name.toString())) {
+      line = lines.shift();
+      continue;
+    }
+
+    let matchSceneRegexes = [
+      escapeRegExp(stripStr(JSON.parse(line).name.toString())),
+      escapeRegExp(stripStr(JSON.parse(line).name.toString()).replace(/ /g, "")),
+    ].map((str) => new RegExp(str, "gi"));
+
+    if (matchSceneRegexes.some((regex) => regex.test(stripStr(sceneTitle)))) {
+      foundDupScene = true;
+      // TheDupedScene = stripStr(JSON.parse(line).name.toString());
+      break;
+    }
+
+    line = lines.shift();
+  }
+
+  if (foundDupScene) {
+    // Found a possible duplicate
+
+    ctx.$log("[PDS] Title Duplication check: Found a possible duplicate title in the database");
+    // Exit? Break? Return?
+  } else {
+    ctx.$log("[PDS] Title Duplication check: Did not find any possible duplicate title");
+  }
 };

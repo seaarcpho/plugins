@@ -1,68 +1,43 @@
-import { SceneContext, SceneOutput } from "../../types/scene";
+import { AxiosResponse } from "axios";
+
+import { SceneOutput } from "../../types/scene";
 import { Api } from "./api";
+import { MyContext, SceneResult } from "./types";
 import {
+  checkSceneExistsInDb,
   createQuestionPrompter,
   escapeRegExp,
+  ignoreDbLine,
   isPositiveAnswer,
   ManualTouchChoices,
+  matchSceneResultToSearch,
+  normalizeSceneResultData,
   stripStr,
   timeConverter,
-  DeepPartial,
-  ignoreDbLine,
 } from "./util";
 
 const levenshtein = require("./levenshtein.js");
-interface MyContext extends SceneContext {
-  args: DeepPartial<{
-    parseActor: boolean;
-    parseStudio: boolean;
-    ManualTouch: boolean;
-    SceneDuplicationCheck: boolean;
-    source_settings: {
-      Actors: string;
-      Studios: string;
-      Scenes: string;
-    };
-  }>;
-  testMode: DeepPartial<{
-    questionAnswers: {
-      enterInfoSearch: string;
-      enterMovie: string;
-      enterOneActorName: string;
-      enterSceneDate: string;
-      enterSceneTitle: string;
-      enterStudioName: string;
-      movieTitle: string;
-      manualDescription: string;
-      manualActors: string;
-      multipleChoice: string;
-    };
-    CorrectImportInfo: string;
-    testSiteUnavailable: boolean;
-    status: boolean;
-  }>;
-}
-
-interface TitleObj {
-  title: string;
-  slug: string;
-}
 
 function applyStudioAndActors(
   result: { actors?: string[]; studio?: string } | undefined,
-  actor: string[],
-  studio: string[]
+  actors: string[],
+  studio: string | undefined
 ): void {
   if (!result) {
     return;
   }
 
-  if (!result.actors && Array.isArray(actor) && actor.length) {
-    result.actors = actor;
+  if ((!result.actors || !result.actors.length) && Array.isArray(actors) && actors.length) {
+    result.actors = actors;
   }
-  if (!result.studio && Array.isArray(studio) && studio.length) {
-    result.studio = studio[0];
+  if (studio) {
+    // Always apply existing studio
+    // TODO: Is this correct? Shouldn't TPDB be the source of truth ?
+    result.studio = studio;
   }
+  // if (!result.studio && studio) {
+  //   result.studio = studio;
+  // }
 }
 
 module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
@@ -73,64 +48,59 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     $moment,
     $log,
     testMode,
-    sceneName,
     scenePath,
     args,
     $inquirer,
     $createImage,
   } = ctx;
-  // Array Variable that will be returned
-  const result: SceneOutput = {};
 
   /**
-   * If makeChoices() was already run
+   * If makeChoices() was already run (for test mode only)
    */
   let didRunMakeChoices = false;
-  // Variable that is used for all the "manualTouch" questions
 
   const cleanPathname = stripStr(scenePath.toString());
 
   // Making sure that the event that triggered is the correct event
-
-  if (event !== "sceneCreated" && event !== "sceneCustom" && testMode?.status !== true) {
-    $throw(" ERR: Plugin used for unsupported event");
+  if (event !== "sceneCreated" && event !== "sceneCustom") {
+    $throw("ERR: Plugin used for unsupported event");
   }
 
   // Checking all of the arguments are set in the plugin
 
-  if (args?.source_settings === undefined) {
-    $throw(" ERR: Missing source_settings in plugin args");
+  if (!Object.hasOwnProperty.call(args, "source_settings")) {
+    $throw("ERR: Missing source_settings in plugin args");
   }
 
-  if (args?.parseActor === undefined) {
-    $throw(" ERR: Missing ParseActor in plugin args");
+  if (!Object.hasOwnProperty.call(args, "parseActor")) {
+    $throw("ERR: Missing parseActor in plugin args");
   }
 
-  if (args?.parseStudio === undefined) {
-    $throw(" ERR: Missing parseStudio in plugin args");
+  if (!Object.hasOwnProperty.call(args, "parseStudio")) {
+    $throw("ERR: Missing parseStudio in plugin args");
   }
 
-  if (args?.ManualTouch === undefined) {
-    $throw(" ERR: Missing ManualTouch in plugin args");
+  if (!Object.hasOwnProperty.call(args, "ManualTouch")) {
+    $throw("ERR: Missing ManualTouch in plugin args");
   }
 
-  if (args?.SceneDuplicationCheck === undefined) {
-    $throw(" ERR: Missing SceneDuplicationCheck in plugin args");
+  if (!Object.hasOwnProperty.call(args, "SceneDuplicationCheck")) {
+    $throw("ERR: Missing SceneDuplicationCheck in plugin args");
   }
 
   const tpdbApi = new Api(ctx);
 
-  $log(` MSG: STARTING to analyze scene: ${scenePath}`);
+  $log(`[PDS] MSG: STARTING to analyze scene: ${JSON.stringify(scenePath)}`);
   // -------------------ACTOR Parse
 
   // This is where the plugin attempts to check for Actors using the Actors.db
 
   // creating a array to use for other functions
-  const gettingActor: string[] = [];
-  const actor: string[] = [];
+  const allDbActors: string[] = [];
+  const parsedDbActors: string[] = [];
 
   if (args?.parseActor && args?.source_settings?.Actors) {
-    $log(`:::::PARSE:::: Parsing Actors DB ==> ${args.source_settings.Actors}`);
+    $log(`[PDS] PARSE: Parsing Actors DB ==> ${args.source_settings.Actors}`);
     $fs
       .readFileSync(args.source_settings.Actors, "utf8")
       .split("\n")
@@ -150,7 +120,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         const foundActorMatch = stripStr(scenePath).match(matchActor);
 
         if (foundActorMatch !== null) {
-          gettingActor.push(JSON.parse(line).name);
+          allDbActors.push(JSON.parse(line).name);
           return;
         }
 
@@ -168,7 +138,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
           let foundAliasActorMatch = stripStr(scenePath).match(matchAliasActor);
 
           if (foundAliasActorMatch !== null) {
-            gettingActor.push("alias:" + JSON.parse(line).name);
+            allDbActors.push("alias:" + JSON.parse(line).name);
           } else {
             const aliasNoSpaces = personAlias.toString().replace(" ", "");
 
@@ -177,15 +147,15 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
             foundAliasActorMatch = stripStr(scenePath).match(matchAliasActor);
 
             if (foundAliasActorMatch !== null) {
-              gettingActor.push("alias:" + JSON.parse(line).name);
+              allDbActors.push("alias:" + JSON.parse(line).name);
             }
           }
         });
       });
 
     let actorHighScore = 5000;
-    if (gettingActor.length && Array.isArray(gettingActor)) {
-      gettingActor.forEach((person) => {
+    if (allDbActors.length && Array.isArray(allDbActors)) {
+      allDbActors.forEach((person) => {
         // This is a function that will see how many differences it will take to make the string match.
         // The lowest amount of changes means that it is probably the closest match to what we need.
         // lowest score wins :)
@@ -199,15 +169,19 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         if (found < actorHighScore) {
           actorHighScore = found;
 
-          actor[0] = person;
+          parsedDbActors.push(person);
         }
         if (foundAnAlias) {
-          $log(`    SUCCESS: Found Actor-Alias: ` + person);
+          $log(`[PDS] PARSE: SUCCESS Found Actor-Alias: ${JSON.stringify(person)}`);
         } else {
-          $log(`    SUCCESS: Found Actor: ` + person);
+          $log(`[PDS] PARSE: SUCCESS Found Actor: ${JSON.stringify(person)}`);
         }
       });
-      $log(`---> Using "best match" Actor For Search: ` + actor);
+      $log(
+        `[PDS] PARSE: End of parse. Using "best match" Actor For Search: ${JSON.stringify(
+          parsedDbActors
+        )}`
+      );
     }
   }
   // -------------------STUDIO Parse
@@ -216,12 +190,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
   // creating a array to use for other functions
 
-  const gettingStudio: string[] = [];
-
-  const studio: string[] = [];
+  const allDbStudios: string[] = [];
+  let parsedDbStudio: string | undefined;
 
   if (args?.parseStudio && args?.source_settings?.Studios) {
-    $log(`:::::PARSE:::: Parsing Studios DB ==> ${args.source_settings.Studios}`);
+    $log(`[PDS] PARSE: Parsing Studios DB ==> ${JSON.stringify(args.source_settings.Studios)}`);
 
     $fs
       .readFileSync(args.source_settings.Studios, "utf8")
@@ -239,14 +212,14 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         const foundStudioMatch = stripStr(scenePath).match(matchStudio);
 
         if (foundStudioMatch !== null) {
-          gettingStudio.push(JSON.parse(line).name);
+          allDbStudios.push(JSON.parse(line).name);
         } else if (JSON.parse(line).name !== null) {
           matchStudio = new RegExp(escapeRegExp(JSON.parse(line).name.replace(/ /g, "")), "i");
 
           const foundStudioMatch = stripStr(scenePath).match(matchStudio);
 
           if (foundStudioMatch !== null) {
-            gettingStudio.push(JSON.parse(line).name);
+            allDbStudios.push(JSON.parse(line).name);
           }
         }
 
@@ -263,7 +236,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
             let foundAliasStudioMatch = stripStr(scenePath).match(matchAliasStudio);
 
             if (foundAliasStudioMatch !== null) {
-              gettingStudio.push("alias:" + JSON.parse(line).name);
+              allDbStudios.push("alias:" + JSON.parse(line).name);
             } else {
               const aliasNoSpaces = studioAlias.toString().replace(" ", "");
 
@@ -272,7 +245,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
               foundAliasStudioMatch = stripStr(scenePath).match(matchAliasStudio);
 
               if (foundAliasStudioMatch !== null) {
-                gettingStudio.push("alias:" + JSON.parse(line).name);
+                allDbStudios.push("alias:" + JSON.parse(line).name);
               }
             }
           }
@@ -281,10 +254,10 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     // this is a debug option to se see how many studios were found by just doing a simple regex
     // $log(GettingStudio);
     let studioHighScore = 5000;
-    if (gettingStudio.length && Array.isArray(gettingStudio)) {
+    if (allDbStudios.length && Array.isArray(allDbStudios)) {
       let foundStudioAnAlias = false;
       let instanceFoundStudioAnAlias = false;
-      gettingStudio.forEach((stud) => {
+      allDbStudios.forEach((stud) => {
         if (stud.includes("alias:")) {
           stud = stud.toString().replace("alias:", "").trim();
           instanceFoundStudioAnAlias = true;
@@ -298,17 +271,17 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         if (found < studioHighScore) {
           studioHighScore = found;
 
-          studio[0] = stud;
+          parsedDbStudio = stud;
           foundStudioAnAlias = instanceFoundStudioAnAlias;
         }
         if (foundStudioAnAlias) {
-          $log(`    SUCCESS: Found Studio-Alias: ` + studio[0]);
+          $log(`[PDS] PARSE:\tSUCCESS: Found Studio-Alias: ${JSON.stringify(parsedDbStudio)}`);
         } else {
-          $log(`    SUCCESS: Found Studio: ` + studio[0]);
+          $log(`[PDS] PARSE:\tSUCCESS: Found Studio: ${JSON.stringify(parsedDbStudio)}`);
         }
       });
 
-      $log(`---> Using "best match" Studio For Search: ` + studio);
+      $log(`[PDS] PARSE:\tUsing "best match" Studio For Search: ${JSON.stringify(parsedDbStudio)}`);
     }
   }
   // Try to PARSE the SceneName and determine Date
@@ -319,43 +292,123 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
   const yymmdd = stripStr(scenePath, true).match(/\d\d \d\d \d\d/);
 
-  let timestamp = Number.NaN;
+  let parsedTimestamp = Number.NaN;
 
-  $log(":::::PARSE:::: Parsing Date from ScenePath");
+  $log("[PDS] PARSE: Parsing Date from ScenePath");
   // $log(stripStr(scenePath, true));
 
   if (yyyymmdd && yyyymmdd.length) {
     const date = yyyymmdd[0].replace(" ", ".");
 
-    $log("   SUCCESS: Found => yyyymmdd");
+    $log("[PDS] PARSE:\tSUCCESS: Found => yyyymmdd");
 
-    timestamp = $moment(date, "YYYY-MM-DD").valueOf();
+    parsedTimestamp = $moment(date, "YYYY-MM-DD").valueOf();
   } else if (ddmmyyyy && ddmmyyyy.length) {
     const date = ddmmyyyy[0].replace(" ", ".");
 
-    $log("   SUCCESS: Found => ddmmyyyy");
+    $log("[PDS] PARSE:\tSUCCESS: Found => ddmmyyyy");
 
-    timestamp = $moment(date, "DD-MM-YYYY").valueOf();
+    parsedTimestamp = $moment(date, "DD-MM-YYYY").valueOf();
   } else if (yymmdd && yymmdd.length) {
     const date = yymmdd[0].replace(" ", ".");
 
-    $log("   SUCCESS: Found => yymmdd");
+    $log("[PDS] PARSE:\tSUCCESS: Found => yymmdd");
 
-    timestamp = $moment(date, "YY-MM-DD").valueOf();
+    parsedTimestamp = $moment(date, "YY-MM-DD").valueOf();
   } else {
-    $log("   FAILED: Could not find a date in the ScenePath");
+    $log("[PDS] PARSE:\tFAILED: Could not find a date in the ScenePath");
   }
 
   // Function that is called to convert a found date into a timestamp.
 
   // After everything has completed parsing, I run a function that will perform all of the lookups against TPDB
 
-  const finalCallResult = await doASearch(actor, studio, timestamp);
-  if (Array.isArray(finalCallResult)) {
-    return {};
+  let searchTitle: string | undefined = "";
+  let searchActors = parsedDbActors;
+  let searchStudio = parsedDbStudio;
+  let searchTimestamp: number | undefined = parsedTimestamp;
+  let userMovie: string | undefined;
+
+  if (!Array.isArray(parsedDbActors) || !parsedDbActors.length || !parsedDbStudio) {
+    $log(
+      "[PDS] ERR: Could not find a Studio or Actor in the SceneName for an initial search. Will prompt user for action"
+    );
+    const action = await makeChoices();
+    if (action === ManualTouchChoices.MANUAL_ENTER) {
+      const res = await manualImport();
+      return res;
+    }
+    if (action === ManualTouchChoices.SEARCH) {
+      const userSearchChoices = await getNextSearchChoices();
+      searchTitle = userSearchChoices.title;
+      searchActors = userSearchChoices.actors || [];
+      searchStudio = userSearchChoices.studio;
+      searchTimestamp = userSearchChoices.timestamp;
+      userMovie = userSearchChoices.movie;
+    }
+    // Else continue execution
   }
 
-  return finalCallResult || {};
+  const gotResultOrExit = false;
+  do {
+    const searchResult = await doASearch({
+      title: searchTitle,
+      actors: searchActors,
+      studio: searchStudio,
+      timestamp: searchTimestamp,
+    });
+    if (searchResult) {
+      if (!searchResult.movie) {
+        searchResult.movie = userMovie;
+      }
+
+      if (!args?.ManualTouch) {
+        return searchResult;
+      }
+
+      const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+      const { correctImportInfo: resultsConfirmation } = await questionAsync<{
+        correctImportInfo: string;
+      }>({
+        type: "input",
+        name: "correctImportInfo",
+        message: "Is this the correct scene details to import? (y/N)",
+        testAnswer: testMode ? testMode.CorrectImportInfo : "",
+      });
+
+      if (isPositiveAnswer(resultsConfirmation)) {
+        if (searchResult.thumbnail) {
+          searchResult.thumbnail = await $createImage(
+            searchResult.thumbnail,
+            searchResult.name || "",
+            true
+          );
+        }
+
+        return searchResult;
+      }
+    }
+
+    const action = await makeChoices();
+    if (!action || action === ManualTouchChoices.NOTHING) {
+      // Search already "failed" & user wants to do nothing => exit with no data
+      return {};
+    }
+    if (action === ManualTouchChoices.MANUAL_ENTER) {
+      const res = await manualImport();
+      return res;
+    }
+    if (action === ManualTouchChoices.SEARCH) {
+      const userSearchChoices = await getNextSearchChoices();
+      searchTitle = userSearchChoices.title;
+      searchActors = userSearchChoices.actors || [];
+      searchStudio = userSearchChoices.studio;
+      searchTimestamp = userSearchChoices.timestamp;
+      userMovie = userSearchChoices.movie;
+    }
+  } while (gotResultOrExit);
+
+  return {};
 
   // -------------------------------------------------------------
 
@@ -382,8 +435,10 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    * Standard block of manual questions that prompt the user for input
    * @returns either an array of all questions that need to be import manually
    */
-  async function manualImport(): Promise<SceneOutput | TitleObj[] | undefined> {
+  async function manualImport(): Promise<SceneOutput> {
     const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+
+    const result: SceneOutput = {};
 
     const { isMovie: manualMovieAnswer } = await questionAsync<{ isMovie: string }>({
       type: "input",
@@ -402,7 +457,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         testAnswer: testMode?.questionAnswers?.movieTitle ?? "",
       });
 
-      if (result.movie === undefined && manualMovieName !== "") {
+      if (manualMovieName) {
         result.movie = manualMovieName;
       }
     }
@@ -456,13 +511,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       message: `What are the Actors NAMES in the scene?: (separated by Comma)`,
       testAnswer: testMode?.questionAnswers?.manualActors ?? "",
       default() {
-        return `${actor.length ? ` ${actor.join(", ")}` : ""}`;
+        return searchActors ? ` ${searchActors.join(",")}` : "";
       },
     });
 
-    const areActorsBlank = !splitActors || !splitActors.trim();
-
-    if (!areActorsBlank) {
+    if (splitActors && splitActors.trim()) {
       result.actors = splitActors.trim().split(",");
     }
 
@@ -472,40 +525,135 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       message: `What Studio NAME is responsible for the scene?:`,
       testAnswer: testMode?.questionAnswers?.enterStudioName ?? "",
       default() {
-        return `${studio[0] ? ` ${studio[0]}` : ""}`;
+        return searchStudio ? ` ${searchStudio}` : "";
       },
     });
 
-    const isStudioBlank = askedStudio === "" || askedStudio === " " || askedStudio === null;
-
-    if (!isStudioBlank) {
+    if (askedStudio && askedStudio.trim()) {
       result.studio = askedStudio;
     }
 
     $log("====  Final Entry =====");
 
-    applyStudioAndActors(result, actor, studio);
+    applyStudioAndActors(result, parsedDbActors, parsedDbStudio);
     logResultObject(result);
 
-    if (args?.ManualTouch) {
-      const { correctImportInfo: resultsConfirmation } = await questionAsync<{
-        correctImportInfo: string;
+    return result;
+  }
+
+  async function getNextSearchChoices(): Promise<
+    Partial<{
+      title: string;
+      actors: string[];
+      studio: string;
+      timestamp: number;
+      movie: string;
+    }>
+  > {
+    let userTimestamp: number | undefined;
+    let userMovie: string | undefined;
+    let userActors: string[] = [];
+
+    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+
+    const { movieSearch: movieAnswer } = await questionAsync<{ movieSearch: string }>({
+      type: "input",
+      name: "movieSearch",
+      message: "Is this a Scene from a Movie / Set / Collection?: (y/N) ",
+      testAnswer: testMode?.questionAnswers?.enterMovie ?? "",
+    });
+    const enterMovieSearch = isPositiveAnswer(movieAnswer);
+
+    if (enterMovieSearch) {
+      const { manualMovieTitleSearch: movieName } = await questionAsync<{
+        manualMovieTitleSearch: string;
       }>({
         type: "input",
-        name: "correctImportInfo",
-        message: "Is this the correct scene details to import? (y/N)",
-        testAnswer: testMode ? testMode.CorrectImportInfo : "",
+        name: "manualMovieTitleSearch",
+        message: "What is the Title of the Movie?: ",
+        testAnswer: testMode?.questionAnswers?.movieTitle ?? "",
       });
 
-      if (isPositiveAnswer(resultsConfirmation)) {
-        return result;
-      } else {
-        const res = await makeChoices();
-        return res;
+      if (movieName) {
+        userMovie = movieName;
       }
-    } else {
-      return result;
     }
+
+    const { titleOfScene: manualEnterTitleScene } = await questionAsync<{ titleOfScene: string }>({
+      type: "input",
+      name: "titleOfScene",
+      message: "What is the TITLE of the scene?: ",
+      testAnswer: testMode?.questionAnswers?.enterSceneTitle ?? "",
+    });
+
+    const { manualActorSearch: Q2Actor } = await questionAsync<{ manualActorSearch: string }>({
+      type: "input",
+      name: "manualActorSearch",
+      message: `What is ONE of the Actors NAME in the scene?:`,
+      testAnswer: testMode?.questionAnswers?.enterOneActorName ?? "",
+      default() {
+        return searchActors ? ` ${searchActors.join(",")}` : "";
+      },
+    });
+
+    if (Q2Actor && Q2Actor.trim()) {
+      if (Q2Actor.includes(",")) {
+        userActors = Q2Actor.split(",").map((str) => str.trim());
+      } else {
+        userActors = [Q2Actor.trim()];
+      }
+    }
+
+    const { manualStudioSearch: Q3Studio } = await questionAsync<{
+      manualStudioSearch: string;
+    }>({
+      type: "input",
+      name: "manualStudioSearch",
+      message: `What Studio NAME is responsible for the scene?:`,
+      testAnswer: testMode?.questionAnswers?.enterStudioName ?? "",
+      default() {
+        return searchStudio ? ` ${searchStudio}` : "";
+      },
+    });
+
+    const { manualDateSearch: Q4date } = await questionAsync<{ manualDateSearch: string }>({
+      type: "input",
+      name: "manualDateSearch",
+      message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
+      testAnswer: testMode?.questionAnswers?.enterSceneDate ?? "",
+      default() {
+        if (!searchTimestamp) {
+          return "";
+        }
+        const dottedTimestamp = timeConverter(searchTimestamp).replace("-", ".");
+        if (dottedTimestamp && !isNaN(+dottedTimestamp)) {
+          return ` ${dottedTimestamp}`;
+        }
+        return "";
+      },
+    });
+
+    if (Q4date) {
+      const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
+
+      $log(" MSG: Checking Date");
+
+      if (questYear && questYear.length) {
+        const date = questYear[0];
+
+        $log(" MSG: Found => yyyymmdd");
+
+        userTimestamp = $moment(date, "YYYY-MM-DD").valueOf();
+      }
+    }
+
+    return {
+      title: manualEnterTitleScene,
+      actors: userActors,
+      studio: Q3Studio,
+      timestamp: userTimestamp,
+      movie: userMovie,
+    };
   }
 
   /**
@@ -513,624 +661,227 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    * 1. search again => Completes a manual Search of The Porn Database
    * 2. manual info => plugin returns "manualImport"
    * 3. Do nothing => plugin does not return any results (empty object)
-   * @returns {Promise<object>} ???
+   * @returns
    */
-  async function makeChoices(): Promise<SceneOutput | TitleObj[] | undefined> {
+  async function makeChoices(): Promise<string> {
     if (!args?.ManualTouch) {
-      $log(" Config ==> [ManualTouch]  MSG: SET TO FALSE ");
-      if (didRunMakeChoices) {
-        $log("  MSG: returning nothing");
-        return {};
-      } else {
-        $log("  MSG: Trying a single Aggressive Search --> ");
-        didRunMakeChoices = true;
-        const aggressiveSearchNoManual = await run(scenePath, true);
-
-        return aggressiveSearchNoManual;
-      }
-    } else {
-      const questionActor: string[] = [];
-
-      const questionStudio: string[] = [];
-
-      let questionDate;
-
-      /* If testmode is running and a question has already been asked,
-       *  we always want the second option to do nothing and return nothing
-       */
-      if (didRunMakeChoices && testMode) {
-        return {};
-      }
-
-      try {
-        const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
-
-        $log(" Config ==> [ManualTouch]  MSG: SET TO TRUE ");
-        const { choices: Q1Answer } = await questionAsync<{ choices: string }>({
-          type: "rawlist",
-          name: "choices",
-          message: "Would you like to:",
-          testAnswer: testMode?.questionAnswers?.enterInfoSearch ?? "",
-          choices: Object.values(ManualTouchChoices),
-        });
-
-        didRunMakeChoices = true;
-
-        if (Q1Answer === ManualTouchChoices.MANUAL_ENTER) {
-          const manualInfo = await manualImport();
-          return manualInfo;
-        }
-
-        if (Q1Answer === ManualTouchChoices.NOTHING) {
-          return {};
-        }
-
-        const { movieSearch: movieAnswer } = await questionAsync<{ movieSearch: string }>({
-          type: "input",
-          name: "movieSearch",
-          message: "Is this a Scene from a Movie / Set / Collection?: (y/N) ",
-          testAnswer: testMode?.questionAnswers?.enterMovie ?? "",
-        });
-        const enterMovieSearch = isPositiveAnswer(movieAnswer);
-
-        if (enterMovieSearch) {
-          const { manualMovieTitleSearch: movieName } = await questionAsync<{
-            manualMovieTitleSearch: string;
-          }>({
-            type: "input",
-            name: "manualMovieTitleSearch",
-            message: "What is the Title of the Movie?: ",
-            testAnswer: testMode?.questionAnswers?.movieTitle ?? "",
-          });
-
-          if (result.movie === undefined && movieName !== "") {
-            result.movie = movieName;
-          }
-        }
-        const { manualActorSearch: Q2Actor } = await questionAsync<{ manualActorSearch: string }>({
-          type: "input",
-          name: "manualActorSearch",
-          message: `What is ONE of the Actors NAME in the scene?:`,
-          testAnswer: testMode?.questionAnswers?.enterOneActorName ?? "",
-          default() {
-            return `${actor[0] ? ` ${actor[0]}` : ""}`;
-          },
-        });
-
-        questionActor.push(Q2Actor);
-        if (Array.isArray(actor) && !actor.length) {
-          actor.push(Q2Actor);
-        }
-
-        const { manualStudioSearch: Q3Studio } = await questionAsync<{
-          manualStudioSearch: string;
-        }>({
-          type: "input",
-          name: "manualStudioSearch",
-          message: `What Studio NAME is responsible for the scene?:`,
-          testAnswer: testMode?.questionAnswers?.enterStudioName ?? "",
-          default() {
-            return `${studio[0] ? ` ${studio[0]}` : ""}`;
-          },
-        });
-
-        questionStudio.push(Q3Studio);
-        if (Array.isArray(studio) && !studio.length) {
-          studio.push(Q3Studio);
-        }
-        const { manualDateSearch: Q4date } = await questionAsync<{ manualDateSearch: string }>({
-          type: "input",
-          name: "manualDateSearch",
-          message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
-          testAnswer: testMode?.questionAnswers?.enterSceneDate ?? "",
-          default() {
-            const dottedTimestamp = timeConverter(timestamp).replace("-", ".");
-            if (dottedTimestamp && !isNaN(+dottedTimestamp)) {
-              return ` ${dottedTimestamp}`;
-            }
-            return "";
-          },
-        });
-
-        if (Q4date !== "") {
-          const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
-
-          $log(" MSG: Checking Date");
-
-          if (questYear && questYear.length) {
-            const date = questYear[0];
-
-            $log(" MSG: Found => yyyymmdd");
-
-            questionDate = $moment(date, "YYYY-MM-DD").valueOf();
-          }
-        }
-
-        // Re run the search with user's input
-        const res = await doASearch(questionActor, questionStudio, questionDate);
-
-        return res;
-      } catch (error) {
-        $log("Something went wrong asking for search questions", error);
-      }
+      $log(`[PDS] MSG: "ManualTouch" disabled, will continue plugin with current queries`);
+      return ManualTouchChoices.NOTHING;
     }
+
+    // If testmode is running, we do not want to run makeChoices() more than once,
+    // or the test will have an infinite loop
+    if (didRunMakeChoices && testMode) {
+      return ManualTouchChoices.NOTHING;
+    }
+
+    try {
+      const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+
+      $log(`[PDS] MSG: "ManualTouch" is enabled, prompting user for action`);
+      const { choices: Q1Answer } = await questionAsync<{ choices: string }>({
+        type: "rawlist",
+        name: "choices",
+        message: "Would you like to:",
+        testAnswer: testMode?.questionAnswers?.enterInfoSearch ?? "",
+        choices: Object.values(ManualTouchChoices),
+      });
+
+      didRunMakeChoices = true;
+
+      if (!Object.values(ManualTouchChoices).includes(Q1Answer)) {
+        $throw("User did not select a choice, will consider exit");
+        return ManualTouchChoices.NOTHING;
+      }
+
+      return Q1Answer;
+    } catch (error) {
+      $log("Something went wrong asking for search questions", error);
+    }
+
+    return ManualTouchChoices.NOTHING;
   }
 
   /**
    * Retrieves the scene titles or details from TPDB
    *
-   * @param parseQuery - what tpdb should parse
+   * @param parseQueryOrId - what tpdb should parse
    * @param aggressiveSearch - if the search does not only have 1 result, if this should run a manual import instead of trying to get titles
-   * @returns either an array of all the possible Porn Database search results, or a data object for the proper "found" scene
+   * @returns either an array of all the possible Porn Database search results, or a data object for the proper "found" scene or null if
+   * nothing at all was found
    */
-  async function run(
-    parseQuery: string,
+  async function runSceneSearch(
+    parseQueryOrId: string,
+    searchType: "parse" | "id",
     aggressiveSearch = false
-  ): Promise<SceneOutput | TitleObj[] | undefined> {
-    const res = await tpdbApi.parseScene(parseQuery);
-    $log(`Scene search url: ${res.config.url}?parse=${encodeURIComponent(parseQuery)}`);
+  ): Promise<SceneResult.SceneData[] | null> {
+    try {
+      let apiRes:
+        | AxiosResponse<SceneResult.SceneListResult>
+        | AxiosResponse<SceneResult.SingleSceneResult>
+        | null = null;
+      if (searchType === "parse") {
+        apiRes = await tpdbApi.parseScene(parseQueryOrId);
+      } else if (searchType === "id") {
+        apiRes = await tpdbApi.getSceneById(parseQueryOrId);
+      }
 
-    // checking the status of the link or site, will escape if the site is down
+      if (!apiRes?.data || testMode?.testSiteUnavailable) {
+        $throw("ERR: TPDB API: received no data");
+        return null; // for type compatibility
+      }
 
-    if (res.status !== 200 || !res.data || testMode?.testSiteUnavailable) {
-      $log(" ERR: TPDB API query failed");
+      const sceneList = Array.isArray(apiRes.data.data) ? apiRes.data.data : [apiRes.data.data];
 
+      // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
+      if (aggressiveSearch && sceneList.length !== 1) {
+        $throw("ERR: TPDB Could NOT find correct scene info, or too many results");
+        return null; // for type compatibility
+      }
+
+      // list the found results and tries to match the SCENENAME to the found results.
+      const matchedScene: SceneResult.SceneData | null = matchSceneResultToSearch(
+        ctx,
+        sceneList,
+        parsedDbActors,
+        parsedDbStudio
+      );
+
+      if (!matchedScene) {
+        $log("[PDS] ERR: TPDB Could NOT find correct scene info");
+        return sceneList;
+      }
+
+      checkSceneExistsInDb(ctx, matchedScene.title);
+
+      $log("[PDS] MSG: Returning the results for user selection");
+
+      return [matchedScene];
+    } catch (err) {
+      $log("[PDS] ERR: TPDB API query failed");
       if (testMode?.status && !testMode?.testSiteUnavailable) {
         $log("!! This will impact the test if it was not expecting a failure !!");
       }
 
-      const manualInfo = await makeChoices();
-      return manualInfo;
+      return null;
     }
-
-    // Grab the content data of the fed link
-    const sceneSearchResult = res.data;
-
-    // setting the scene index to an invalid value by default
-    let correctSceneIdx = -1;
-
-    // If a result was returned, it sets it to the first entry
-    if (sceneSearchResult.data.length === 1) {
-      correctSceneIdx = 0;
-    }
-
-    // making a variable to store all of the titles of the found results (in case we need the user to select a scene)
-    const allTitles: TitleObj[] = [];
-
-    // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
-    if (aggressiveSearch && correctSceneIdx === -1) {
-      $log(" ERR: TPDB Could NOT find correct scene info");
-
-      const manualInfo = await makeChoices();
-      return manualInfo;
-    } else {
-      // list the found results and tries to match the SCENENAME to the found results.
-      // all while gathering all of the titles, in case no match is found
-
-      if (sceneSearchResult.data.length > 1) {
-        $log(`     SRCH: ${sceneSearchResult.data.length} results found`);
-
-        for (let sceneIdx = 0; sceneIdx < sceneSearchResult.data.length; sceneIdx++) {
-          const scene = sceneSearchResult.data[sceneIdx];
-
-          allTitles[sceneIdx] = { title: scene.title, slug: scene.slug };
-
-          // making variables to use to eliminate Actors and scenes from the search results.
-
-          // It is better to search just the title.  We already have the actor and studio.
-
-          let searchedTitle = stripStr(sceneName).toString().toLowerCase();
-
-          let matchTitle;
-          if (stripStr(allTitles[sceneIdx].title) !== "") {
-            matchTitle = stripStr(allTitles[sceneIdx].title).toString().toLowerCase();
-          }
-
-          // Only Run a match if there is a searched title to execute a match on
-
-          if (matchTitle !== undefined) {
-            // lets remove the actors from the scenename and the searched title -- We should already know this
-            //$log("removing actors name from comparison strings...")
-            for (let j = 0; j < actor.length; j++) {
-              if (actor[j] !== undefined) {
-                searchedTitle = searchedTitle.replace(actor[j].toString().toLowerCase(), "");
-
-                matchTitle = matchTitle.replace(actor[j].toString().toLowerCase(), "").trim();
-              }
-            }
-
-            // lets remove the Studio from the scenename and the searched title -- We should already know this
-            //$log("removing studio name from comparison strings...")
-            if (studio[0] !== undefined) {
-              searchedTitle = searchedTitle.replace(studio[0].toString().toLowerCase(), "");
-
-              searchedTitle = searchedTitle.replace(
-                studio[0].toString().toLowerCase().replace(" ", ""),
-                ""
-              );
-
-              matchTitle = matchTitle.replace(studio[0].toString().toLowerCase(), "").trim();
-            }
-
-            if (matchTitle.trim() !== "") {
-              $log(
-                `     SRCH: Trying to match TPD title: ` +
-                  matchTitle.trim() +
-                  " --with--> " +
-                  searchedTitle.trim()
-              );
-
-              matchTitle = new RegExp(matchTitle.trim(), "i");
-
-              if (searchedTitle !== undefined) {
-                if (searchedTitle.trim().match(matchTitle)) {
-                  correctSceneIdx = sceneIdx;
-
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // making sure the scene was found (-1 is not a proper scene value)
-      if (correctSceneIdx === -1) {
-        // Will provide a list back the user if no Scene was found
-
-        if (sceneSearchResult.data.length > 1 && args?.ManualTouch === true) {
-          $log(" ERR: TPDB Could NOT find correct scene info, here were the results");
-
-          return allTitles;
-        }
-
-        $log(" ERR: TPDB Could NOT find correct scene info");
-
-        const manualInfo = await makeChoices();
-        return manualInfo;
-      }
-    }
-
-    const tpdbSceneSearchData = sceneSearchResult.data[correctSceneIdx];
-
-    // return all of the information to TPM
-
-    if (tpdbSceneSearchData.title !== "") {
-      // Is there a duplicate scene already in the Database with that name?
-      let foundDupScene = false;
-      // If i decide to do anything with duplicate scenes, this variable on the next line will come into play
-      // let TheDupedScene = [];
-      if (args?.SceneDuplicationCheck && args?.source_settings?.Scenes) {
-        const lines = $fs.readFileSync(args.source_settings.Scenes, "utf8").split("\n");
-
-        let line = lines.shift();
-        while (!foundDupScene && line) {
-          if (ignoreDbLine(line) || !stripStr(JSON.parse(line).name.toString())) {
-            line = lines.shift();
-            continue;
-          }
-
-          let matchScene = new RegExp(
-            escapeRegExp(stripStr(JSON.parse(line).name.toString())),
-            "gi"
-          );
-
-          const foundSceneMatch = stripStr(tpdbSceneSearchData.title).match(matchScene);
-
-          if (foundSceneMatch !== null) {
-            foundDupScene = true;
-            // TheDupedScene = stripStr(JSON.parse(line).name.toString());
-          } else if (stripStr(JSON.parse(line).name.toString()) !== null) {
-            matchScene = new RegExp(
-              escapeRegExp(stripStr(JSON.parse(line).name.toString()).replace(/ /g, "")),
-              "gi"
-            );
-
-            const foundSceneMatch = stripStr(tpdbSceneSearchData.title).match(matchScene);
-
-            if (foundSceneMatch !== null) {
-              // TheDupedScene = stripStr(JSON.parse(line).name.toString());
-              foundDupScene = true;
-            }
-          }
-
-          line = lines.shift();
-        }
-      }
-      if (foundDupScene) {
-        // Found a possible duplicate
-
-        $log(" [Title Duplication check] === Found a possible duplicate title in the database");
-
-        // Exit? Break? Return?
-
-        result.name = tpdbSceneSearchData.title;
-      } else {
-        result.name = tpdbSceneSearchData.title;
-      }
-    }
-
-    if (tpdbSceneSearchData.description !== "") {
-      result.description = tpdbSceneSearchData.description;
-    }
-
-    if (tpdbSceneSearchData.date !== "") {
-      result.releaseDate = new Date(tpdbSceneSearchData.date).getTime();
-    }
-
-    if (tpdbSceneSearchData.tags?.length) {
-      result.labels = tpdbSceneSearchData.tags.map((l) => l.tag);
-    }
-
-    if (
-      tpdbSceneSearchData.background.large !== "" &&
-      !tpdbSceneSearchData.background.large.includes("default.png")
-    ) {
-      result.thumbnail = tpdbSceneSearchData.background.large;
-    }
-
-    if (tpdbSceneSearchData.performers) {
-      result.actors = tpdbSceneSearchData.performers.map((p) => p.name);
-    }
-
-    if (tpdbSceneSearchData.site.name !== "") {
-      if (Array.isArray(studio) && studio.length) {
-        result.studio = studio.toString().trim();
-      } else {
-        result.studio = tpdbSceneSearchData.site.name;
-      }
-    }
-
-    $log(" Returning the results");
-
-    return result;
   }
 
   /**
    * The (Backbone) main Search function for the plugin
    *
-   * @param searchActor - The URL API that has the sites hosted on TPD
+   * @param searchActors - The URL API that has the sites hosted on TPD
    * @param searchStudio - The URL API that has the sites hosted on TPD
    * @param searchFuncTimestamp - The URL API that has the sites hosted on TPD
    * @returns return the proper scene information (either through manual questions or automatically)
+   * or null if there were no results, too many results
    */
-  async function doASearch(
-    searchActor: string[] | string,
-    searchStudio: string[] | string,
-    searchFuncTimestamp: number
-  ): Promise<SceneOutput | TitleObj[] | undefined> {
-    // check to see if the Studio and Actor are available for searching.
+  async function doASearch({
+    title,
+    actors,
+    studio,
+    timestamp,
+  }: Partial<{
+    title: string;
+    actors: string[];
+    studio: string;
+    timestamp: number;
+  }>): Promise<SceneOutput | null> {
+    async function mergeFinalResult(rawScene: SceneResult.SceneData): Promise<SceneOutput> {
+      const sceneData = normalizeSceneResultData(rawScene);
+
+      $log("[PDS] MSG: ====  Final Entry =====");
+
+      applyStudioAndActors(sceneData, parsedDbActors, studio);
+      logResultObject(sceneData);
+
+      return sceneData;
+    }
+
+    const queries = [title, actors, studio];
+    if (timestamp) {
+      queries.push(timeConverter(timestamp));
+    }
+    const initialQuery = queries.reduce(
+      (acc: string, query: string | string[] | undefined): string => {
+        if (Array.isArray(query)) {
+          return [acc, query.join(" ")].join(" ");
+        }
+        if (query) {
+          return [acc, query].join(" ");
+        }
+        return acc;
+      },
+      ""
+    );
+
+    $log(`[PDS] MSG: Running TPDB Primary Search on: ${JSON.stringify(initialQuery)}`);
+    const primarySceneSearchResult = await runSceneSearch(initialQuery, "parse", false);
 
     if (
-      Array.isArray(searchStudio) &&
-      searchStudio.length &&
-      Array.isArray(searchActor) &&
-      searchActor.length
+      primarySceneSearchResult &&
+      Array.isArray(primarySceneSearchResult) &&
+      primarySceneSearchResult.length === 1
     ) {
-      // Grabs the searchable sites in TPM
-
-      // const studioShortNames = await grabSites();
-
-      // let doesSiteExist;
-
-      // let compareHighScore = 5000;
-
-      // for (const studioName of studioShortNames) {
-      //   const siteNoSpaces = new RegExp(escapeRegExp(studioName), "gi");
-
-      //   const studioWithNoSpaces = searchStudio.toString().replace(/ /gi, "");
-
-      //   const foundStudioInAPI = studioWithNoSpaces.match(siteNoSpaces);
-
-      //   if (foundStudioInAPI !== null) {
-      //     const levenFound = levenshtein(foundStudioInAPI.toString(), searchStudio.toString());
-
-      //     if (levenFound < compareHighScore) {
-      //       compareHighScore = levenFound;
-      //       doesSiteExist = foundStudioInAPI;
-      //     }
-      //   }
-      // }
-
-      // if (!doesSiteExist) {
-      //   $log(
-      //     " ERR: This Studio does not exist in ThePornDatabase.  No searches are possible with this Studio / Network"
-      //   );
-
-      //   const manualInfo = await makeChoices();
-      //   return manualInfo;
-      // }
-
-      $log(":::::MSG: Checking TPDB for Data Extraction");
-
-      let tpdbParseQuery = "";
-
-      // making the search string based on the timestamp or not
-
-      if (isNaN(searchFuncTimestamp)) {
-        $log(":::::MSG: Placing TPDB Search string without timestamp...");
-
-        tpdbParseQuery = `${searchStudio[0]} ${searchActor[0]}`;
-      } else {
-        $log(":::::MSG: Placing TPDB Search string");
-
-        tpdbParseQuery = `${searchStudio[0]} ${searchActor[0]} ${timeConverter(
-          searchFuncTimestamp
-        )}`;
-      }
-
-      // Grabbing the results using the "Normal" Search methods (comparing against scene name)
-
-      $log(":::::MSG: Running TPDB Primary Search on: " + tpdbParseQuery);
-
-      const grabResults = await run(tpdbParseQuery);
-      // Once the results have been searched, we need to do something with them
-      if (grabResults && Array.isArray(grabResults)) {
-        // Run through the list of titles and ask if they would like to choose one.
-        $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
-
-        const answersList: string[] = [];
-        const possibleTitles: string[] = [];
-        for (let titleIdx = 0; titleIdx < Object.keys(grabResults).length; titleIdx++) {
-          answersList.push(grabResults[titleIdx].title);
-          possibleTitles.push(grabResults[titleIdx].title);
-        }
-
-        const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
-        answersList.push((new $inquirer.Separator() as any) as string);
-        answersList.push("== None of the above == ");
-        answersList.push("== Manual Search == ");
-
-        const { searchedTitles: multipleSitesAnswer } = await questionAsync<{
-          searchedTitles: string;
-        }>({
-          type: "rawlist",
-          name: "searchedTitles",
-          message: "Which Title would you like to use?",
-          testAnswer: testMode?.questionAnswers?.multipleChoice ?? "",
-          choices: answersList,
-        });
-
-        const findResultIndex = possibleTitles.indexOf(multipleSitesAnswer.trim());
-
-        if (findResultIndex < 0) {
-          if (args?.ManualTouch) {
-            const manualInfo = await makeChoices();
-            return manualInfo;
-          } else {
-            return {};
-          }
-        } else {
-          const selectedTitle = grabResults[possibleTitles.indexOf(multipleSitesAnswer)]?.slug;
-
-          $log(" MSG: Running Aggressive-Grab Search on: " + selectedTitle);
-          const goGetIt = await run(selectedTitle, true);
-
-          if (!goGetIt) {
-            $log("Failed to run, quitting");
-            return {};
-          }
-
-          if (Array.isArray(goGetIt)) {
-            $log("run() gave unexpected result, quitting");
-            return {};
-          }
-
-          $log("====  Object Final Entry =====");
-
-          applyStudioAndActors(goGetIt, actor, studio);
-          logResultObject(goGetIt);
-
-          if (args?.ManualTouch) {
-            const { correctImportInfo: resultsConfirmation } = await questionAsync<{
-              correctImportInfo: string;
-            }>({
-              type: "input",
-              name: "correctImportInfo",
-              message: "Does this information look like the correct information to import? (y/N)",
-              testAnswer: testMode ? testMode.CorrectImportInfo : "",
-            });
-
-            if (isPositiveAnswer(resultsConfirmation)) {
-              if (goGetIt.thumbnail) {
-                try {
-                  const thumbnailFile = await $createImage(
-                    goGetIt.thumbnail,
-                    goGetIt.name || "",
-                    true
-                  );
-                  goGetIt.thumbnail = thumbnailFile.toString();
-                } catch (e) {
-                  $log("No thumbnail found");
-                }
-              }
-
-              return goGetIt;
-            } else {
-              const res = await makeChoices();
-              return res;
-            }
-          } else {
-            if (goGetIt.thumbnail) {
-              try {
-                const thumbnailFile = await $createImage(
-                  goGetIt.thumbnail,
-                  goGetIt.name || "",
-                  true
-                );
-
-                goGetIt.thumbnail = thumbnailFile.toString();
-              } catch (e) {
-                $log("No thumbnail found");
-              }
-            }
-
-            return goGetIt;
-          }
-        }
-      } else if (grabResults && typeof grabResults === "object") {
-        // Will return any of the values found
-        const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
-
-        $log("====  Final Entry =====");
-
-        applyStudioAndActors(grabResults, actor, studio);
-        logResultObject(grabResults);
-
-        if (args?.ManualTouch) {
-          const { correctImportInfo: resultsConfirmation } = await questionAsync<{
-            correctImportInfo: string;
-          }>({
-            type: "input",
-            name: "correctImportInfo",
-            message: "Does this information look like the correct information to import? (y/N)",
-            testAnswer: testMode ? testMode.CorrectImportInfo : "",
-          });
-
-          if (isPositiveAnswer(resultsConfirmation)) {
-            if (grabResults.thumbnail) {
-              try {
-                const thumbnailFile = await $createImage(
-                  grabResults.thumbnail,
-                  grabResults.name || "",
-                  true
-                );
-
-                grabResults.thumbnail = thumbnailFile.toString();
-              } catch (e) {
-                $log("No thumbnail found");
-              }
-            }
-
-            return grabResults;
-          } else {
-            const res = await makeChoices();
-            return res;
-          }
-        } else {
-          if (grabResults.thumbnail) {
-            try {
-              const thumbnailFile = await $createImage(
-                grabResults.thumbnail,
-                grabResults.name || "",
-                true
-              );
-
-              grabResults.thumbnail = thumbnailFile.toString();
-            } catch (e) {
-              $log("No thumbnail found");
-            }
-          }
-
-          return grabResults;
-        }
-      }
-
-      // If there was no studio or Actor, and the "Manual Touch" arg is set to TRUE, it will prompt you for entries manually.
-    } else {
-      $log(" ERR:Could not find a Studio or Actor in the SceneName");
-      const res = await makeChoices();
-      return res;
+      return mergeFinalResult(primarySceneSearchResult[0]);
     }
+
+    if (
+      primarySceneSearchResult &&
+      Array.isArray(primarySceneSearchResult) &&
+      primarySceneSearchResult.length > 1
+    ) {
+      // Run through the list of titles and ask if they would like to choose one.
+      $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+
+      const answersList: string[] = [];
+      const possibleTitles: string[] = [];
+
+      for (const scene of primarySceneSearchResult) {
+        answersList.push(scene.title);
+        possibleTitles.push(scene.title);
+      }
+
+      const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+      answersList.push((new $inquirer.Separator() as any) as string);
+      answersList.push("== None of the above == ");
+      answersList.push("== Manual Search == ");
+
+      const { searchedTitles: multipleSitesAnswer } = await questionAsync<{
+        searchedTitles: string;
+      }>({
+        type: "rawlist",
+        name: "searchedTitles",
+        message: "Which Title would you like to use?",
+        testAnswer: testMode?.questionAnswers?.multipleChoice ?? "",
+        choices: answersList,
+      });
+
+      const findResultIndex = possibleTitles.indexOf(multipleSitesAnswer.trim());
+      const userSelectedSceneId = primarySceneSearchResult[findResultIndex]?.id;
+
+      if (!userSelectedSceneId) {
+        $log("[PDS] MSG: User did not select a scene, exiting secondary search");
+        return null;
+      }
+
+      $log(`[PDS] MSG: Running Aggressive-Grab Search on: ${JSON.stringify(userSelectedSceneId)}`);
+      const secondarySceneSearchResult = await runSceneSearch(userSelectedSceneId, "id", true);
+
+      if (!secondarySceneSearchResult) {
+        $log("[PDS] ERR: Failed to find secondary result");
+        return null;
+      }
+
+      if (
+        secondarySceneSearchResult &&
+        Array.isArray(secondarySceneSearchResult) &&
+        secondarySceneSearchResult.length === 1
+      ) {
+        return mergeFinalResult(secondarySceneSearchResult[0]);
+      }
+    }
+
+    return null;
   }
 };

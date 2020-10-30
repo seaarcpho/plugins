@@ -4,11 +4,12 @@ import { ManualTouchChoices } from "../util";
 const context = require("../../../context");
 const { expect } = require("chai");
 
-describe("PromisedScene", () => {
+describe.only("PromisedScene", () => {
   describe("When Populated Databases exist...", () => {
     it("Should have DB files with the Actor, Studio, Scene and date already", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -38,9 +39,10 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
-    it("Should not return an actor with a single name like 'PRESSLEY', even if it exists but allow for manual SEARCH success", async () => {
+    it.only("Should not return an actor with a single name like 'PRESSLEY', even if it exists but allow for manual SEARCH success", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -81,6 +83,7 @@ describe("PromisedScene", () => {
     it("Should grab an alias for an actor Madison Swan = Mia Malkova", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -113,6 +116,7 @@ describe("PromisedScene", () => {
     it("Should grab an alias with no spaces for an actor Madison Swan = Mia Malkova", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -145,6 +149,7 @@ describe("PromisedScene", () => {
     it("Search and Grab a scene with multiple parsed Actors, run a search and match based on title of scene - testing YY-MM-DD", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -191,6 +196,7 @@ describe("PromisedScene", () => {
     it("Search and Grab a Scene that has multiple parsed Studios - testing dd.mm.yyyy", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -236,6 +242,7 @@ describe("PromisedScene", () => {
     it("Search and Grab a Scene that has multiple parsed Studios with no spaces - testing dd.mm.yyyy", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -281,6 +288,7 @@ describe("PromisedScene", () => {
     it("Select a scene from a list of returned searches", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -324,6 +332,7 @@ describe("PromisedScene", () => {
     it("Select 'none of the above' of the last 2 options in a rawlist, it should make the user select a choice.  Should return nothing because we assume we select 'do nothing' when asked again", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -360,6 +369,7 @@ describe("PromisedScene", () => {
     it("list of returned searches, let the script find the title within the path name", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -403,6 +413,7 @@ describe("PromisedScene", () => {
     it("TPD not available and should not return anything because Manualinfo is = n", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -438,6 +449,7 @@ describe("PromisedScene", () => {
     it("TPD does not support that specific studio. Should return nothing because we assume we select 'do nothing' when asked again", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -473,6 +485,7 @@ describe("PromisedScene", () => {
     it("Should not parse the studio but success in searching it with fullname", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -514,6 +527,7 @@ describe("PromisedScene", () => {
     it("Should return nothing because no search is completed with no parsed Actor or Studio when manualTouch is false", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: false,
           SceneDuplicationCheck: true,
@@ -538,6 +552,7 @@ describe("PromisedScene", () => {
     it("Should allow manual input, no movie, no search -- Unpopulated databases", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: false,
@@ -582,6 +597,7 @@ describe("PromisedScene", () => {
     it("Not the correct import information, saying 'no' should assume 'do nothing' on the second question", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: false,
@@ -620,6 +636,7 @@ describe("PromisedScene", () => {
     it("Should allow manual input, with movie, no search -- Unpopulated databases", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -667,6 +684,7 @@ describe("PromisedScene", () => {
     it("Should have DB files with Studio and Scene already -- No Actor -- ManualTouch True -- Should find with correct answers", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -710,6 +728,7 @@ describe("PromisedScene", () => {
     it("Should have DB files with Scene already -- No Studio or Actor -- ManualTouch True -- Should find with correct answers", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: true,
           SceneDuplicationCheck: true,
@@ -754,6 +773,7 @@ describe("PromisedScene", () => {
     it("Should have DB files with Scene already but return nothing, no questions -- No Studio or Actor parsed", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
           ManualTouch: false,
           SceneDuplicationCheck: true,
@@ -784,6 +804,7 @@ describe("PromisedScene", () => {
       try {
         await plugin({
           ...context,
+          event: "fake event",
           args: {
             ManualTouch: true,
             SceneDuplicationCheck: true,
@@ -814,6 +835,7 @@ describe("PromisedScene", () => {
       try {
         await plugin({
           ...context,
+          event: "sceneCreated",
           args: {
             ManualTouch: true,
             SceneDuplicationCheck: true,
@@ -839,6 +861,7 @@ describe("PromisedScene", () => {
       try {
         await plugin({
           ...context,
+          event: "sceneCreated",
           args: {
             ManualTouch: true,
             SceneDuplicationCheck: true,
@@ -868,6 +891,7 @@ describe("PromisedScene", () => {
       try {
         await plugin({
           ...context,
+          event: "sceneCreated",
           args: {
             ManualTouch: true,
             SceneDuplicationCheck: true,
@@ -897,6 +921,7 @@ describe("PromisedScene", () => {
       try {
         await plugin({
           ...context,
+          event: "sceneCreated",
           args: {
             SceneDuplicationCheck: true,
             parseActor: true,
@@ -926,6 +951,7 @@ describe("PromisedScene", () => {
       try {
         await plugin({
           ...context,
+          event: "sceneCreated",
           args: {
             ManualTouch: true,
             parseActor: true,

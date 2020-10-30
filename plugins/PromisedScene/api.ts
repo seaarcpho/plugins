@@ -1,7 +1,7 @@
 import { AxiosInstance, AxiosResponse } from "axios";
 
-import { SceneResult, SiteResult } from "../types";
-import { Context } from "./../../../types/plugin";
+import { SceneResult, SiteResult } from "./types";
+import { Context } from "../../types/plugin";
 
 export class Api {
   ctx: Context;
@@ -15,11 +15,16 @@ export class Api {
   }
 
   async parseScene(parse: string): Promise<AxiosResponse<SceneResult.SceneListResult>> {
+    this.ctx.$log(`[PDS] GET: https://api.metadataapi.net/api/scenes?parse=${encodeURIComponent(parse)}`);
     return this.axios.get<SceneResult.SceneListResult>("/scenes", {
       params: {
         parse,
       },
     });
+  }
+
+  async getSceneById(sceneId: string): Promise<AxiosResponse<SceneResult.SingleSceneResult>> {
+    return this.axios.get<SceneResult.SingleSceneResult>(`/scenes/${sceneId}`);
   }
 
   async getSites(): Promise<AxiosResponse<SiteResult.SiteListResult>> {
