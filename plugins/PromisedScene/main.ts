@@ -83,36 +83,13 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       timestamp: searchTimestamp,
     });
     if (searchResult) {
-      if (!searchResult.movie) {
+      if (!searchResult.movie && userMovie) {
         searchResult.movie = userMovie;
       }
 
-      logResultObject(searchResult);
-
-      if (!args?.manualTouch) {
-        return searchResult;
-      }
-
-      const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
-      const { correctImportInfo: resultsConfirmation } = await questionAsync<{
-        correctImportInfo: string;
-      }>({
-        type: "input",
-        name: "correctImportInfo",
-        message: "Is this the correct scene details to import? (y/N)",
-        testAnswer: testMode ? testMode.correctImportInfo : "",
-      });
-
-      if (isPositiveAnswer(resultsConfirmation)) {
-        if (searchResult.thumbnail) {
-          searchResult.thumbnail = await $createImage(
-            searchResult.thumbnail,
-            searchResult.name || "",
-            true
-          );
-        }
-
-        return searchResult;
+      const confirmedData = await confirmFinalEntry(searchResult);
+      if (confirmedData) {
+        return confirmedData;
       }
     }
 
@@ -120,13 +97,13 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     if (!action || action === manualTouchChoices.NOTHING) {
       // Search already "failed" & user wants to do nothing => exit with no data
       return {};
-    }
-    if (action === manualTouchChoices.MANUAL_ENTER) {
-      const res = await manualImport();
-      logResultObject(res);
-      return res;
-    }
-    if (action === manualTouchChoices.SEARCH) {
+    } else if (action === manualTouchChoices.MANUAL_ENTER) {
+      const manualData = await manualImport();
+      const confirmedData = await confirmFinalEntry(manualData);
+      if (confirmedData) {
+        return confirmedData;
+      }
+    } else if (action === manualTouchChoices.SEARCH) {
       const userSearchChoices = await getNextSearchChoices();
       searchTitle = userSearchChoices.title;
       searchActors = userSearchChoices.actors || [];
@@ -161,6 +138,40 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }
 
     $log(JSON.stringify(logObj, null, 2));
+  }
+
+  /**
+   * Logs the data and asks the user to confirm that it should be imported
+   *
+   * @param sceneData - the final data to confirm and apply
+   * @returns the final data to import or null if should not
+   */
+  async function confirmFinalEntry(sceneData: SceneOutput): Promise<SceneOutput | null> {
+    logResultObject(sceneData);
+
+    if (!args?.manualTouch) {
+      return sceneData;
+    }
+
+    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+    const { correctImportInfo: resultsConfirmation } = await questionAsync<{
+      correctImportInfo: string;
+    }>({
+      type: "input",
+      name: "correctImportInfo",
+      message: "Is this the correct scene details to import? (y/N)",
+      testAnswer: testMode ? testMode.correctImportInfo : "",
+    });
+
+    if (isPositiveAnswer(resultsConfirmation)) {
+      if (sceneData.thumbnail) {
+        sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
+      }
+
+      return sceneData;
+    }
+
+    return null;
   }
 
   /**
