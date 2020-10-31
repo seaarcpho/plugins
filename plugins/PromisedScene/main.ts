@@ -560,6 +560,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       ""
     );
 
+    if (!initialQuery) {
+      $log("[PDS] WARN: Did not have any parameters to do primary search");
+      return null;
+    }
+
     $log(`[PDS] MSG: Running TPDB Primary Search on: ${JSON.stringify(initialQuery)}`);
     const primarySceneSearchResult = await runSceneSearch(initialQuery, "parse", false);
 
