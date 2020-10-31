@@ -1,6 +1,6 @@
 ## PromisedScene 0.1.0
 
-by Ch00nassid a.k.a: DGs.Ch00
+by Ch00nassid a.k.a: DGs.Ch00, leadwolf
 
 Ask questions and make sure scene parsing is correct
 
