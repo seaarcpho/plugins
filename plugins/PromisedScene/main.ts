@@ -73,6 +73,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   let searchStudio = parsedDbStudio ?? undefined;
   let searchTimestamp: number | undefined = parsedTimestamp ?? undefined;
   let userMovie: string | undefined;
+  let extra: string | undefined;
 
   const gotResultOrExit = false;
   do {
@@ -81,6 +82,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       actors: searchActors,
       studio: searchStudio,
       timestamp: searchTimestamp,
+      extra,
     });
     if (searchResult) {
       if (!searchResult.movie && userMovie) {
@@ -110,6 +112,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       searchStudio = userSearchChoices.studio;
       searchTimestamp = userSearchChoices.timestamp;
       userMovie = userSearchChoices.movie;
+      extra = userSearchChoices.extra;
     }
   } while (!gotResultOrExit);
 
@@ -279,6 +282,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       studio: string;
       timestamp: number;
       movie: string;
+      extra: string;
     }>
   > {
     let userTitle: string | undefined;
@@ -355,6 +359,15 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       },
     });
 
+    const { extra } = await questionAsync<{
+      extra: string;
+    }>({
+      type: "input",
+      name: "extra",
+      message: `What else should be in the search?:`,
+      testAnswer: testMode?.questionAnswers?.extra ?? "",
+    });
+
     const { manualDateSearch: Q4date } = await questionAsync<{ manualDateSearch: string }>({
       type: "input",
       name: "manualDateSearch",
@@ -385,6 +398,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       studio: Q3Studio,
       timestamp: userTimestamp,
       movie: userMovie,
+      extra,
     };
   }
 
@@ -501,6 +515,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     actors: string[];
     studio: string;
     timestamp: number;
+    extra: string;
   }>): Promise<SceneOutput | null> {
     async function mergeSearchResult(rawScene: SceneResult.SceneData): Promise<SceneOutput> {
       const sceneData = normalizeSceneResultData(rawScene);
@@ -520,14 +535,17 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       return sceneData;
     }
 
-    const queries = [actors, studio];
-    if (!queries.flat().filter(Boolean).join("")) {
-      $log("[PDS] WARN: Did not have any parameters to do primary search");
-      return null;
-    }
+    const queries = [actors, studio, extra];
 
     if (args.useTitleInSearch) {
       queries.unshift(title);
+    }
+
+    // Check that we actually have something to search with.
+    // (Purposefully ignore the date, since that cannot reliable identify a scene)
+    if (!queries.flat().filter(Boolean).join("")) {
+      $log("[PDS] WARN: Did not have any parameters to do primary search");
+      return null;
     }
     if (timestamp && !Number.isNaN(timestamp)) {
       queries.push(timeConverter(timestamp));

@@ -215,6 +215,7 @@ export interface MyContext extends SceneContext {
       manualDescription: string;
       manualActors: string;
       multipleChoice: string;
+      extra: string;
     };
     correctImportInfo: string;
     testSiteUnavailable: boolean;
