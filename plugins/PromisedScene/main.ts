@@ -76,26 +76,6 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   let searchTimestamp: number | undefined = parsedTimestamp ?? undefined;
   let userMovie: string | undefined;
 
-  if (!Array.isArray(searchActors) || !searchActors.length || !searchStudio) {
-    $log(
-      "[PDS] ERR: Could not find a Studio or Actor in the SceneName for an initial search. Will prompt user for action"
-    );
-    const action = await makeChoices();
-    if (action === manualTouchChoices.MANUAL_ENTER) {
-      const res = await manualImport();
-      return res;
-    }
-    if (action === manualTouchChoices.SEARCH) {
-      const userSearchChoices = await getNextSearchChoices();
-      searchTitle = userSearchChoices.title;
-      searchActors = userSearchChoices.actors || [];
-      searchStudio = userSearchChoices.studio;
-      searchTimestamp = userSearchChoices.timestamp;
-      userMovie = userSearchChoices.movie;
-    }
-    // Else continue execution
-  }
-
   const gotResultOrExit = false;
   do {
     const searchResult = await doASearch({
@@ -156,7 +136,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       searchTimestamp = userSearchChoices.timestamp;
       userMovie = userSearchChoices.movie;
     }
-  } while (gotResultOrExit);
+  } while (!gotResultOrExit);
 
   return {};
 
@@ -469,8 +449,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    */
   async function runSceneSearch(
     parseQueryOrId: string,
-    searchType: "parse" | "id",
-    aggressiveSearch = false
+    searchType: "parse" | "id"
   ): Promise<SceneResult.SceneData[] | null> {
     try {
       let apiRes:
@@ -490,8 +469,15 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
       const sceneList = Array.isArray(apiRes.data.data) ? apiRes.data.data : [apiRes.data.data];
 
-      // When completing an aggressive search, We don't want "extra stuff" -- it should only have 1 result that is found!
-      if (aggressiveSearch && sceneList.length !== 1) {
+      if (searchType === "id") {
+        // When searching by id, it should only have 1 result that is found
+        if (sceneList.length === 1) {
+          // Since we searched by id, no need to try and auto match
+          const searchedScene = sceneList[0];
+          checkSceneExistsInDb(ctx, searchedScene.title);
+          return [searchedScene];
+        }
+
         $throw("ERR: TPDB Could NOT find correct scene info, or too many results");
         return null; // for type compatibility
       }
@@ -506,12 +492,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
       if (!matchedScene) {
         $log("[PDS] ERR: TPDB Could NOT find correct scene info");
+        $log("[PDS] MSG: Returning the results for user selection");
         return sceneList;
       }
 
       checkSceneExistsInDb(ctx, matchedScene.title);
-
-      $log("[PDS] MSG: Returning the results for user selection");
 
       return [matchedScene];
     } catch (err) {
@@ -563,6 +548,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }
 
     const queries = [actors, studio];
+    if (!queries.flat().filter(Boolean).join("")) {
+      $log("[PDS] WARN: Did not have any parameters to do primary search");
+      return null;
+    }
+
     if (args.useTitleInSearch) {
       queries.unshift(title);
     }
