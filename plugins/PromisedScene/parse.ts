@@ -1,8 +1,8 @@
 import levenshtein from "./levenshtein";
 import { MyContext } from "./types";
-import { escapeRegExp, ignoreDbLine, stripStr } from "./util";
+import { escapeRegExp, ignoreDbLine, stripStr, dateToTimestamp } from "./util";
 
-export const parseActor = (ctx: MyContext): string | null => {
+export const parseSceneActor = (ctx: MyContext): string | null => {
   if (!ctx.args?.parseActor || !ctx.args?.source_settings?.actors) {
     return null;
   }
@@ -98,7 +98,7 @@ export const parseActor = (ctx: MyContext): string | null => {
   return parsedDbActor;
 };
 
-export const parseStudio = (ctx: MyContext): string | null => {
+export const parseSceneStudio = (ctx: MyContext): string | null => {
   if (!ctx.args?.parseStudio || !ctx.args?.source_settings?.studios) {
     return null;
   }
@@ -204,37 +204,8 @@ export const parseStudio = (ctx: MyContext): string | null => {
   return parsedDbStudio;
 };
 
-export const parseTimestamp = (ctx: MyContext): number | null => {
+export const parseSceneTimestamp = (ctx: MyContext): number | null => {
   const cleanScenePath = stripStr(ctx.scenePath, true);
 
-  const ddmmyyyy = cleanScenePath.match(/\d\d \d\d \d\d\d\d/);
-  const yyyymmdd = cleanScenePath.match(/\d\d\d\d \d\d \d\d/);
-  const yymmdd = cleanScenePath.match(/\d\d \d\d \d\d/);
-
-  ctx.$log("[PDS] PARSE: Parsing Date from ScenePath");
-
-  if (yyyymmdd && yyyymmdd.length) {
-    const date = yyyymmdd[0].replace(" ", ".");
-
-    ctx.$log("[PDS] PARSE:\tSUCCESS: Found => yyyymmdd");
-
-    return ctx.$moment(date, "YYYY-MM-DD").valueOf();
-  }
-  if (ddmmyyyy && ddmmyyyy.length) {
-    const date = ddmmyyyy[0].replace(" ", ".");
-
-    ctx.$log("[PDS] PARSE:\tSUCCESS: Found => ddmmyyyy");
-
-    return ctx.$moment(date, "DD-MM-YYYY").valueOf();
-  }
-  if (yymmdd && yymmdd.length) {
-    const date = yymmdd[0].replace(" ", ".");
-
-    ctx.$log("[PDS] PARSE:\tSUCCESS: Found => yymmdd");
-
-    return ctx.$moment(date, "YY-MM-DD").valueOf();
-  }
-
-  ctx.$log("[PDS] PARSE:\tFAILED: Could not find a date in the ScenePath");
-  return null;
+  return dateToTimestamp(ctx, cleanScenePath);
 };

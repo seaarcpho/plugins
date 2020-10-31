@@ -40,6 +40,39 @@ export function timeConverter(timestamp: number) {
   return formattedString;
 }
 
+export const dateToTimestamp = (ctx: MyContext, dateStr: string): number | null => {
+  const ddmmyyyy = dateStr.match(/\d\d(?:\s|\.)\d\d(?:\s|\.)\d\d\d\d/);
+  const yyyymmdd = dateStr.match(/\d\d\d\d(?:\s|\.)\d\d(?:\s|\.)\d\d/);
+  const yymmdd = dateStr.match(/\d\d(?:\s|\.)\d\d(?:\s|\.)\d\d/);
+
+  ctx.$log(`[PDS] MSG: Converting date ${JSON.stringify(dateStr)} to timestamp`);
+
+  if (yyyymmdd && yyyymmdd.length) {
+    const date = yyyymmdd[0].replace(" ", ".");
+
+    ctx.$log("[PDS] MSG:\tSUCCESS: Found => yyyymmdd");
+
+    return ctx.$moment(date, "YYYY-MM-DD").valueOf();
+  }
+  if (ddmmyyyy && ddmmyyyy.length) {
+    const date = ddmmyyyy[0].replace(" ", ".");
+
+    ctx.$log("[PDS] MSG:\tSUCCESS: Found => ddmmyyyy");
+
+    return ctx.$moment(date, "DD-MM-YYYY").valueOf();
+  }
+  if (yymmdd && yymmdd.length) {
+    const date = yymmdd[0].replace(" ", ".");
+
+    ctx.$log("[PDS] MSG:\tSUCCESS: Found => yymmdd");
+
+    return ctx.$moment(date, "YY-MM-DD").valueOf();
+  }
+
+  ctx.$log("[PDS] MSG:\tFAILED: Could not find a date");
+  return null;
+};
+
 /**
  * @param str - String to be cleaned of: "P.O.V." "/[^a-zA-Z0-9'/\\,(){}]/" (i should make this a file of customizable strings to clean? maybe?)
  * @param keepDate - Boolean that identifies if it should clean a string with dates or not | True = does not remove zeros in front of a number from 1 - 9

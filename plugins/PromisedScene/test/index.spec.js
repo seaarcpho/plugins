@@ -4,7 +4,7 @@ import { manualTouchChoices } from "../util";
 const context = require("../../../context");
 const { expect } = require("chai");
 
-describe("PromisedScene", () => {
+describe.only("PromisedScene", () => {
   describe("When Populated Databases exist...", () => {
     it("Should have DB files with the Actor, Studio, Scene and date already", async () => {
       const result = await plugin({

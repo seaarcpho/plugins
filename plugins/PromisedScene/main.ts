@@ -1,10 +1,11 @@
 import { SceneOutput } from "../../types/scene";
 import { Api } from "./api";
-import { parseActor, parseStudio, parseTimestamp } from "./parse";
+import { parseSceneActor, parseSceneStudio, parseSceneTimestamp } from "./parse";
 import { MyContext, SceneResult } from "./types";
 import {
   checkSceneExistsInDb,
   createQuestionPrompter,
+  dateToTimestamp,
   isPositiveAnswer,
   manualTouchChoices,
   matchSceneResultToSearch,
@@ -18,7 +19,6 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     scenePath,
     sceneName,
     $throw,
-    $moment,
     $log,
     testMode,
     args,
@@ -62,9 +62,9 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
   $log(`[PDS] MSG: STARTING to analyze scene: ${JSON.stringify(scenePath)}`);
 
-  const parsedDbActor = parseActor(ctx);
-  const parsedDbStudio = parseStudio(ctx);
-  const parsedTimestamp = parseTimestamp(ctx);
+  const parsedDbActor = parseSceneActor(ctx);
+  const parsedDbStudio = parseSceneStudio(ctx);
+  const parsedTimestamp = parseSceneTimestamp(ctx);
 
   // After everything has completed parsing, I run a function that will perform all of the lookups against TPDB
 
@@ -219,21 +219,14 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }>({
       type: "input",
       name: "releaseDateOfScene",
-      message: "What is the RELEASE DATE of the scene (YYYY.MM.DD)?: ",
+      message: "What is the RELEASE DATE of the scene (YYYY.MM.DD / DD.MM.YYYY / YY.MM.DD)?: ",
       testAnswer: testMode?.questionAnswers?.enterSceneDate ?? "",
     });
 
     if (manualEnterReleaseDateScene) {
-      const questYear = manualEnterReleaseDateScene.toString().match(/\d\d\d\d.\d\d.\d\d/);
-
-      $log("[PDS] MSG: Checking Date");
-
-      if (questYear && questYear.length) {
-        const date = questYear[0];
-
-        $log("[PDS] MSG: Found => yyyymmdd");
-
-        result.releaseDate = $moment(date, "YYYY-MM-DD").valueOf();
+      const parsedDate = dateToTimestamp(ctx, manualEnterReleaseDateScene);
+      if (parsedDate) {
+        result.releaseDate = parsedDate;
       }
     }
 
@@ -365,7 +358,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     const { manualDateSearch: Q4date } = await questionAsync<{ manualDateSearch: string }>({
       type: "input",
       name: "manualDateSearch",
-      message: "What is the release date (YYYY.MM.DD)?: (Blanks allowed) ",
+      message: "What is the release date (YYYY.MM.DD / DD.MM.YYYY / YY.MM.DD)?: (Blanks allowed) ",
       testAnswer: testMode?.questionAnswers?.enterSceneDate ?? "",
       default() {
         if (!searchTimestamp) {
@@ -380,16 +373,9 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     });
 
     if (Q4date) {
-      const questYear = Q4date.match(/\d\d\d\d.\d\d.\d\d/);
-
-      $log(" MSG: Checking Date");
-
-      if (questYear && questYear.length) {
-        const date = questYear[0];
-
-        $log(" MSG: Found => yyyymmdd");
-
-        userTimestamp = $moment(date, "YYYY-MM-DD").valueOf();
+      const parsedDate = dateToTimestamp(ctx, Q4date);
+      if (parsedDate) {
+        userTimestamp = parsedDate;
       }
     }
 
