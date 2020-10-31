@@ -550,10 +550,10 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     const initialQuery = queries.reduce(
       (acc: string, query: string | string[] | undefined): string => {
         if (Array.isArray(query)) {
-          return [acc, query.join(" ")].join(" ");
+          return [acc, query].flat().filter(Boolean).join(" ");
         }
         if (query) {
-          return [acc, query].join(" ");
+          return [acc, query].filter(Boolean).join(" ");
         }
         return acc;
       },
