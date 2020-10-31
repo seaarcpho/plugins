@@ -5,6 +5,186 @@ const context = require("../../../context");
 const { expect } = require("chai");
 
 describe("PromisedScene", () => {
+  describe("Handle all of the errors properly.", () => {
+    it("Should fail with error:  Plugin used for unsupported event", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "fake event",
+          args: {
+            manualTouch: true,
+            sceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: false,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Plugin used for unsupported event");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing source_settings in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            manualTouch: true,
+            sceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing source_settings in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing parseActor in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            manualTouch: true,
+            sceneDuplicationCheck: true,
+            parseStudio: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing parseActor in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing parseStudio in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            manualTouch: true,
+            sceneDuplicationCheck: true,
+            parseActor: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing parseStudio in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing manualTouch in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            sceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing manualTouch in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing sceneDuplicationCheck in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            manualTouch: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing sceneDuplicationCheck in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+  });
+
   describe("When Populated Databases exist...", () => {
     it("Should have DB files with the Actor, Studio, Scene and date already", async () => {
       const result = await plugin({
@@ -523,6 +703,7 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("BANG BROS 18");
     });
   });
+
   describe("When UnPopulated Databases exist...", () => {
     it("Should return nothing because no search is completed with no parsed Actor or Studio when manualTouch is false", async () => {
       const result = await plugin({
@@ -680,6 +861,7 @@ describe("PromisedScene", () => {
       expect(result.movie).to.equal("So Young So Sexy P.O.V. #8");
     });
   });
+
   describe("When Mixed Databases exist...", () => {
     it("Should have DB files with Studio and Scene already -- No Actor -- manualTouch True -- Should find with correct answers", async () => {
       const result = await plugin({
@@ -797,184 +979,51 @@ describe("PromisedScene", () => {
       });
       expect(result).to.deep.equal({});
     });
-  });
-  describe("Handle all of the errors properly.", () => {
-    it("Should fail with error:  Plugin used for unsupported event", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          event: "fake event",
-          args: {
-            manualTouch: true,
-            sceneDuplicationCheck: true,
-            parseActor: true,
-            parseStudio: true,
-            source_settings: {
-              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
+
+    it("Should have DB files with Scene already -- No Studio or Actor -- manualTouch True, extra search -- Should find with correct answers", async () => {
+      const result = await plugin({
+        ...context,
+        event: "sceneCreated",
+        args: {
+          manualTouch: true,
+          sceneDuplicationCheck: true,
+          parseActor: true,
+          parseStudio: true,
+          source_settings: {
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: false,
+        },
+        sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
+        scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
+        testMode: {
+          correctImportInfo: "y",
+          questionAnswers: {
+            enterInfoSearch: manualTouchChoices.SEARCH,
+            enterMovie: "",
+            enterOneActorName: "",
+            enterSceneDate: "",
+            enterSceneTitle: "",
+            enterStudioName: "",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "",
+            extra: "Mia Malkova NEW SENSATIONS 2013.10.10",
           },
-        });
-      } catch (error) {
-        expect(error.message).to.include("ERR: Plugin used for unsupported event");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing source_settings in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          event: "sceneCreated",
-          args: {
-            manualTouch: true,
-            sceneDuplicationCheck: true,
-            parseActor: true,
-            parseStudio: true,
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.include("ERR: Missing source_settings in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing parseActor in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          event: "sceneCreated",
-          args: {
-            manualTouch: true,
-            sceneDuplicationCheck: true,
-            parseStudio: true,
-            source_settings: {
-              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.include("ERR: Missing parseActor in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing parseStudio in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          event: "sceneCreated",
-          args: {
-            manualTouch: true,
-            sceneDuplicationCheck: true,
-            parseActor: true,
-            source_settings: {
-              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.include("ERR: Missing parseStudio in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing manualTouch in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          event: "sceneCreated",
-          args: {
-            sceneDuplicationCheck: true,
-            parseActor: true,
-            parseStudio: true,
-            source_settings: {
-              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.include("ERR: Missing manualTouch in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing sceneDuplicationCheck in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          event: "sceneCreated",
-          args: {
-            manualTouch: true,
-            parseActor: true,
-            parseStudio: true,
-            source_settings: {
-              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.include("ERR: Missing sceneDuplicationCheck in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
+          testSiteUnavailable: false,
+          status: true,
+        },
+      });
+      expect(result).to.be.an("object");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
+      expect(result.releaseDate).to.be.a("number");
+      expect(result.thumbnail).to.be.a("string");
+      expect(result.actors).to.be.a("Array");
+      expect(result.studio).to.equal("New Sensations");
     });
   });
 });
