@@ -194,12 +194,12 @@ export interface MyContext extends SceneContext {
   args: DeepPartial<{
     parseActor: boolean;
     parseStudio: boolean;
-    ManualTouch: boolean;
-    SceneDuplicationCheck: boolean;
+    manualTouch: boolean;
+    sceneDuplicationCheck: boolean;
     source_settings: {
-      Actors: string;
-      Studios: string;
-      Scenes: string;
+      actors: string;
+      studios: string;
+      scenes: string;
     };
   }>;
   testMode: DeepPartial<{

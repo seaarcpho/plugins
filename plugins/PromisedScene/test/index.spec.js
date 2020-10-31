@@ -1,5 +1,5 @@
 import plugin from "../main";
-import { ManualTouchChoices } from "../util";
+import { manualTouchChoices } from "../util";
 
 const context = require("../../../context");
 const { expect } = require("chai");
@@ -11,14 +11,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -44,14 +44,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] PRESSLEY 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -59,7 +59,7 @@ describe.only("PromisedScene", () => {
           "Z:\\Keep\\test\\[New Sensations] PRESSLEY 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -85,14 +85,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Madison Swan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -118,14 +118,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] MadisonSwan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -151,14 +151,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName:
@@ -168,7 +168,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "16.04.08",
@@ -198,14 +198,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[Bangbros clips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
@@ -214,7 +214,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -244,14 +244,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
@@ -260,7 +260,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -290,14 +290,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova",
@@ -305,7 +305,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -334,14 +334,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova",
@@ -349,7 +349,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -371,14 +371,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #08.mp4",
@@ -386,7 +386,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -415,21 +415,21 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -451,21 +451,21 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[Colette] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[Colette] Mia Malkova.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -487,14 +487,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[bb18] Kira Perez - Cock Is Her Duty.mp4",
@@ -502,7 +502,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Kira Perez",
             enterSceneDate: "",
@@ -529,14 +529,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: false,
-          SceneDuplicationCheck: true,
+          manualTouch: false,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -554,14 +554,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: false,
+          manualTouch: true,
+          sceneDuplicationCheck: false,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -570,7 +570,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.MANUAL_ENTER,
+            enterInfoSearch: manualTouchChoices.MANUAL_ENTER,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -599,14 +599,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: false,
+          manualTouch: true,
+          sceneDuplicationCheck: false,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -615,7 +615,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "n",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.MANUAL_ENTER,
+            enterInfoSearch: manualTouchChoices.MANUAL_ENTER,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -638,14 +638,14 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -654,7 +654,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.MANUAL_ENTER,
+            enterInfoSearch: manualTouchChoices.MANUAL_ENTER,
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -681,19 +681,19 @@ describe.only("PromisedScene", () => {
     });
   });
   describe("When Mixed Databases exist...", () => {
-    it("Should have DB files with Studio and Scene already -- No Actor -- ManualTouch True -- Should find with correct answers", async () => {
+    it("Should have DB files with Studio and Scene already -- No Actor -- manualTouch True -- Should find with correct answers", async () => {
       const result = await plugin({
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
@@ -701,7 +701,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -725,19 +725,19 @@ describe.only("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
-    it("Should have DB files with Scene already -- No Studio or Actor -- ManualTouch True -- Should find with correct answers", async () => {
+    it("Should have DB files with Scene already -- No Studio or Actor -- manualTouch True -- Should find with correct answers", async () => {
       const result = await plugin({
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
@@ -745,7 +745,7 @@ describe.only("PromisedScene", () => {
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.SEARCH,
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
@@ -775,21 +775,21 @@ describe.only("PromisedScene", () => {
         ...context,
         event: "sceneCreated",
         args: {
-          ManualTouch: false,
-          SceneDuplicationCheck: true,
+          manualTouch: false,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: ManualTouchChoices.NOTHING,
+            enterInfoSearch: manualTouchChoices.NOTHING,
           },
           testSiteUnavailable: false,
           status: true,
@@ -806,14 +806,14 @@ describe.only("PromisedScene", () => {
           ...context,
           event: "fake event",
           args: {
-            ManualTouch: true,
-            SceneDuplicationCheck: true,
+            manualTouch: true,
+            sceneDuplicationCheck: true,
             parseActor: true,
             parseStudio: true,
             source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
             },
           },
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
@@ -837,8 +837,8 @@ describe.only("PromisedScene", () => {
           ...context,
           event: "sceneCreated",
           args: {
-            ManualTouch: true,
-            SceneDuplicationCheck: true,
+            manualTouch: true,
+            sceneDuplicationCheck: true,
             parseActor: true,
             parseStudio: true,
           },
@@ -863,13 +863,13 @@ describe.only("PromisedScene", () => {
           ...context,
           event: "sceneCreated",
           args: {
-            ManualTouch: true,
-            SceneDuplicationCheck: true,
+            manualTouch: true,
+            sceneDuplicationCheck: true,
             parseStudio: true,
             source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
             },
           },
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
@@ -893,13 +893,13 @@ describe.only("PromisedScene", () => {
           ...context,
           event: "sceneCreated",
           args: {
-            ManualTouch: true,
-            SceneDuplicationCheck: true,
+            manualTouch: true,
+            sceneDuplicationCheck: true,
             parseActor: true,
             source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
             },
           },
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
@@ -916,20 +916,20 @@ describe.only("PromisedScene", () => {
       }
       expect(errord).to.be.true;
     });
-    it("Should fail with error:  Missing ManualTouch in plugin args", async () => {
+    it("Should fail with error:  Missing manualTouch in plugin args", async () => {
       let errord = false;
       try {
         await plugin({
           ...context,
           event: "sceneCreated",
           args: {
-            SceneDuplicationCheck: true,
+            sceneDuplicationCheck: true,
             parseActor: true,
             parseStudio: true,
             source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
             },
           },
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
@@ -941,25 +941,25 @@ describe.only("PromisedScene", () => {
           },
         });
       } catch (error) {
-        expect(error.message).to.include("ERR: Missing ManualTouch in plugin args");
+        expect(error.message).to.include("ERR: Missing manualTouch in plugin args");
         errord = true;
       }
       expect(errord).to.be.true;
     });
-    it("Should fail with error:  Missing SceneDuplicationCheck in plugin args", async () => {
+    it("Should fail with error:  Missing sceneDuplicationCheck in plugin args", async () => {
       let errord = false;
       try {
         await plugin({
           ...context,
           event: "sceneCreated",
           args: {
-            ManualTouch: true,
+            manualTouch: true,
             parseActor: true,
             parseStudio: true,
             source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
             },
           },
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
@@ -971,7 +971,7 @@ describe.only("PromisedScene", () => {
           },
         });
       } catch (error) {
-        expect(error.message).to.include("ERR: Missing SceneDuplicationCheck in plugin args");
+        expect(error.message).to.include("ERR: Missing sceneDuplicationCheck in plugin args");
         errord = true;
       }
       expect(errord).to.be.true;

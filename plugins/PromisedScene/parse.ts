@@ -3,7 +3,7 @@ import { MyContext } from "./types";
 import { escapeRegExp, ignoreDbLine, stripStr } from "./util";
 
 export const parseActor = (ctx: MyContext): string | null => {
-  if (!ctx.args?.parseActor || !ctx.args?.source_settings?.Actors) {
+  if (!ctx.args?.parseActor || !ctx.args?.source_settings?.actors) {
     return null;
   }
   const cleanScenePath = stripStr(ctx.scenePath);
@@ -11,9 +11,9 @@ export const parseActor = (ctx: MyContext): string | null => {
   const allDbActors: string[] = [];
   let parsedDbActor: string | null = null;
 
-  ctx.$log(`[PDS] PARSE: Parsing Actors DB ==> ${ctx.args.source_settings.Actors}`);
+  ctx.$log(`[PDS] PARSE: Parsing Actors DB ==> ${ctx.args.source_settings.actors}`);
   ctx.$fs
-    .readFileSync(ctx.args.source_settings.Actors, "utf8")
+    .readFileSync(ctx.args.source_settings.actors, "utf8")
     .split("\n")
     .forEach((line) => {
       if (ignoreDbLine(line)) {
@@ -99,11 +99,11 @@ export const parseActor = (ctx: MyContext): string | null => {
 };
 
 export const parseStudio = (ctx: MyContext): string | null => {
-  if (!ctx.args?.parseStudio || !ctx.args?.source_settings?.Studios) {
+  if (!ctx.args?.parseStudio || !ctx.args?.source_settings?.studios) {
     return null;
   }
   ctx.$log(
-    `[PDS] PARSE: Parsing Studios DB ==> ${JSON.stringify(ctx.args.source_settings.Studios)}`
+    `[PDS] PARSE: Parsing Studios DB ==> ${JSON.stringify(ctx.args.source_settings.studios)}`
   );
 
   const cleanScenePath = stripStr(ctx.scenePath);
@@ -112,7 +112,7 @@ export const parseStudio = (ctx: MyContext): string | null => {
   let parsedDbStudio: string | null = null;
 
   ctx.$fs
-    .readFileSync(ctx.args.source_settings.Studios, "utf8")
+    .readFileSync(ctx.args.source_settings.studios, "utf8")
     .split("\n")
     .forEach((line) => {
       if (ignoreDbLine(line)) {

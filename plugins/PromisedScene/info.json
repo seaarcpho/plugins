@@ -20,35 +20,35 @@
 		  "description": "Try to find the Studio name in your database within the scenePath string"
 		},
 		{
-		  "name": "ManualTouch",
+		  "name": "manualTouch",
 		  "type": "Boolean",
 		  "required": true,
 		  "default": true,
 		  "description": "If true, will ask questions to manually answer and fill in details.  If false, will agressivly search and automatically populate the vault."
 		},
 		{
-		  "name": "SceneDuplicationCheck",
+		  "name": "sceneDuplicationCheck",
 		  "type": "Boolean",
 		  "required": true,
 		  "default": true,
 		  "description": "Will notify you of a possible duplicate title that is being imported.  Will not currently stop / correct anything"
 		},
 		{
-		  "name": "source_settings.Actors",
+		  "name": "source_settings.actors",
 		  "type": "String",
 		  "required": true,
 		  "default": "./library/actors.db",
 		  "description": "finds the DB file for Actors to determine which actors are currently in your collection"
 		},
 		{
-		  "name": "source_settings.Studios",
+		  "name": "source_settings.studios",
 		  "type": "String",
 		  "required": true,
 		  "default": "./library/studios.db",
 		  "description": "finds the DB file for Studios to determine which Studios are currently in your collection"
 		},
 		{
-		  "name": "source_settings.Scenes",
+		  "name": "source_settings.scenes",
 		  "type": "String",
 		  "required": true,
 		  "default": "./library/scenes.db",

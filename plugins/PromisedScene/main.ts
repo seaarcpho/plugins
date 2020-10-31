@@ -8,7 +8,7 @@ import {
   checkSceneExistsInDb,
   createQuestionPrompter,
   isPositiveAnswer,
-  ManualTouchChoices,
+  manualTouchChoices,
   matchSceneResultToSearch,
   normalizeSceneResultData,
   timeConverter,
@@ -41,12 +41,12 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     $throw("ERR: Missing parseStudio in plugin args");
   }
 
-  if (!Object.hasOwnProperty.call(args, "ManualTouch")) {
-    $throw("ERR: Missing ManualTouch in plugin args");
+  if (!Object.hasOwnProperty.call(args, "manualTouch")) {
+    $throw("ERR: Missing manualTouch in plugin args");
   }
 
-  if (!Object.hasOwnProperty.call(args, "SceneDuplicationCheck")) {
-    $throw("ERR: Missing SceneDuplicationCheck in plugin args");
+  if (!Object.hasOwnProperty.call(args, "sceneDuplicationCheck")) {
+    $throw("ERR: Missing sceneDuplicationCheck in plugin args");
   }
 
   const tpdbApi = new Api(ctx);
@@ -70,11 +70,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       "[PDS] ERR: Could not find a Studio or Actor in the SceneName for an initial search. Will prompt user for action"
     );
     const action = await makeChoices();
-    if (action === ManualTouchChoices.MANUAL_ENTER) {
+    if (action === manualTouchChoices.MANUAL_ENTER) {
       const res = await manualImport();
       return res;
     }
-    if (action === ManualTouchChoices.SEARCH) {
+    if (action === manualTouchChoices.SEARCH) {
       const userSearchChoices = await getNextSearchChoices();
       searchTitle = userSearchChoices.title;
       searchActors = userSearchChoices.actors || [];
@@ -100,7 +100,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
       logResultObject(searchResult);
 
-      if (!args?.ManualTouch) {
+      if (!args?.manualTouch) {
         return searchResult;
       }
 
@@ -128,16 +128,16 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }
 
     const action = await makeChoices();
-    if (!action || action === ManualTouchChoices.NOTHING) {
+    if (!action || action === manualTouchChoices.NOTHING) {
       // Search already "failed" & user wants to do nothing => exit with no data
       return {};
     }
-    if (action === ManualTouchChoices.MANUAL_ENTER) {
+    if (action === manualTouchChoices.MANUAL_ENTER) {
       const res = await manualImport();
       logResultObject(res);
       return res;
     }
-    if (action === ManualTouchChoices.SEARCH) {
+    if (action === manualTouchChoices.SEARCH) {
       const userSearchChoices = await getNextSearchChoices();
       searchTitle = userSearchChoices.title;
       searchActors = userSearchChoices.actors || [];
@@ -400,34 +400,34 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    * @returns
    */
   async function makeChoices(): Promise<string> {
-    if (!args?.ManualTouch) {
-      $log(`[PDS] MSG: "ManualTouch" disabled, will continue plugin with current queries`);
-      return ManualTouchChoices.NOTHING;
+    if (!args?.manualTouch) {
+      $log(`[PDS] MSG: "manualTouch" disabled, will continue plugin with current queries`);
+      return manualTouchChoices.NOTHING;
     }
 
     // If testmode is running, we do not want to run makeChoices() more than once,
     // or the test will have an infinite loop
     if (didRunMakeChoices && testMode) {
-      return ManualTouchChoices.NOTHING;
+      return manualTouchChoices.NOTHING;
     }
 
     try {
       const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
 
-      $log(`[PDS] MSG: "ManualTouch" is enabled, prompting user for action`);
+      $log(`[PDS] MSG: "manualTouch" is enabled, prompting user for action`);
       const { choices: Q1Answer } = await questionAsync<{ choices: string }>({
         type: "rawlist",
         name: "choices",
         message: "Would you like to:",
         testAnswer: testMode?.questionAnswers?.enterInfoSearch ?? "",
-        choices: Object.values(ManualTouchChoices),
+        choices: Object.values(manualTouchChoices),
       });
 
       didRunMakeChoices = true;
 
-      if (!Object.values(ManualTouchChoices).includes(Q1Answer)) {
+      if (!Object.values(manualTouchChoices).includes(Q1Answer)) {
         $throw("User did not select a choice, will consider exit");
-        return ManualTouchChoices.NOTHING;
+        return manualTouchChoices.NOTHING;
       }
 
       return Q1Answer;
@@ -435,7 +435,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       $log("Something went wrong asking for search questions", error);
     }
 
-    return ManualTouchChoices.NOTHING;
+    return manualTouchChoices.NOTHING;
   }
 
   /**
@@ -582,7 +582,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
     $log("[PDS] MSG: Scene is possibly one of multiple search results");
 
-    if (!args.ManualTouch) {
+    if (!args.manualTouch) {
       $log("[PDS] MSG: MaunalTouch is disabled, cannot automatically choose from multiple results");
       return null;
     }

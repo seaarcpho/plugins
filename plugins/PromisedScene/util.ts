@@ -2,7 +2,7 @@ import { Context } from "../../types/plugin";
 import { SceneOutput } from "../../types/scene";
 import { MyContext, SceneResult } from "./types";
 
-export const ManualTouchChoices = {
+export const manualTouchChoices = {
   MANUAL_ENTER: "Enter scene details manually, straight into the porn-vault",
   NOTHING: "Do nothing (let the scene be imported with no details)",
   SEARCH: "Search scene details on The Porn Database (TPD)",
@@ -231,7 +231,7 @@ export const normalizeSceneResultData = (sceneData: SceneResult.SceneData): Scen
  * @param sceneTitle - title to search
  */
 export const checkSceneExistsInDb = (ctx: MyContext, sceneTitle: string | undefined): void => {
-  if (!sceneTitle || !ctx.args?.SceneDuplicationCheck || !ctx.args?.source_settings?.Scenes) {
+  if (!sceneTitle || !ctx.args?.sceneDuplicationCheck || !ctx.args?.source_settings?.scenes) {
     return;
   }
 
@@ -239,7 +239,7 @@ export const checkSceneExistsInDb = (ctx: MyContext, sceneTitle: string | undefi
   let foundDupScene = false;
   // If i decide to do anything with duplicate scenes, this variable on the next line will come into play
   // let TheDupedScene = [];
-  const lines = ctx.$fs.readFileSync(ctx.args.source_settings.Scenes, "utf8").split("\n");
+  const lines = ctx.$fs.readFileSync(ctx.args.source_settings.scenes, "utf8").split("\n");
 
   let line = lines.shift();
   while (!foundDupScene && line) {
