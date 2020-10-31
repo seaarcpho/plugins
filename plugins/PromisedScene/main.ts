@@ -1,5 +1,3 @@
-import { AxiosResponse } from "axios";
-
 import { SceneOutput } from "../../types/scene";
 import { Api } from "./api";
 import { parseActor, parseStudio, parseTimestamp } from "./parse";
@@ -447,20 +445,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    * @returns either an array of all the possible Porn Database search results, or a data object for the proper "found" scene or null if
    * nothing at all was found
    */
-  async function runSceneSearch(
-    parseQueryOrId: string,
-    searchType: "parse" | "id"
+  async function runSceneParseSearch(
+    parseQueryOrId: string
   ): Promise<SceneResult.SceneData[] | null> {
     try {
-      let apiRes:
-        | AxiosResponse<SceneResult.SceneListResult>
-        | AxiosResponse<SceneResult.SingleSceneResult>
-        | null = null;
-      if (searchType === "parse") {
-        apiRes = await tpdbApi.parseScene(parseQueryOrId);
-      } else if (searchType === "id") {
-        apiRes = await tpdbApi.getSceneById(parseQueryOrId);
-      }
+      let apiRes = await tpdbApi.parseScene(parseQueryOrId);
 
       if (!apiRes?.data || testMode?.testSiteUnavailable) {
         $throw("ERR: TPDB API: received no data");
@@ -468,19 +457,6 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       }
 
       const sceneList = Array.isArray(apiRes.data.data) ? apiRes.data.data : [apiRes.data.data];
-
-      if (searchType === "id") {
-        // When searching by id, it should only have 1 result that is found
-        if (sceneList.length === 1) {
-          // Since we searched by id, no need to try and auto match
-          const searchedScene = sceneList[0];
-          checkSceneExistsInDb(ctx, searchedScene.title);
-          return [searchedScene];
-        }
-
-        $throw("ERR: TPDB Could NOT find correct scene info, or too many results");
-        return null; // for type compatibility
-      }
 
       // list the found results and tries to match the SCENENAME to the found results.
       const matchedScene: SceneResult.SceneData | null = matchSceneResultToSearch(
@@ -567,7 +543,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }
 
     $log(`[PDS] MSG: Running TPDB Primary Search on: ${JSON.stringify(initialQuery)}`);
-    const primarySceneSearchResult = await runSceneSearch(initialQuery, "parse", false);
+    const primarySceneSearchResult = await runSceneParseSearch(initialQuery);
 
     if (!primarySceneSearchResult) {
       $log("[PDS] MSG: Did not find any possible matches for primary search");
@@ -589,7 +565,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     $log("[PDS] MSG: Scene is possibly one of multiple search results");
 
     if (!args.manualTouch) {
-      $log("[PDS] MSG: MaunalTouch is disabled, cannot automatically choose from multiple results");
+      $log("[PDS] MSG: ManualTouch is disabled, cannot automatically choose from multiple results");
       return null;
     }
 
@@ -622,32 +598,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     const userSelectedScene: SceneResult.SceneData | undefined =
       primarySceneSearchResult[findResultIndex];
 
-    if (!userSelectedScene || !userSelectedScene.id) {
-      $log("[PDS] MSG: User did not select a scene, exiting secondary search");
+    if (!userSelectedScene) {
+      $log("[PDS] MSG: User did not select a scene, exiting scene selection");
       return null;
     }
 
-    $log(
-      `[PDS] MSG: Running Aggressive-Grab Search on: ${JSON.stringify({
-        id: userSelectedScene.id,
-        title: userSelectedScene.title,
-      })}`
-    );
-    const secondarySceneSearchResult = await runSceneSearch(userSelectedScene.id, "id", true);
-
-    if (!secondarySceneSearchResult) {
-      $log("[PDS] ERR: Failed to find secondary result");
-      return null;
-    }
-
-    if (
-      secondarySceneSearchResult &&
-      Array.isArray(secondarySceneSearchResult) &&
-      secondarySceneSearchResult.length === 1
-    ) {
-      return mergeSearchResult(secondarySceneSearchResult[0]);
-    }
-
-    return null;
+    return mergeSearchResult(userSelectedScene);
   }
 };

@@ -482,7 +482,7 @@ describe.only("PromisedScene", () => {
       });
       expect(result).to.deep.equal({});
     });
-    it("Should not parse the studio but success in searching it with fullname", async () => {
+    it.only("Should not parse the studio but success in searching it with fullname", async () => {
       const result = await plugin({
         ...context,
         event: "sceneCreated",
@@ -497,8 +497,8 @@ describe.only("PromisedScene", () => {
             studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
-        sceneName: "[bb18] Kira Perez - Cock Is Her Duty.mp4",
-        scenePath: "Z:\\Keep\\test\\[bb18] Kira Perez - Cock Is Her Duty.mp4",
+        sceneName: "[nostudio] Kira Perez - Cock Is Her Duty.mp4",
+        scenePath: "Z:\\Keep\\test\\[nostudio] Kira Perez - Cock Is Her Duty.mp4",
         testMode: {
           correctImportInfo: "y",
           questionAnswers: {
