@@ -65,7 +65,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   let searchTimestamp: number | undefined = parsedTimestamp ?? undefined;
   let userMovie: string | undefined;
 
-  if (!Array.isArray(searchActors) || !searchActors.length || !parsedDbStudio) {
+  if (!Array.isArray(searchActors) || !searchActors.length || !searchStudio) {
     $log(
       "[PDS] ERR: Could not find a Studio or Actor in the SceneName for an initial search. Will prompt user for action"
     );
@@ -111,7 +111,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         type: "input",
         name: "correctImportInfo",
         message: "Is this the correct scene details to import? (y/N)",
-        testAnswer: testMode ? testMode.CorrectImportInfo : "",
+        testAnswer: testMode ? testMode.correctImportInfo : "",
       });
 
       if (isPositiveAnswer(resultsConfirmation)) {
@@ -224,12 +224,12 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     if (manualEnterReleaseDateScene) {
       const questYear = manualEnterReleaseDateScene.toString().match(/\d\d\d\d.\d\d.\d\d/);
 
-      $log(" MSG: Checking Date");
+      $log("[PDS] MSG: Checking Date");
 
       if (questYear && questYear.length) {
         const date = questYear[0];
 
-        $log(" MSG: Found => yyyymmdd");
+        $log("[PDS] MSG: Found => yyyymmdd");
 
         result.releaseDate = $moment(date, "YYYY-MM-DD").valueOf();
       }
@@ -541,7 +541,9 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       return sceneData;
     }
 
-    const queries = [title, actors, studio];
+    // TODO: sometimes title search does not work
+    // const queries = [title, actors, studio];
+    const queries = [actors, studio];
     if (timestamp && !Number.isNaN(timestamp)) {
       queries.push(timeConverter(timestamp));
     }
@@ -561,67 +563,83 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     $log(`[PDS] MSG: Running TPDB Primary Search on: ${JSON.stringify(initialQuery)}`);
     const primarySceneSearchResult = await runSceneSearch(initialQuery, "parse", false);
 
-    if (
-      primarySceneSearchResult &&
-      Array.isArray(primarySceneSearchResult) &&
-      primarySceneSearchResult.length === 1
-    ) {
+    if (!primarySceneSearchResult) {
+      $log("[PDS] MSG: Did not find any possible matches for primary search");
+      return null;
+    }
+
+    if (Array.isArray(primarySceneSearchResult) && primarySceneSearchResult.length === 1) {
       return mergeSearchResult(primarySceneSearchResult[0]);
     }
 
+    const hasMultiplePossibleMatches =
+      Array.isArray(primarySceneSearchResult) && primarySceneSearchResult.length > 1;
+
+    if (!hasMultiplePossibleMatches) {
+      $log("[PDS] MSG: Did not find any possible matches for primary search");
+      return null;
+    }
+
+    $log("[PDS] MSG: Scene is possibly one of multiple search results");
+
+    if (!args.ManualTouch) {
+      $log("[PDS] MSG: MaunalTouch is disabled, cannot automatically choose from multiple results");
+      return null;
+    }
+
+    // Run through the list of titles and ask if they would like to choose one.
+    $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+
+    const answersList: string[] = [];
+    const possibleTitles: string[] = [];
+
+    for (const scene of primarySceneSearchResult) {
+      answersList.push(scene.title);
+      possibleTitles.push(scene.title);
+    }
+
+    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+    answersList.push((new $inquirer.Separator() as any) as string);
+    answersList.push("== None of the above == ");
+
+    const { searchedTitles: multipleSitesAnswer } = await questionAsync<{
+      searchedTitles: string;
+    }>({
+      type: "rawlist",
+      name: "searchedTitles",
+      message: "Which Title would you like to use?",
+      testAnswer: testMode?.questionAnswers?.multipleChoice ?? "",
+      choices: answersList,
+    });
+
+    const findResultIndex = possibleTitles.indexOf(multipleSitesAnswer.trim());
+    const userSelectedScene: SceneResult.SceneData | undefined =
+      primarySceneSearchResult[findResultIndex];
+
+    if (!userSelectedScene || !userSelectedScene.id) {
+      $log("[PDS] MSG: User did not select a scene, exiting secondary search");
+      return null;
+    }
+
+    $log(
+      `[PDS] MSG: Running Aggressive-Grab Search on: ${JSON.stringify({
+        id: userSelectedScene.id,
+        title: userSelectedScene.title,
+      })}`
+    );
+    const secondarySceneSearchResult = await runSceneSearch(userSelectedScene.id, "id", true);
+
+    if (!secondarySceneSearchResult) {
+      $log("[PDS] ERR: Failed to find secondary result");
+      return null;
+    }
+
     if (
-      primarySceneSearchResult &&
-      Array.isArray(primarySceneSearchResult) &&
-      primarySceneSearchResult.length > 1
+      secondarySceneSearchResult &&
+      Array.isArray(secondarySceneSearchResult) &&
+      secondarySceneSearchResult.length === 1
     ) {
-      // Run through the list of titles and ask if they would like to choose one.
-      $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
-
-      const answersList: string[] = [];
-      const possibleTitles: string[] = [];
-
-      for (const scene of primarySceneSearchResult) {
-        answersList.push(scene.title);
-        possibleTitles.push(scene.title);
-      }
-
-      const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
-      answersList.push((new $inquirer.Separator() as any) as string);
-      answersList.push("== None of the above == ");
-
-      const { searchedTitles: multipleSitesAnswer } = await questionAsync<{
-        searchedTitles: string;
-      }>({
-        type: "rawlist",
-        name: "searchedTitles",
-        message: "Which Title would you like to use?",
-        testAnswer: testMode?.questionAnswers?.multipleChoice ?? "",
-        choices: answersList,
-      });
-
-      const findResultIndex = possibleTitles.indexOf(multipleSitesAnswer.trim());
-      const userSelectedSceneId = primarySceneSearchResult[findResultIndex]?.id;
-
-      if (!userSelectedSceneId) {
-        $log("[PDS] MSG: User did not select a scene, exiting secondary search");
-        return null;
-      }
-
-      $log(`[PDS] MSG: Running Aggressive-Grab Search on: ${JSON.stringify(userSelectedSceneId)}`);
-      const secondarySceneSearchResult = await runSceneSearch(userSelectedSceneId, "id", true);
-
-      if (!secondarySceneSearchResult) {
-        $log("[PDS] ERR: Failed to find secondary result");
-        return null;
-      }
-
-      if (
-        secondarySceneSearchResult &&
-        Array.isArray(secondarySceneSearchResult) &&
-        secondarySceneSearchResult.length === 1
-      ) {
-        return mergeSearchResult(secondarySceneSearchResult[0]);
-      }
+      return mergeSearchResult(secondarySceneSearchResult[0]);
     }
 
     return null;
