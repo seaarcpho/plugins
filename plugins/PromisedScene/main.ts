@@ -163,13 +163,15 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   function logResultObject(results: SceneOutput): void {
     $log("[PDS] MSG: ====  Final Entry =====");
 
-    for (const property in results) {
-      if (property === "releaseDate") {
-        $log(`${property}: ${timeConverter(results[property] ?? 0)}`);
-      } else {
-        $log(`${property}: ${results[property]}`);
-      }
+    const logObj = {
+      ...results,
+    };
+
+    if (logObj.releaseDate) {
+      (logObj.releaseDate as any) = timeConverter(logObj.releaseDate ?? 0);
     }
+
+    $log(JSON.stringify(logObj, null, 2));
   }
 
   /**
