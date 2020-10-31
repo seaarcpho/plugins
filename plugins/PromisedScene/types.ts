@@ -192,6 +192,7 @@ export type DeepPartial<T> = {
 
 export interface MyContext extends SceneContext {
   args: DeepPartial<{
+    useTitleInSearch: boolean;
     parseActor: boolean;
     parseStudio: boolean;
     manualTouch: boolean;

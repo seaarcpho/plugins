@@ -15,7 +15,18 @@ import {
 } from "./util";
 
 module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
-  const { event, $throw, $moment, $log, testMode, scenePath, args, $inquirer, $createImage } = ctx;
+  const {
+    event,
+    scenePath,
+    sceneName,
+    $throw,
+    $moment,
+    $log,
+    testMode,
+    args,
+    $inquirer,
+    $createImage,
+  } = ctx;
 
   /**
    * If makeChoices() was already run (for test mode only)
@@ -59,7 +70,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
   // After everything has completed parsing, I run a function that will perform all of the lookups against TPDB
 
-  let searchTitle: string | undefined = "";
+  let searchTitle: string | undefined = sceneName;
   let searchActors = parsedDbActor ? [parsedDbActor] : [];
   let searchStudio = parsedDbStudio ?? undefined;
   let searchTimestamp: number | undefined = parsedTimestamp ?? undefined;
@@ -288,6 +299,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       movie: string;
     }>
   > {
+    let userTitle: string | undefined;
     let userTimestamp: number | undefined;
     let userMovie: string | undefined;
     let userActors: string[] = [];
@@ -317,12 +329,19 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       }
     }
 
-    const { titleOfScene: manualEnterTitleScene } = await questionAsync<{ titleOfScene: string }>({
-      type: "input",
-      name: "titleOfScene",
-      message: "What is the TITLE of the scene?: ",
-      testAnswer: testMode?.questionAnswers?.enterSceneTitle ?? "",
-    });
+    if (args.useTitleInSearch) {
+      const { titleOfScene: manualEnterTitleScene } = await questionAsync<{ titleOfScene: string }>(
+        {
+          type: "input",
+          name: "titleOfScene",
+          message: "What is the TITLE of the scene?: ",
+          testAnswer: testMode?.questionAnswers?.enterSceneTitle ?? "",
+        }
+      );
+      if (manualEnterTitleScene && manualEnterTitleScene.trim()) {
+        userTitle = manualEnterTitleScene.trim();
+      }
+    }
 
     const { manualActorSearch: Q2Actor } = await questionAsync<{ manualActorSearch: string }>({
       type: "input",
@@ -386,7 +405,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }
 
     return {
-      title: manualEnterTitleScene,
+      title: userTitle,
       actors: userActors,
       studio: Q3Studio,
       timestamp: userTimestamp,
@@ -543,24 +562,14 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       return sceneData;
     }
 
-    // TODO: sometimes title search does not work
-    // const queries = [title, actors, studio];
     const queries = [actors, studio];
+    if (args.useTitleInSearch) {
+      queries.unshift(title);
+    }
     if (timestamp && !Number.isNaN(timestamp)) {
       queries.push(timeConverter(timestamp));
     }
-    const initialQuery = queries.reduce(
-      (acc: string, query: string | string[] | undefined): string => {
-        if (Array.isArray(query)) {
-          return [acc, query].flat().filter(Boolean).join(" ");
-        }
-        if (query) {
-          return [acc, query].filter(Boolean).join(" ");
-        }
-        return acc;
-      },
-      ""
-    );
+    const initialQuery = queries.flat().filter(Boolean).join(" ");
 
     if (!initialQuery) {
       $log("[PDS] WARN: Did not have any parameters to do primary search");
