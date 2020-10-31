@@ -7,20 +7,36 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Mocha All",
+      "name": "Mocha all",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-      "args": ["${workspaceFolder}/plugins/**/*.spec.js", "--timeout", "10000"],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "args": [
+        "-r",
+        "ts-node/register",
+        "\"plugins/**/*.spec.js\"",
+        "--timeout",
+        "10000"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Mocha Current File",
+      "name": "Mocha current file",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-      "args": ["--timeout", "10000", "${file}"],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "args": [
+        "-r",
+        "ts-node/register",
+        "${file}",
+        "--timeout",
+        "10000"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     }
   ]
 }

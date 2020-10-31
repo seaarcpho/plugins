@@ -77,7 +77,7 @@ function generatePluginExample(pluginInfo: PluginInfo) {
     plugins: {
       register: {
         [pluginInfo.name]: {
-          path: `./plugins/${pluginInfo.name}/main.js`,
+          path: `./plugins/${pluginInfo.name}/main.ts`,
           args: defaultArgs,
         },
       },
@@ -92,6 +92,7 @@ const generatePluginDocs = () => {
     const pluginPath = nodepath.join(pluginFolder, pluginDirName);
 
     const infoPath = nodepath.join(pluginPath, "info.json");
+
     const pluginInfo = JSON.parse(fs.readFileSync(infoPath, "utf-8")) as PluginInfo;
     info[pluginDirName] = pluginInfo;
 
@@ -104,7 +105,7 @@ const generatePluginDocs = () => {
     const exampleJSON = JSON.stringify(example, null, 2);
     const exampleYAML = YAML.stringify(example, { simpleKeys: true });
 
-    const rendered = Handlebars.compile(pluginTemplate)({
+    const rendered = Handlebars.compile(pluginTemplate, { noEscape: true })({
       name: pluginInfo.name,
       version: pluginInfo.version,
       description: pluginInfo.description,

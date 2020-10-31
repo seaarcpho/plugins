@@ -6,10 +6,10 @@ Filter labels returned by other plugins
 
 ### Arguments
 
-| Name      | Type          | Required | Description       |
-| --------- | ------------- | -------- | ----------------- |
-| whitelist | Array&lt;String&gt; | false    | Labels to include |
-| blacklist | Array&lt;String&gt; | false    | Labels to exclude |
+| Name      | Type     | Required | Description       |
+| --------- | -------- | -------- | ----------------- |
+| whitelist | String[] | false    | Labels to include |
+| blacklist | String[] | false    | Labels to exclude |
 
 ### Example installation with default arguments
 
@@ -20,7 +20,7 @@ Filter labels returned by other plugins
   "plugins": {
     "register": {
       "label_filter": {
-        "path": "./plugins/label_filter/main.js",
+        "path": "./plugins/label_filter/main.ts",
         "args": {
           "whitelist": [],
           "blacklist": []
@@ -40,7 +40,10 @@ Filter labels returned by other plugins
       "sceneCustom": [
         "label_filter"
       ],
-      "movieCreated": [
+      "studioCreated": [
+        "label_filter"
+      ],
+      "studioCustom": [
         "label_filter"
       ]
     }
@@ -55,7 +58,7 @@ Filter labels returned by other plugins
 plugins:
   register:
     label_filter:
-      path: ./plugins/label_filter/main.js
+      path: ./plugins/label_filter/main.ts
       args:
         whitelist: []
         blacklist: []
@@ -68,7 +71,9 @@ plugins:
       - label_filter
     sceneCustom:
       - label_filter
-    movieCreated:
+    studioCreated:
+      - label_filter
+    studioCustom:
       - label_filter
 
 ---

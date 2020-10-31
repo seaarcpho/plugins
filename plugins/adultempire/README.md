@@ -1,4 +1,4 @@
-## adultempire 0.3.1
+## adultempire 0.4.0
 
 by boi123212321
 
@@ -19,7 +19,7 @@ Scrape data from adultempire
   "plugins": {
     "register": {
       "adultempire": {
-        "path": "./plugins/adultempire/main.js",
+        "path": "./plugins/adultempire/main.ts",
         "args": {
           "dry": false
         }
@@ -44,7 +44,7 @@ Scrape data from adultempire
 plugins:
   register:
     adultempire:
-      path: ./plugins/adultempire/main.js
+      path: ./plugins/adultempire/main.ts
       args:
         dry: false
   events:

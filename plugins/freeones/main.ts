@@ -1,19 +1,35 @@
-function lowercase(str) {
+import { ActorContext, ActorOutput } from "../../types/actor";
+import { Context } from "../../types/plugin";
+
+interface MyContext extends ActorContext {
+  args: {
+    whitelist?: string[];
+    blacklist?: string[];
+    dry?: boolean;
+    useImperial?: boolean;
+    useAvatarAsThumbnail?: boolean;
+  };
+}
+
+function lowercase(str: string): string {
   return str.toLowerCase();
 }
 
-function cmToFt(cm) {
+function cmToFt(cm: number): number {
   cm *= 0.033;
   return Math.round((cm + Number.EPSILON) * 100) / 100;
 }
 
-function kgToLbs(kg) {
+function kgToLbs(kg: number): number {
   kg *= 2.2;
   return Math.round((kg + Number.EPSILON) * 100) / 100;
 }
 
-async function search({ $axios }, query) {
-  const url = `https://www.freeones.xxx/partial/subject`;
+async function search(
+  { $axios }: { $axios: Context["$axios"] },
+  query: string
+): Promise<string> {
+  const url = `https://www.freeones.com/partial/subject`;
   return (
     await $axios.get(url, {
       params: {
@@ -23,7 +39,7 @@ async function search({ $axios }, query) {
   ).data;
 }
 
-async function getFirstSearchResult(ctx, query) {
+async function getFirstSearchResult(ctx: MyContext, query: string): Promise<cheerio.Cheerio> {
   const searchHtml = await search(ctx, query);
   const $ = ctx.$cheerio.load(searchHtml);
   const el = $(".grid-item.teaser-subject>a");
@@ -31,6 +47,11 @@ async function getFirstSearchResult(ctx, query) {
 }
 
 class Measurements {
+  bust?: number;
+  cup?: string;
+  waist?: number;
+  hip?: number;
+
   static fromString(str) {
     const [bra, waist, hip] = str.split("-");
     if (bra && waist && hip) {
@@ -44,16 +65,16 @@ class Measurements {
     return null;
   }
 
-  toString() {
+  toString(): string {
     return `${this.braSize()}-${this.waist}-${this.hip}`;
   }
 
-  braSize() {
+  braSize(): string {
     return `${this.bust}${this.cup}`;
   }
 }
 
-module.exports = async (ctx) => {
+module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   const { $createImage, args, $axios, $moment, $cheerio, $throw, $log, actorName } = ctx;
   if (!actorName) $throw("Uh oh. You shouldn't use the plugin for this type of event");
 
@@ -89,7 +110,7 @@ module.exports = async (ctx) => {
     $log("Will use the Avatar as the Actor Thumbnail...");
   }
 
-  let firstResult;
+  let firstResult: cheerio.Cheerio | undefined;
   try {
     firstResult = await getFirstSearchResult(ctx, actorName);
   } catch (error) {
@@ -98,15 +119,15 @@ module.exports = async (ctx) => {
 
   if (!firstResult) $throw(`${actorName} not found!`);
 
-  const href = firstResult.attr("href");
+  const href = (firstResult as cheerio.Cheerio).attr("href");
 
-  let html;
+  let html: string | undefined;
   try {
-    html = (await $axios.get(`https://freeones.xxx${href}/profile`)).data;
+    html = (await $axios.get(`https://freeones.com${href}/profile`)).data;
   } catch (error) {
     $throw(error.message);
   }
-  const $ = $cheerio.load(html);
+  const $ = $cheerio.load(html || "");
 
   function getNationality() {
     if (isBlacklisted("nationality")) return {};
@@ -119,7 +140,7 @@ module.exports = async (ctx) => {
       return {};
     }
 
-    const nationality = $(selector).attr("href").split("=").slice(-1)[0];
+    const nationality = ($(selector).attr("href") || "").split("=").slice(-1)[0];
     if (!nationality) {
       return {};
     }
@@ -136,7 +157,8 @@ module.exports = async (ctx) => {
     if (!selector) return {};
 
     const rawHeight = $(selector).text();
-    const cm = rawHeight.match(/\d+cm/)[0];
+    const rawHeightMatch = rawHeight.match(/\d+cm/);
+    const cm = rawHeightMatch ? rawHeightMatch[0] : null;
     if (!cm) return {};
     const height = parseInt(cm.replace("cm", ""));
     if (!useImperial) return { height };
@@ -153,7 +175,8 @@ module.exports = async (ctx) => {
     if (!selector) return {};
 
     const rawWeight = $(selector).text();
-    const kg = rawWeight.match(/\d+kg/)[0];
+    const rawWeightMatch = rawWeight.match(/\d+kg/);
+    const kg = rawWeightMatch ? rawWeightMatch[0] : null;
     if (!kg) return {};
     const weight = parseInt(kg.replace("kg", ""));
     if (!useImperial) return { weight };
@@ -178,7 +201,9 @@ module.exports = async (ctx) => {
     $log("Getting birthplace...");
 
     const selector = $('[data-test="section-personal-information"] a[href*="placeOfBirth"]');
-    const cityName = selector.length ? $(selector).attr("href").split("=").slice(-1)[0] : null;
+    const cityName = selector.length
+      ? ($(selector).attr("href") || "").split("=").slice(-1)[0]
+      : null;
 
     if (!cityName) {
       $log("No birthplace found");
@@ -186,7 +211,7 @@ module.exports = async (ctx) => {
     } else {
       const stateSelector = $('[data-test="section-personal-information"] a[href*="province"]');
       const stateName = stateSelector.length
-        ? $(stateSelector).attr("href").split("=").slice(-1)[0]
+        ? ($(stateSelector).attr("href") || "").split("=").slice(-1)[0]
         : null;
       if (!stateName) {
         $log("No birth province found, just city!");
@@ -198,14 +223,14 @@ module.exports = async (ctx) => {
     }
   }
 
-  function scrapeText(prop, selector) {
+  function scrapeText<T>(prop: string, selector: string): T | {} {
     if (isBlacklisted(prop)) return {};
     $log(`Getting ${prop}...`);
 
     const el = $(selector);
     if (!el) return {};
 
-    return { [prop]: el.text() };
+    return ({ [prop]: el.text() } as any) as T;
   }
 
   async function getAvatar() {
@@ -239,7 +264,7 @@ module.exports = async (ctx) => {
     const aTag = $('[data-test="section-personal-information"] a');
     if (!aTag) return {};
 
-    const href = $(aTag).attr("href");
+    const href = $(aTag).attr("href") || "";
     const yyyymmdd = href.match(/\d\d\d\d-\d\d-\d\d/);
 
     if (yyyymmdd && yyyymmdd.length) {
@@ -268,8 +293,12 @@ module.exports = async (ctx) => {
   }
 
   function scrapeMeasurements() {
-    const measurementParts = [];
-    $('[data-test="p-measurements"] .text-underline-always').each(function (i, element) {
+    const measurementParts: string[] = [];
+    $('[data-test="p-measurements"] .text-underline-always').each(function (
+      this: cheerio.Element,
+      i,
+      element
+    ) {
       measurementParts[i] = $(this).text();
     });
     const measurements = measurementParts.join("-");
@@ -313,20 +342,32 @@ module.exports = async (ctx) => {
     return { sex: "Female", gender: "Female" };
   }
 
-  let tattooResult = scrapeText("tattoos", '[cdata-test="p_has_tattoos"]');
-  if (!Object.keys(tattooResult).length) {
-    tattooResult = scrapeText("tattoos", '[data-test="p_has_tattoos"]');
+  let tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[cdata-test="p_has_tattoos"]');
+  if (!tattooResult["tattoos"]) {
+    tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[data-test="p_has_tattoos"]');
   }
-  const tattooText = tattooResult.tattoos;
+  const tattooText = tattooResult["tattoos"];
   const hasTattoos = !!tattooText && !!tattooText.length && tattooText !== "No Tattoos";
 
-  const piercingText = scrapeText("piercings", '[data-test="p_has_piercings"]').piercings;
+  const piercingText = scrapeText<{ piercings: string }>(
+    "piercings",
+    '[data-test="p_has_piercings"]'
+  )["piercings"];
   const hasPiercings = !!piercingText && !!piercingText.length && piercingText !== "No Piercings";
 
   const custom = {
-    ...scrapeText("hair color", '[data-test="link_hair_color"] .text-underline-always'),
-    ...scrapeText("eye color", '[data-test="link_eye_color"] .text-underline-always'),
-    ...scrapeText("ethnicity", '[data-test="link_ethnicity"] .text-underline-always'),
+    ...scrapeText<{ ["hair color"]: string }>(
+      "hair color",
+      '[data-test="link_hair_color"] .text-underline-always'
+    ),
+    ...scrapeText<{ ["eye color"]: string }>(
+      "eye color",
+      '[data-test="link_eye_color"] .text-underline-always'
+    ),
+    ...scrapeText<{ ethnicity: string }>(
+      "ethnicity",
+      '[data-test="link_ethnicity"] .text-underline-always'
+    ),
     ...getHeight(),
     ...getWeight(),
     ...getMeasurements(),
@@ -344,7 +385,7 @@ module.exports = async (ctx) => {
     ...getAlias(),
     ...(await getAvatar()),
     custom,
-  };
+  } as ActorOutput;
 
   if (!isBlacklisted("labels")) {
     data.labels = [];

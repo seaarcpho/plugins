@@ -1,28 +1,211 @@
+import plugin from "../main";
+import { manualTouchChoices } from "../util";
+
 const context = require("../../../context");
-const plugin = require("../main");
 const { expect } = require("chai");
 
 describe("PromisedScene", () => {
+  describe("Handle all of the errors properly.", () => {
+    it("Should fail with error:  Plugin used for unsupported event", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "fake event",
+          args: {
+            manualTouch: true,
+            sceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: false,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Plugin used for unsupported event");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing source_settings in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            manualTouch: true,
+            sceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing source_settings in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing parseActor in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            manualTouch: true,
+            sceneDuplicationCheck: true,
+            parseStudio: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing parseActor in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing parseStudio in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            manualTouch: true,
+            sceneDuplicationCheck: true,
+            parseActor: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing parseStudio in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing manualTouch in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            sceneDuplicationCheck: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing manualTouch in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+    it("Should fail with error:  Missing sceneDuplicationCheck in plugin args", async () => {
+      let errord = false;
+      try {
+        await plugin({
+          ...context,
+          event: "sceneCreated",
+          args: {
+            manualTouch: true,
+            parseActor: true,
+            parseStudio: true,
+            source_settings: {
+              actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+              scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+              studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            },
+          },
+          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          scenePath:
+            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
+          testMode: {
+            testSiteUnavailable: false,
+            status: true,
+          },
+        });
+      } catch (error) {
+        expect(error.message).to.include("ERR: Missing sceneDuplicationCheck in plugin args");
+        errord = true;
+      }
+      expect(errord).to.be.true;
+    });
+  });
+
   describe("When Populated Databases exist...", () => {
     it("Should have DB files with the Actor, Studio, Scene and date already", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           testSiteUnavailable: false,
           status: true,
         },
@@ -39,15 +222,16 @@ describe("PromisedScene", () => {
     it("Should not return an actor with a single name like 'PRESSLEY', even if it exists but allow for manual SEARCH success", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] PRESSLEY 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -55,14 +239,14 @@ describe("PromisedScene", () => {
           "Z:\\Keep\\test\\[New Sensations] PRESSLEY 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
             enterSceneTitle: "So Young So Sexy",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
           },
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           testSiteUnavailable: false,
           status: true,
         },
@@ -79,22 +263,23 @@ describe("PromisedScene", () => {
     it("Should grab an alias for an actor Madison Swan = Mia Malkova", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Madison Swan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Madison Swan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           testSiteUnavailable: false,
           status: true,
         },
@@ -111,22 +296,23 @@ describe("PromisedScene", () => {
     it("Should grab an alias with no spaces for an actor Madison Swan = Mia Malkova", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] MadisonSwan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] MadisonSwan 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           testSiteUnavailable: false,
           status: true,
         },
@@ -143,15 +329,16 @@ describe("PromisedScene", () => {
     it("Search and Grab a scene with multiple parsed Actors, run a search and match based on title of scene - testing YY-MM-DD", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName:
@@ -159,14 +346,14 @@ describe("PromisedScene", () => {
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Riley Nixon, Mia Malkova 16.04.08 - Makes the Heart Skip a Beat.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "16.04.08",
             enterSceneTitle: "Makes the Heart Skip a Beat",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "Mia Malkova, Riley Nixon",
             manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
@@ -189,24 +376,25 @@ describe("PromisedScene", () => {
     it("Search and Grab a Scene that has multiple parsed Studios - testing dd.mm.yyyy", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[Bangbros clips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         scenePath:
           "Z:\\Keep\\test\\[Bangbros clips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -234,24 +422,25 @@ describe("PromisedScene", () => {
     it("Search and Grab a Scene that has multiple parsed Studios with no spaces - testing dd.mm.yyyy", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         scenePath:
           "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "04.01.2016",
@@ -279,28 +468,29 @@ describe("PromisedScene", () => {
     it("Select a scene from a list of returned searches", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
             enterSceneTitle: "Mia Malkova New Sensations",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "",
             manualDescription: "",
             movieTitle: "",
@@ -322,28 +512,29 @@ describe("PromisedScene", () => {
     it("Select 'none of the above' of the last 2 options in a rawlist, it should make the user select a choice.  Should return nothing because we assume we select 'do nothing' when asked again", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
             enterSceneTitle: "New Sensations Mia Malkova",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "",
             manualDescription: "",
             movieTitle: "",
@@ -358,28 +549,29 @@ describe("PromisedScene", () => {
     it("list of returned searches, let the script find the title within the path name", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #08.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova So Young So Sexy P.O.V. #08.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
             enterSceneTitle: "",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "",
             manualDescription: "",
             movieTitle: "",
@@ -401,27 +593,28 @@ describe("PromisedScene", () => {
     it("TPD not available and should not return anything because Manualinfo is = n", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
             enterSceneTitle: "New Sensations Mia Malkova",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "",
             manualDescription: "",
             movieTitle: "",
@@ -436,22 +629,23 @@ describe("PromisedScene", () => {
     it("TPD does not support that specific studio. Should return nothing because we assume we select 'do nothing' when asked again", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[Colette] Mia Malkova",
         scenePath: "Z:\\Keep\\test\\[Colette] Mia Malkova.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "",
@@ -471,28 +665,29 @@ describe("PromisedScene", () => {
     it("Should not parse the studio but success in searching it with fullname", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
-        sceneName: "[bb18] Kira Perez - Cock Is Her Duty.mp4",
-        scenePath: "Z:\\Keep\\test\\[bb18] Kira Perez - Cock Is Her Duty.mp4",
+        sceneName: "[nostudio] Kira Perez - Cock Is Her Duty.mp4",
+        scenePath: "Z:\\Keep\\test\\[nostudio] Kira Perez - Cock Is Her Duty.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Kira Perez",
             enterSceneDate: "",
             enterSceneTitle: "Cock Is Her Duty",
-            enterStudioName: "Bang Bros 18",
+            enterStudioName: "BANG BROS 18",
           },
           testSiteUnavailable: false,
           status: true,
@@ -505,22 +700,24 @@ describe("PromisedScene", () => {
       expect(result.releaseDate).to.be.a("number");
       expect(result.thumbnail).to.be.a("string");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.equal("BANGBROS 18");
+      expect(result.studio).to.equal("BANG BROS 18");
     });
   });
+
   describe("When UnPopulated Databases exist...", () => {
     it("Should return nothing because no search is completed with no parsed Actor or Studio when manualTouch is false", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: false,
-          SceneDuplicationCheck: true,
+          manualTouch: false,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
@@ -536,29 +733,30 @@ describe("PromisedScene", () => {
     it("Should allow manual input, no movie, no search -- Unpopulated databases", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: false,
+          manualTouch: true,
+          sceneDuplicationCheck: false,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
+            enterInfoSearch: manualTouchChoices.MANUAL_ENTER,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
             enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "Mia Malkova, Mike Adriano",
             manualDescription:
               "stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
@@ -575,34 +773,35 @@ describe("PromisedScene", () => {
       );
       expect(result.releaseDate).to.be.a("number");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.equal("New Sensations");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Not the correct import information, saying 'no' should assume 'do nothing' on the second question", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: false,
+          manualTouch: true,
+          sceneDuplicationCheck: false,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          CorrectImportInfo: "n",
+          correctImportInfo: "n",
           questionAnswers: {
-            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
+            enterInfoSearch: manualTouchChoices.MANUAL_ENTER,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
             enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "Mia Malkova, Mike Adriano",
             manualDescription:
               "stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
@@ -618,29 +817,30 @@ describe("PromisedScene", () => {
     it("Should allow manual input, with movie, no search -- Unpopulated databases", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         scenePath:
           "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Enter scene details manually, straight into the porn-valt",
+            enterInfoSearch: manualTouchChoices.MANUAL_ENTER,
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
             enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "Mia Malkova, Mike Adriano",
             manualDescription:
               "stud lovin. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
@@ -657,36 +857,38 @@ describe("PromisedScene", () => {
       );
       expect(result.releaseDate).to.be.a("number");
       expect(result.actors).to.be.a("Array");
-      expect(result.studio).to.equal("New Sensations");
+      expect(result.studio).to.equal("NEW SENSATIONS");
       expect(result.movie).to.equal("So Young So Sexy P.O.V. #8");
     });
   });
+
   describe("When Mixed Databases exist...", () => {
-    it("Should have DB files with Studio and Scene already -- No Actor -- ManualTouch True -- Should find with correct answers", async () => {
+    it("Should have DB files with Studio and Scene already -- No Actor -- manualTouch True -- Should find with correct answers", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "n",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
             enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "",
             manualDescription: "",
             movieTitle: "So Young So Sexy P.O.V. #8",
@@ -705,31 +907,32 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
-    it("Should have DB files with Scene already -- No Studio or Actor -- ManualTouch True -- Should find with correct answers", async () => {
+    it("Should have DB files with Scene already -- No Studio or Actor -- manualTouch True -- Should find with correct answers", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: true,
-          SceneDuplicationCheck: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
-          CorrectImportInfo: "y",
+          correctImportInfo: "y",
           questionAnswers: {
-            enterInfoSearch: "Search scene details on The Porn Database (TPD)",
+            enterInfoSearch: manualTouchChoices.SEARCH,
             enterMovie: "y",
             enterOneActorName: "Mia Malkova",
             enterSceneDate: "2013.10.10",
             enterSceneTitle: "So Young So Sexy P.O.V. #8 - Scene 2",
-            enterStudioName: "New Sensations",
+            enterStudioName: "NEW SENSATIONS",
             manualActors: "Mia Malkova,Mike Adriano",
             manualDescription:
               "stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!",
@@ -752,22 +955,23 @@ describe("PromisedScene", () => {
     it("Should have DB files with Scene already but return nothing, no questions -- No Studio or Actor parsed", async () => {
       const result = await plugin({
         ...context,
+        event: "sceneCreated",
         args: {
-          ManualTouch: false,
-          SceneDuplicationCheck: true,
+          manualTouch: false,
+          sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
           source_settings: {
-            Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-            Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-            Studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosUnPopulated.db",
           },
         },
         sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
         testMode: {
           questionAnswers: {
-            enterInfoSearch: "Do nothing (let the scene be imported with no details)",
+            enterInfoSearch: manualTouchChoices.NOTHING,
           },
           testSiteUnavailable: false,
           status: true,
@@ -775,178 +979,51 @@ describe("PromisedScene", () => {
       });
       expect(result).to.deep.equal({});
     });
-  });
-  describe("Handle all of the errors properly.", () => {
-    it("Should fail with error:  Plugin used for unsupported event", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          args: {
-            ManualTouch: true,
-            SceneDuplicationCheck: true,
-            parseActor: true,
-            parseStudio: true,
-            source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
+
+    it("Should have DB files with Scene already -- No Studio or Actor -- manualTouch True, extra search -- Should find with correct answers", async () => {
+      const result = await plugin({
+        ...context,
+        event: "sceneCreated",
+        args: {
+          manualTouch: true,
+          sceneDuplicationCheck: true,
+          parseActor: true,
+          parseStudio: true,
+          source_settings: {
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
           },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: false,
+        },
+        sceneName: "[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
+        scenePath: "Z:\\Keep\\test\\[New Sensations] Mia Malkova - So Young So Sexy P.O.V. #8.mp4",
+        testMode: {
+          correctImportInfo: "y",
+          questionAnswers: {
+            enterInfoSearch: manualTouchChoices.SEARCH,
+            enterMovie: "",
+            enterOneActorName: "",
+            enterSceneDate: "",
+            enterSceneTitle: "",
+            enterStudioName: "",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "",
+            extra: "Mia Malkova NEW SENSATIONS 2013.10.10",
           },
-        });
-      } catch (error) {
-        expect(error.message).to.equal(" ERR: Plugin used for unsupported event");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing source_settings in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          args: {
-            ManualTouch: true,
-            SceneDuplicationCheck: true,
-            parseActor: true,
-            parseStudio: true,
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.equal(" ERR: Missing source_settings in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing ParseActor in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          args: {
-            ManualTouch: true,
-            SceneDuplicationCheck: true,
-            parseStudio: true,
-            source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.equal(" ERR: Missing ParseActor in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing parseStudio in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          args: {
-            ManualTouch: true,
-            SceneDuplicationCheck: true,
-            parseActor: true,
-            source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.equal(" ERR: Missing parseStudio in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing ManualTouch in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          args: {
-            SceneDuplicationCheck: true,
-            parseActor: true,
-            parseStudio: true,
-            source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.equal(" ERR: Missing ManualTouch in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
-    });
-    it("Should fail with error:  Missing SceneDuplicationCheck in plugin args", async () => {
-      let errord = false;
-      try {
-        await plugin({
-          ...context,
-          args: {
-            ManualTouch: true,
-            parseActor: true,
-            parseStudio: true,
-            source_settings: {
-              Actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
-              Scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
-              Studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
-            },
-          },
-          sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          scenePath:
-            "Z:\\Keep\\test\\[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
-          testMode: {
-            testSiteUnavailable: false,
-            status: true,
-          },
-        });
-      } catch (error) {
-        expect(error.message).to.equal(" ERR: Missing SceneDuplicationCheck in plugin args");
-        errord = true;
-      }
-      expect(errord).to.be.true;
+          testSiteUnavailable: false,
+          status: true,
+        },
+      });
+      expect(result).to.be.an("object");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
+      expect(result.releaseDate).to.be.a("number");
+      expect(result.thumbnail).to.be.a("string");
+      expect(result.actors).to.be.a("Array");
+      expect(result.studio).to.equal("New Sensations");
     });
   });
 });
