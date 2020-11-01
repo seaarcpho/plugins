@@ -13,6 +13,13 @@
       "description": "When searching TPDB: in auto search, if should use existing scene title. In manual user search, if should prompt user for title and use in search"
     },
     {
+      "name": "alwaysUseSingleResult",
+      "type": "Boolean",
+      "required": false,
+      "default": false,
+      "description": "When searching TPDB, if there is **only** 1 result, even if its title **doesn't** match the searched title, if should return that data"
+    },
+    {
       "name": "parseActor",
       "type": "Boolean",
       "required": true,
@@ -31,7 +38,7 @@
       "type": "Boolean",
       "required": true,
       "default": true,
-      "description": "If true, will ask questions to manually answer and fill in details.  If false, will agressivly search and automatically populate the vault."
+      "description": "If true, will allow you to answer questions to manually enter scene data, manually search TPDB, confirm the final result"
     },
     {
       "name": "sceneDuplicationCheck",

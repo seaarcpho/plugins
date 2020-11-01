@@ -10,7 +10,7 @@ import {
   manualTouchChoices,
   matchSceneResultToSearch,
   normalizeSceneResultData,
-  timeConverter,
+  timestampToString,
 } from "./util";
 
 module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
@@ -137,7 +137,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     };
 
     if (logObj.releaseDate) {
-      (logObj.releaseDate as any) = timeConverter(logObj.releaseDate ?? 0);
+      (logObj.releaseDate as any) = timestampToString(logObj.releaseDate ?? 0);
     }
 
     $log(JSON.stringify(logObj, null, 2));
@@ -377,7 +377,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         if (!searchTimestamp) {
           return "";
         }
-        const dottedTimestamp = timeConverter(searchTimestamp).replace("-", ".");
+        const dottedTimestamp = timestampToString(searchTimestamp).replace("-", ".");
         if (dottedTimestamp && !isNaN(+dottedTimestamp)) {
           return ` ${dottedTimestamp}`;
         }
@@ -449,54 +449,6 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   }
 
   /**
-   * Retrieves the scene titles or details from TPDB
-   *
-   * @param parseQueryOrId - what tpdb should parse
-   * @param aggressiveSearch - if the search does not only have 1 result, if this should run a manual import instead of trying to get titles
-   * @returns either an array of all the possible Porn Database search results, or a data object for the proper "found" scene or null if
-   * nothing at all was found
-   */
-  async function runSceneParseSearch(
-    parseQueryOrId: string
-  ): Promise<SceneResult.SceneData[] | null> {
-    try {
-      let apiRes = await tpdbApi.parseScene(parseQueryOrId);
-
-      if (!apiRes?.data || testMode?.testSiteUnavailable) {
-        $throw("ERR: TPDB API: received no data");
-        return null; // for type compatibility
-      }
-
-      const sceneList = Array.isArray(apiRes.data.data) ? apiRes.data.data : [apiRes.data.data];
-
-      // list the found results and tries to match the SCENENAME to the found results.
-      const matchedScene: SceneResult.SceneData | null = matchSceneResultToSearch(
-        ctx,
-        sceneList,
-        searchActors,
-        searchStudio
-      );
-
-      if (!matchedScene) {
-        $log("[PDS] ERR: TPDB Could NOT find correct scene info");
-        $log("[PDS] MSG: Returning the results for user selection");
-        return sceneList;
-      }
-
-      checkSceneExistsInDb(ctx, matchedScene.title);
-
-      return [matchedScene];
-    } catch (err) {
-      $log("[PDS] ERR: TPDB API query failed");
-      if (testMode?.status && !testMode?.testSiteUnavailable) {
-        $log("!! This will impact the test if it was not expecting a failure !!");
-      }
-
-      return null;
-    }
-  }
-
-  /**
    * The (Backbone) main Search function for the plugin
    *
    * @param searchActors - The URL API that has the sites hosted on TPD
@@ -518,6 +470,8 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     extra: string;
   }>): Promise<SceneOutput | null> {
     async function mergeSearchResult(rawScene: SceneResult.SceneData): Promise<SceneOutput> {
+      checkSceneExistsInDb(ctx, rawScene.title);
+
       const sceneData = normalizeSceneResultData(rawScene);
 
       if (
@@ -548,7 +502,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       return null;
     }
     if (timestamp && !Number.isNaN(timestamp)) {
-      queries.push(timeConverter(timestamp));
+      queries.push(timestampToString(timestamp));
     }
     const initialQuery = queries.flat().filter(Boolean).join(" ");
 
@@ -557,26 +511,42 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       return null;
     }
 
-    $log(`[PDS] MSG: Running TPDB Primary Search on: ${JSON.stringify(initialQuery)}`);
-    const primarySceneSearchResult = await runSceneParseSearch(initialQuery);
+    let sceneList: SceneResult.SceneData[] = [];
 
-    if (!primarySceneSearchResult) {
-      $log("[PDS] MSG: Did not find any possible matches for primary search");
+    try {
+      $log(`[PDS] MSG: Running TPDB Primary Search on: ${JSON.stringify(initialQuery)}`);
+      const apiRes = await tpdbApi.parseScene(initialQuery);
+      if (!apiRes?.data || testMode?.testSiteUnavailable) {
+        $throw("ERR: TPDB API: received no data");
+        return null; // for type compatibility
+      }
+      sceneList = Array.isArray(apiRes.data.data) ? apiRes.data.data : [apiRes.data.data];
+    } catch (err) {
+      $log("[PDS] ERR: TPDB API query failed");
+      if (testMode?.status && !testMode?.testSiteUnavailable) {
+        $log("!! This will impact the test if it was not expecting a failure !!");
+      }
+
       return null;
     }
 
-    if (Array.isArray(primarySceneSearchResult) && primarySceneSearchResult.length === 1) {
-      return mergeSearchResult(primarySceneSearchResult[0]);
-    }
-
-    const hasMultiplePossibleMatches =
-      Array.isArray(primarySceneSearchResult) && primarySceneSearchResult.length > 1;
-
-    if (!hasMultiplePossibleMatches) {
-      $log("[PDS] MSG: Did not find any possible matches for primary search");
+    if (!sceneList.length) {
+      $log("[PDS] ERR: Did not find any results from TPDB");
       return null;
     }
 
+    const matchedScene = matchSceneResultToSearch(ctx, sceneList, searchActors, searchStudio);
+
+    if (matchedScene) {
+      return mergeSearchResult(matchedScene);
+    } else if (args.alwaysUseSingleResult && sceneList.length === 1) {
+      $log(
+        `[PDS] MSG: Did not match results to scene, but only 1 result was found and "alwaysUseSingleResult" is enabled. Returning it`
+      );
+      return mergeSearchResult(sceneList[0]);
+    }
+
+    $log("[PDS] ERR: Did not match any of the titles from TPDB");
     $log("[PDS] MSG: Scene is possibly one of multiple search results");
 
     if (!args.manualTouch) {
@@ -590,7 +560,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     const answersList: string[] = [];
     const possibleTitles: string[] = [];
 
-    for (const scene of primarySceneSearchResult) {
+    for (const scene of sceneList) {
       answersList.push(scene.title);
       possibleTitles.push(scene.title);
     }
@@ -610,8 +580,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     });
 
     const findResultIndex = possibleTitles.indexOf(multipleSitesAnswer.trim());
-    const userSelectedScene: SceneResult.SceneData | undefined =
-      primarySceneSearchResult[findResultIndex];
+    const userSelectedScene: SceneResult.SceneData | undefined = sceneList[findResultIndex];
 
     if (!userSelectedScene) {
       $log("[PDS] MSG: User did not select a scene, exiting scene selection");

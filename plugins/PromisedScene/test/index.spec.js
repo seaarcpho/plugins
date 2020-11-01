@@ -702,6 +702,53 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("BANG BROS 18");
     });
+
+    it("with db, alwaysUseSingleResult, extra search -- Should find with correct answers", async () => {
+      const result = await plugin({
+        ...context,
+        event: "sceneCreated",
+        args: {
+          alwaysUseSingleResult: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
+          parseActor: true,
+          parseStudio: true,
+          source_settings: {
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+          },
+        },
+        sceneName: "fake scene name",
+        scenePath: "Z:\\Keep\\test\\fake scene name",
+        testMode: {
+          correctImportInfo: "y",
+          questionAnswers: {
+            enterInfoSearch: manualTouchChoices.SEARCH,
+            enterMovie: "",
+            enterOneActorName: "",
+            enterSceneDate: "",
+            enterSceneTitle: "",
+            enterStudioName: "",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "",
+            extra: "Mia Malkova NEW SENSATIONS 2013.10.10",
+          },
+          testSiteUnavailable: false,
+          status: true,
+        },
+      });
+      expect(result).to.be.an("object");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
+      expect(result.releaseDate).to.be.a("number");
+      expect(result.thumbnail).to.be.a("string");
+      expect(result.actors).to.be.a("Array");
+      expect(result.studio).to.equal("New Sensations");
+    });
   });
 
   describe("When UnPopulated Databases exist...", () => {
@@ -859,6 +906,53 @@ describe("PromisedScene", () => {
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
       expect(result.movie).to.equal("So Young So Sexy P.O.V. #8");
+    });
+
+    it("no db, alwaysUseSingleResult, extra search -- Should find with correct answers", async () => {
+      const result = await plugin({
+        ...context,
+        event: "sceneCreated",
+        args: {
+          alwaysUseSingleResult: true,
+          manualTouch: true,
+          sceneDuplicationCheck: true,
+          parseActor: true,
+          parseStudio: true,
+          source_settings: {
+            actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+          },
+        },
+        sceneName: "fake scene name",
+        scenePath: "Z:\\Keep\\test\\fake scene name",
+        testMode: {
+          correctImportInfo: "y",
+          questionAnswers: {
+            enterInfoSearch: manualTouchChoices.SEARCH,
+            enterMovie: "",
+            enterOneActorName: "",
+            enterSceneDate: "",
+            enterSceneTitle: "",
+            enterStudioName: "",
+            manualActors: "",
+            manualDescription: "",
+            movieTitle: "",
+            multipleChoice: "",
+            extra: "Mia Malkova NEW SENSATIONS 2013.10.10",
+          },
+          testSiteUnavailable: false,
+          status: true,
+        },
+      });
+      expect(result).to.be.an("object");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
+      expect(result.releaseDate).to.be.a("number");
+      expect(result.thumbnail).to.be.a("string");
+      expect(result.actors).to.be.a("Array");
+      expect(result.studio).to.equal("New Sensations");
     });
   });
 
