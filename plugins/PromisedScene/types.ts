@@ -197,6 +197,7 @@ export interface MyContext extends SceneContext {
     parseStudio: boolean;
     manualTouch: boolean;
     sceneDuplicationCheck: boolean;
+    alwaysUseSingleResult: boolean;
     source_settings: {
       actors: string;
       studios: string;

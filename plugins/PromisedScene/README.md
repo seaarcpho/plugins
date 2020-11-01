@@ -9,6 +9,7 @@ Ask questions and make sure scene parsing is correct
 | Name                    | Type    | Required | Description                                                                                                                                       |
 | ----------------------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | useTitleInSearch        | Boolean | false    | When searching TPDB: in auto search, if should use existing scene title. In manual user search, if should prompt user for title and use in search |
+| alwaysUseSingleResult   | Boolean | false    | When searching TPDB, if there is **only** 1 result, even if its title **doesn't** match the searched title, if should return that data            |
 | parseActor              | Boolean | true     | Try to find the Actor name in your database within the scenePath string                                                                           |
 | parseStudio             | Boolean | true     | Try to find the Studio name in your database within the scenePath string                                                                          |
 | manualTouch             | Boolean | true     | If true, will ask questions to manually answer and fill in details.  If false, will agressivly search and automatically populate the vault.       |
@@ -29,6 +30,7 @@ Ask questions and make sure scene parsing is correct
         "path": "./plugins/PromisedScene/main.ts",
         "args": {
           "useTitleInSearch": false,
+          "alwaysUseSingleResult": false,
           "parseActor": true,
           "parseStudio": true,
           "manualTouch": true,
@@ -63,6 +65,7 @@ plugins:
       path: ./plugins/PromisedScene/main.ts
       args:
         useTitleInSearch: false
+        alwaysUseSingleResult: false
         parseActor: true
         parseStudio: true
         manualTouch: true

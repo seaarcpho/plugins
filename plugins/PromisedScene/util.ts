@@ -209,7 +209,11 @@ export const matchSceneResultToSearch = (
 
       if (searchedTitle !== undefined) {
         if (matchTitleRegex.test(searchedTitle)) {
-          ctx.$log(`[PDS] MATCH:\t\tSUCCESS: ${JSON.stringify(scene.title)} did match`);
+          ctx.$log(
+            `[PDS] MATCH:\t\tSUCCESS: ${JSON.stringify(searchedTitle)} did match to ${JSON.stringify(
+              matchTitle
+            )}`
+          );
           return scene;
         }
       }

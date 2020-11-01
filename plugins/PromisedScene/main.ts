@@ -470,6 +470,8 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     extra: string;
   }>): Promise<SceneOutput | null> {
     async function mergeSearchResult(rawScene: SceneResult.SceneData): Promise<SceneOutput> {
+      checkSceneExistsInDb(ctx, rawScene.title);
+
       const sceneData = normalizeSceneResultData(rawScene);
 
       if (
@@ -528,20 +530,23 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       return null;
     }
 
-    const matchedScene = matchSceneResultToSearch(ctx, sceneList, searchActors, searchStudio);
-
-    if (matchedScene) {
-      checkSceneExistsInDb(ctx, matchedScene.title);
-      return mergeSearchResult(matchedScene);
-    }
-
-    $log("[PDS] ERR: Did not find any possible matches for primary search");
-
     if (!sceneList.length) {
-      $log("[PDS] MSG: Did not find any possible results for secondary selection");
+      $log("[PDS] ERR: Did not find any results from TPDB");
       return null;
     }
 
+    const matchedScene = matchSceneResultToSearch(ctx, sceneList, searchActors, searchStudio);
+
+    if (matchedScene) {
+      return mergeSearchResult(matchedScene);
+    } else if (args.alwaysUseSingleResult && sceneList.length === 1) {
+      $log(
+        `[PDS] MSG: Did not match results to scene, but only 1 result was found and "alwaysUseSingleResult" is enabled. Returning it`
+      );
+      return mergeSearchResult(sceneList[0]);
+    }
+
+    $log("[PDS] ERR: Did not match any of the titles from TPDB");
     $log("[PDS] MSG: Scene is possibly one of multiple search results");
 
     if (!args.manualTouch) {
