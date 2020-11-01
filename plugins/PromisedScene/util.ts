@@ -16,10 +16,10 @@ export const isPositiveAnswer = (answer = ""): boolean =>
   ["y", "yes"].includes(answer.toLowerCase());
 
 /**
- * @param timestamp - Time string to be converted to timestamp
- * @returns TODO:
+ * @param timestamp - Timestamp to be converted to date
+ * @returns a human friendly date string in YYYY-MM-DD
  */
-export function timeConverter(timestamp: number) {
+export function timestampToString(timestamp: number) {
   const dateNotFormatted = new Date(timestamp);
 
   let formattedString = dateNotFormatted.getFullYear() + "-";
@@ -170,6 +170,12 @@ export const matchSceneResultToSearch = (
   ctx.$log(`[PDS] SRCH: ${sceneList.length} results found`);
 
   for (const scene of sceneList) {
+    ctx.$log(
+      `[PDS] SRCH: Trying to match TPD title: ${JSON.stringify(
+        scene.title
+      )} --with--> ${JSON.stringify(ctx.sceneName)}`
+    );
+
     // It is better to search just the title.  We already have the actor and studio.
     let searchedTitle = stripStr(ctx.sceneName).toLowerCase();
 
@@ -188,7 +194,6 @@ export const matchSceneResultToSearch = (
     }
 
     // lets remove the Studio from the scenename and the searched title -- We should already know this
-    //$log("removing studio name from comparison strings...")
     if (studio) {
       searchedTitle = searchedTitle.replace(studio.toLowerCase(), "");
       searchedTitle = searchedTitle.replace(studio.toLowerCase().replace(" ", ""), "");
@@ -200,12 +205,6 @@ export const matchSceneResultToSearch = (
     searchedTitle = searchedTitle.trim();
 
     if (matchTitle) {
-      ctx.$log(
-        `[PDS] SRCH: Trying to match TPD title: ${JSON.stringify(
-          matchTitle
-        )} --with--> ${JSON.stringify(searchedTitle)}`
-      );
-
       const matchTitleRegex = new RegExp(matchTitle, "i");
 
       if (searchedTitle !== undefined) {
