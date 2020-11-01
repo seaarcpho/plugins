@@ -4,7 +4,7 @@ import { manualTouchChoices } from "../util";
 const context = require("../../../context");
 const { expect } = require("chai");
 
-describe("PromisedScene", () => {
+describe.only("PromisedScene", () => {
   describe("Handle all of the errors properly.", () => {
     it("Should fail with error:  Plugin used for unsupported event", async () => {
       let errord = false;

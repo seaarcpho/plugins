@@ -65,36 +65,31 @@ export const parseSceneActor = (ctx: MyContext): string | null => {
     });
 
   let actorHighScore = 5000;
-  if (allDbActors.length && Array.isArray(allDbActors)) {
-    allDbActors.forEach((person) => {
-      // This is a function that will see how many differences it will take to make the string match.
-      // The lowest amount of changes means that it is probably the closest match to what we need.
-      // lowest score wins :)
-      let foundAnAlias = false;
-      if (person.includes("alias:")) {
-        person = person.toString().replace("alias:", "").trim();
-        foundAnAlias = true;
-      }
-      const found = levenshtein(person.toString().toLowerCase(), cleanScenePath);
 
-      if (found < actorHighScore) {
-        actorHighScore = found;
+  allDbActors.forEach((person) => {
+    // This is a function that will see how many differences it will take to make the string match.
+    // The lowest amount of changes means that it is probably the closest match to what we need.
+    // lowest score wins :)
+    let foundAnAlias = false;
+    if (person.includes("alias:")) {
+      person = person.toString().replace("alias:", "").trim();
+      foundAnAlias = true;
+    }
+    const found = levenshtein(person.toString().toLowerCase(), cleanScenePath);
 
-        parsedDbActor = person;
-      }
-      if (foundAnAlias) {
-        ctx.$log(`[PDS] PARSE: SUCCESS Found Actor-Alias: ${JSON.stringify(person)}`);
-      } else {
-        ctx.$log(`[PDS] PARSE: SUCCESS Found Actor: ${JSON.stringify(person)}`);
-      }
-    });
-    ctx.$log(
-      `[PDS] PARSE: End of parse. Using "best match" Actor For Search: ${JSON.stringify(
-        parsedDbActor
-      )}`
-    );
-  }
+    if (found < actorHighScore) {
+      actorHighScore = found;
 
+      parsedDbActor = person;
+    }
+    if (foundAnAlias) {
+      ctx.$log(`[PDS] PARSE: SUCCESS Found Actor-Alias: ${JSON.stringify(person)}`);
+    } else {
+      ctx.$log(`[PDS] PARSE: SUCCESS Found Actor: ${JSON.stringify(person)}`);
+    }
+  });
+
+  ctx.$log(`[PDS] PARSE:\tUsing "best match" Actor For Search: ${JSON.stringify(parsedDbActor)}`);
   return parsedDbActor;
 };
 
@@ -166,41 +161,36 @@ export const parseSceneStudio = (ctx: MyContext): string | null => {
         }
       });
     });
-  // this is a debug option to se see how many studios were found by just doing a simple regex
-  // $log(GettingStudio);
+
   let studioHighScore = 5000;
-  if (allDbStudios.length && Array.isArray(allDbStudios)) {
-    let foundStudioAnAlias = false;
-    let instanceFoundStudioAnAlias = false;
-    allDbStudios.forEach((stud) => {
-      if (stud.includes("alias:")) {
-        stud = stud.toString().replace("alias:", "").trim();
-        instanceFoundStudioAnAlias = true;
-      }
+  let foundStudioAnAlias = false;
+  let instanceFoundStudioAnAlias = false;
 
-      // This is a function that will see how many differences it will take to make the string match.
-      // The lowest amount of changes means that it is probably the closest match to what we need.
-      // lowest score wins :)
-      const found = levenshtein(stud.toString().toLowerCase(), cleanScenePath);
+  allDbStudios.forEach((stud) => {
+    if (stud.includes("alias:")) {
+      stud = stud.toString().replace("alias:", "").trim();
+      instanceFoundStudioAnAlias = true;
+    }
 
-      if (found < studioHighScore) {
-        studioHighScore = found;
+    // This is a function that will see how many differences it will take to make the string match.
+    // The lowest amount of changes means that it is probably the closest match to what we need.
+    // lowest score wins :)
+    const found = levenshtein(stud.toString().toLowerCase(), cleanScenePath);
 
-        parsedDbStudio = stud;
-        foundStudioAnAlias = instanceFoundStudioAnAlias;
-      }
-      if (foundStudioAnAlias) {
-        ctx.$log(`[PDS] PARSE:\tSUCCESS: Found Studio-Alias: ${JSON.stringify(parsedDbStudio)}`);
-      } else {
-        ctx.$log(`[PDS] PARSE:\tSUCCESS: Found Studio: ${JSON.stringify(parsedDbStudio)}`);
-      }
-    });
+    if (found < studioHighScore) {
+      studioHighScore = found;
 
-    ctx.$log(
-      `[PDS] PARSE:\tUsing "best match" Studio For Search: ${JSON.stringify(parsedDbStudio)}`
-    );
-  }
+      parsedDbStudio = stud;
+      foundStudioAnAlias = instanceFoundStudioAnAlias;
+    }
+    if (foundStudioAnAlias) {
+      ctx.$log(`[PDS] PARSE:\tSUCCESS: Found Studio-Alias: ${JSON.stringify(parsedDbStudio)}`);
+    } else {
+      ctx.$log(`[PDS] PARSE:\tSUCCESS: Found Studio: ${JSON.stringify(parsedDbStudio)}`);
+    }
+  });
 
+  ctx.$log(`[PDS] PARSE:\tUsing "best match" Studio For Search: ${JSON.stringify(parsedDbStudio)}`);
   return parsedDbStudio;
 };
 

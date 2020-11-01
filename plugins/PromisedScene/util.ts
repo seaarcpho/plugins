@@ -167,11 +167,11 @@ export const matchSceneResultToSearch = (
   knownActors: string[],
   studio: string | undefined
 ): SceneResult.SceneData | null => {
-  ctx.$log(`[PDS] SRCH: ${sceneList.length} results found`);
+  ctx.$log(`[PDS] MATCH: ${sceneList.length} results found`);
 
   for (const scene of sceneList) {
     ctx.$log(
-      `[PDS] SRCH: Trying to match TPD title: ${JSON.stringify(
+      `[PDS] MATCH:\tTrying to match TPD title: ${JSON.stringify(
         scene.title
       )} --with--> ${JSON.stringify(ctx.sceneName)}`
     );
@@ -209,11 +209,14 @@ export const matchSceneResultToSearch = (
 
       if (searchedTitle !== undefined) {
         if (matchTitleRegex.test(searchedTitle)) {
+          ctx.$log(`[PDS] MATCH:\t\tSUCCESS: ${JSON.stringify(scene.title)} did match`);
           return scene;
         }
       }
     }
   }
+
+  ctx.$log(`[PDS] MATCH:\tERR: did not find any match`);
 
   return null;
 };
