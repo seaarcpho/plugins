@@ -38,6 +38,14 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
   // Checking all of the arguments are set in the plugin
 
+  if (!Object.hasOwnProperty.call(args, "useTitleInSearch")) {
+    $log("WARN: Missing useTitleInSearch in plugin args!");
+  }
+
+  if (!Object.hasOwnProperty.call(args, "alwaysUseSingleResult")) {
+    $log("WARN: Missing alwaysUseSingleResult in plugin args!");
+  }
+
   if (!Object.hasOwnProperty.call(args, "source_settings")) {
     $throw("ERR: Missing source_settings in plugin args");
   }
