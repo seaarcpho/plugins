@@ -161,6 +161,9 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     logResultObject(sceneData);
 
     if (!args?.manualTouch) {
+      if (sceneData.thumbnail) {
+        sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
+      }
       return sceneData;
     }
 
