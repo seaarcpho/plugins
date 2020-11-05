@@ -129,19 +129,15 @@ export class ChannelExtractor {
       return {};
     }
 
-    const imageUrls = buildImageUrls(entity);
+    const { logo } = buildImageUrls(entity);
 
-    if (!imageUrls.thumbnail) {
+    if (!logo) {
       return {};
     }
 
     const thumbnail = this.ctx.args.dry
-      ? `_would_have_created_${imageUrls.thumbnail}`
-      : await this.ctx.$createImage(
-          imageUrls.thumbnail,
-          this._getName().name || this.ctx.studioName,
-          true
-        );
+      ? `_would_have_created_${logo}`
+      : await this.ctx.$createImage(logo, this._getName().name || this.ctx.studioName, true);
 
     return {
       thumbnail,
