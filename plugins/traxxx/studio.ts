@@ -129,19 +129,15 @@ export class ChannelExtractor {
       return {};
     }
 
-    const imageUrls = buildImageUrls(entity);
+    const { logo } = buildImageUrls(entity);
 
-    if (!imageUrls.thumbnail) {
+    if (!logo) {
       return {};
     }
 
     const thumbnail = this.ctx.args.dry
-      ? `_would_have_created_${imageUrls.thumbnail}`
-      : await this.ctx.$createImage(
-          imageUrls.thumbnail,
-          this._getName().name || this.ctx.studioName,
-          true
-        );
+      ? `_would_have_created_${logo}`
+      : await this.ctx.$createImage(logo, this._getName().name || this.ctx.studioName, true);
 
     return {
       thumbnail,
@@ -215,9 +211,9 @@ export class ChannelExtractor {
     return { parent: parentName };
   }
 
-  getCustom(): Partial<{ "Traxxx Id": number; "Traxxx Type": string; Homepage: string }> {
+  getCustom(): Partial<{ "Traxxx Slug": string; "Traxxx Type": string; Homepage: string }> {
     return {
-      ["Traxxx Id"]: this.preferredEntity?.entity?.id,
+      ["Traxxx Slug"]: this.preferredEntity?.entity?.slug,
       ["Traxxx Type"]: this.preferredEntity?.entity?.type,
       Homepage: this.preferredEntity?.entity?.url,
     };
