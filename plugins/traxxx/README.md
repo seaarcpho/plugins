@@ -19,7 +19,7 @@ This plugin retrieves data from Traxxx.
     * `aliases` : aliases of the studio
     * `parent`: the parent channel/network
     * `custom` : custom fields:
-        * `Traxxx Slug` : the slug identifier (for use by plugins)
+        * `Traxxx Slug` : the matched id (for use by plugins)
         * `Traxxx Type` : the type of channel/network (for use by plugins)
         * `Homepage` : the Homepage of the studio
 
