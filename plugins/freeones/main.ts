@@ -238,7 +238,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     if (isBlacklisted("avatar")) return {};
     $log("Getting avatar...");
 
-    const imgEl = $(".profile-header .img-fluid");
+    const imgEl = $(`.dashboard-header img.img-fluid`);
     if (!imgEl) return {};
 
     const url = $(imgEl).attr("src");
