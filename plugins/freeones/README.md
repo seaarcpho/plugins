@@ -1,4 +1,4 @@
-## freeones 0.8.1
+## freeones 0.8.2
 
 by boi123212321, john4valor, pizzajohnny
 
