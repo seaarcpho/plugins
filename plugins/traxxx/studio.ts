@@ -215,9 +215,9 @@ export class ChannelExtractor {
     return { parent: parentName };
   }
 
-  getCustom(): Partial<{ "Traxxx Id": number; "Traxxx Type": string; Homepage: string }> {
+  getCustom(): Partial<{ "Traxxx Slug": string; "Traxxx Type": string; Homepage: string }> {
     return {
-      ["Traxxx Id"]: this.preferredEntity?.entity?.id,
+      ["Traxxx Slug"]: this.preferredEntity?.entity?.slug,
       ["Traxxx Type"]: this.preferredEntity?.entity?.type,
       Homepage: this.preferredEntity?.entity?.url,
     };
