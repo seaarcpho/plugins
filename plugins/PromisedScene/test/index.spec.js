@@ -1,10 +1,16 @@
 import plugin from "../main";
 import { manualTouchChoices } from "../util";
 
-const context = require("../../../context");
+const baseContext = require("../../../context");
 const { expect } = require("chai");
+const IMAGE_ID = "MOCK_IMAGE_ID";
 
-describe("PromisedScene", () => {
+const context = {
+  ...baseContext,
+  $createImage: () => IMAGE_ID,
+};
+
+describe.only("PromisedScene", () => {
   describe("Handle all of the errors properly.", () => {
     it("Should fail with error:  Plugin used for unsupported event", async () => {
       let errord = false;
@@ -215,7 +221,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -256,7 +262,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -289,7 +295,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -322,7 +328,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -369,7 +375,7 @@ describe("PromisedScene", () => {
         "Mia could not stop thinking of Riley, her tutor, and wondered if she would ever have the courage to expose her true feelings towards her. When Riley asked Mia to pose nude for her art final, Mia jumped at the chance. Nervously as she posed, Riley expressed that, out of fear, she never told Mia how she felt. That gave Mia the opening she had desired for so long."
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -415,7 +421,7 @@ describe("PromisedScene", () => {
         "Mia Malkova is one sexy all natural a babe. Sweet pair of tits, a tight pussy and a perfect round ass. She's fucking hot! Hands down! Mia shows off her cock sucking skills and then shows us how flexible she is. Ramon Nomar was fucking her good. Pounding that tight pussy good."
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("BANGBROS CLIPS");
     });
@@ -461,7 +467,7 @@ describe("PromisedScene", () => {
         "Mia Malkova is one sexy all natural a babe. Sweet pair of tits, a tight pussy and a perfect round ass. She's fucking hot! Hands down! Mia shows off her cock sucking skills and then shows us how flexible she is. Ramon Nomar was fucking her good. Pounding that tight pussy good."
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("BANGBROS CLIPS");
     });
@@ -505,7 +511,7 @@ describe("PromisedScene", () => {
         "Mia is pleasantly surprised by her husband’s growing excitement when she confesses to sharing a stolen kiss with another woman. Redhead Katy did not hesitate taking another hot steamy affair with Mia, while her husband seemed to enjoy himself a little too much."
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -586,7 +592,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -698,7 +704,7 @@ describe("PromisedScene", () => {
         "FRAG OUT! Today we have the beautiful Kira Perez playing video games in her spare time. But then, out of the corner of the room, Lil D steps in to check his step sister out. He hides in a corner and throws paper balls to annoy her. Kira's had it with Lil D always bothering her so she challenges him to a match. Loser has to do something they don't want to do. Of course Kira beats his ass and so Lil D has to eat her ass. He isn't feeling it but Kira on the other hand, she wants more than just a tongue up her ass. She tells Lil D to put his pants down because she has an appetite for some dick. The rest is history as Kira shows us again why she is the hottest gamer girl out there. Shit, I might subscribe if she starts streaming! Watch Kira ride Lil D until she can't take it anymore and that's when she goes turbo mode and tries out different positions. Kira does her best to stay away from the gulag for you so watch until the end, dammit!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("BANG BROS 18");
     });
@@ -745,7 +751,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("New Sensations");
     });
@@ -950,7 +956,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("New Sensations");
     });
@@ -997,7 +1003,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -1042,7 +1048,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
@@ -1115,7 +1121,7 @@ describe("PromisedScene", () => {
         "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
       );
       expect(result.releaseDate).to.be.a("number");
-      expect(result.thumbnail).to.be.a("string");
+      expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("New Sensations");
     });
