@@ -1,6 +1,6 @@
-## freeones 0.8.2
+## freeones 0.9.0
 
-by boi123212321, john4valor, pizzajohnny
+by boi123212321, john4valor, pizzajohnny, leadwolf
 
 Scrape data from freeones.com. Custom fields can only be named as follows (not case sensitive): Hair Color, Eye Color, Ethnicity, Height, Weight, Birthplace, Zodiac, Measurements, Chest Size, Waist Size, Hip Size, Cup Size, Bra Size, Bust Size
 
