@@ -25,10 +25,7 @@ function kgToLbs(kg: number): number {
   return Math.round((kg + Number.EPSILON) * 100) / 100;
 }
 
-async function search(
-  { $axios }: { $axios: Context["$axios"] },
-  query: string
-): Promise<string> {
+async function search({ $axios }: { $axios: Context["$axios"] }, query: string): Promise<string> {
   const url = `https://www.freeones.com/partial/subject`;
   return (
     await $axios.get(url, {
@@ -223,14 +220,17 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     }
   }
 
-  function scrapeText<T>(prop: string, selector: string): T | {} {
+  function scrapeText<T extends Record<string, string>>(
+    prop: string,
+    selector: string
+  ): Partial<T> {
     if (isBlacklisted(prop)) return {};
     $log(`Getting ${prop}...`);
 
     const el = $(selector);
     if (!el) return {};
 
-    return ({ [prop]: el.text() } as any) as T;
+    return { [prop]: el.text() } as T;
   }
 
   async function getAvatar() {
@@ -342,18 +342,32 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { sex: "Female", gender: "Female" };
   }
 
-  let tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[cdata-test="p_has_tattoos"]');
-  if (!tattooResult["tattoos"]) {
-    tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[data-test="p_has_tattoos"]');
-  }
-  const tattooText = tattooResult["tattoos"];
-  const hasTattoos = !!tattooText && !!tattooText.length && tattooText !== "No Tattoos";
+  function getTattoos() {
+    if (isBlacklisted("tattoos")) return {};
+    let tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[cdata-test="p_has_tattoos"]');
+    if (!tattooResult["tattoos"]) {
+      tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[data-test="p_has_tattoos"]');
+    }
+    const tattooText = tattooResult["tattoos"]?.trim();
+    if (!tattooText || /No Tattoos/i.test(tattooText)) {
+      return {};
+    }
 
-  const piercingText = scrapeText<{ piercings: string }>(
-    "piercings",
-    '[data-test="p_has_piercings"]'
-  )["piercings"];
-  const hasPiercings = !!piercingText && !!piercingText.length && piercingText !== "No Piercings";
+    return { tattoos: tattooText };
+  }
+
+  function getPiercings() {
+    if (isBlacklisted("piercings")) return {};
+    const piercingText = scrapeText<{ piercings: string }>(
+      "piercings",
+      '[data-test="p_has_piercings"]'
+    )["piercings"]?.trim();
+    if (!piercingText || /No Piercings/i.test(piercingText)) {
+      return {};
+    }
+
+    return { piercings: piercingText };
+  }
 
   const custom = {
     ...scrapeText<{ ["hair color"]: string }>(
@@ -377,6 +391,8 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     ...getBirthplace(),
     ...getZodiac(),
     ...getGender(),
+    ...getTattoos(),
+    ...getPiercings(),
   };
 
   const data = {
@@ -393,8 +409,8 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     if (custom["eye color"]) data.labels.push(`${custom["eye color"]} Eyes`);
     if (custom.ethnicity) data.labels.push(custom.ethnicity);
     if (custom.gender) data.labels.push("Female");
-    if (hasPiercings) data.labels.push("Piercings");
-    if (hasTattoos) data.labels.push("Tattoos");
+    if (custom["piercings"]) data.labels.push("Piercings");
+    if (custom["tattoos"]) data.labels.push("Tattoos");
   }
 
   if (args.dry === true) {

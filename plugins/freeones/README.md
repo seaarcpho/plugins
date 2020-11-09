@@ -6,13 +6,13 @@ Scrape data from freeones.com. Custom fields can only be named as follows (not c
 
 ### Arguments
 
-| Name                 | Type     | Required | Description                                                                                                                                                                                                |
-| -------------------- | -------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dry                  | Boolean  | false    | Whether to commit data changes                                                                                                                                                                             |
-| whitelist            | String[] | false    | Array of data fields to pick (possible values: 'nationality', 'zodiac', 'aliases', 'height', 'weight', 'avatar', 'bornOn', 'labels', 'hair color', 'eye color', 'ethnicity', 'birthplace', 'measurements') |
-| blacklist            | String[] | false    | Array of data fields to omit (for values see whitelist)                                                                                                                                                    |
-| useImperial          | Boolean  | false    | Use imperial units for height and weight                                                                                                                                                                   |
-| useAvatarAsThumbnail | Boolean  | false    | Use the discovered Actor Avatar as the Actor Thumbnail image                                                                                                                                               |
+| Name                 | Type     | Required | Description                                                                                                                                                                                                                        |
+| -------------------- | -------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dry                  | Boolean  | false    | Whether to commit data changes                                                                                                                                                                                                     |
+| whitelist            | String[] | false    | Array of data fields to pick (possible values: 'nationality', 'zodiac', 'aliases', 'height', 'weight', 'avatar', 'bornOn', 'labels', 'hair color', 'eye color', 'ethnicity', 'birthplace', 'measurements', 'tattoos', 'piercings') |
+| blacklist            | String[] | false    | Array of data fields to omit (for values see whitelist)                                                                                                                                                                            |
+| useImperial          | Boolean  | false    | Use imperial units for height and weight                                                                                                                                                                                           |
+| useAvatarAsThumbnail | Boolean  | false    | Use the discovered Actor Avatar as the Actor Thumbnail image                                                                                                                                                                       |
 
 ### Example installation with default arguments
 

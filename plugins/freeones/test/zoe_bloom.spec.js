@@ -34,6 +34,8 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Left Nostril",
+      tattoos: "Yes",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -64,6 +66,8 @@ describe("freeones", () => {
       zodiac: "Aries",
       gender: "Female",
       sex: "Female",
+      piercings: "Left Nostril",
+      tattoos: "Yes",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
