@@ -162,7 +162,12 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
     if (!args?.manualTouch) {
       if (sceneData.thumbnail) {
-        sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
+        try {
+          sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
+        } catch (err) {
+          delete sceneData.thumbnail;
+        }
+        
       }
       return sceneData;
     }
@@ -179,7 +184,11 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
     if (isPositiveAnswer(resultsConfirmation)) {
       if (sceneData.thumbnail) {
-        sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
+        try {
+          sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
+        } catch (err) {
+          delete sceneData.thumbnail;
+        }
       }
 
       return sceneData;
