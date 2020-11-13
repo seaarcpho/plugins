@@ -50,7 +50,7 @@ class Measurements {
   waist?: number;
   hip?: number;
 
-  static fromString(str) {
+  static fromString(str): Measurements | null {
     const [bra, waist, hip] = str.split("-");
     if (bra && waist && hip) {
       const measurements = new Measurements();
@@ -85,7 +85,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   const whitelist = (args.whitelist || []).map(lowercase);
   if (whitelist.length) $log(`Whitelist defined, will only return: ${whitelist.join(", ")}...`);
 
-  function isBlacklisted(prop) {
+  function isBlacklisted(prop): boolean {
     if (whitelist.length) {
       return !whitelist.includes(lowercase(prop));
     }
@@ -108,26 +108,28 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     $log("Will use the Avatar as the Actor Thumbnail...");
   }
 
-  let firstResult: cheerio.Cheerio | undefined;
+  let firstResult: cheerio.Cheerio;
   try {
     firstResult = await getFirstSearchResult(ctx, actorName);
   } catch (error) {
     $throw(error.message);
+    return {}; // return for type compatibility
   }
 
   if (!firstResult) $throw(`${actorName} not found!`);
 
-  const href = (firstResult as cheerio.Cheerio).attr("href");
+  const href = firstResult.attr("href");
 
-  let html: string | undefined;
+  let html: string;
   try {
     html = (await $axios.get(`https://freeones.com${href}/profile`)).data;
   } catch (error) {
     $throw(error.message);
+    return {}; // return for type compatibility
   }
   const $ = $cheerio.load(html || "");
 
-  function getNationality() {
+  function getNationality(): Partial<{ nationality: string }> {
     if (isBlacklisted("nationality")) return {};
     $log("Getting nationality...");
 
@@ -147,7 +149,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     };
   }
 
-  function getHeight() {
+  function getHeight(): Partial<{ height: number }> {
     if (isBlacklisted("height")) return {};
     $log("Getting height...");
 
@@ -165,7 +167,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { height: cmToFt(height) };
   }
 
-  function getWeight() {
+  function getWeight(): Partial<{ weight: number }> {
     if (isBlacklisted("weight")) return {};
     $log("Getting weight...");
 
@@ -183,7 +185,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { weight: kgToLbs(weight) };
   }
 
-  function getZodiac() {
+  function getZodiac(): Partial<{ zodiac: string }> {
     if (isBlacklisted("zodiac")) return {};
     $log("Getting zodiac sign...");
 
@@ -194,7 +196,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { zodiac };
   }
 
-  function getBirthplace() {
+  function getBirthplace(): Partial<{ birthplace: string }> {
     if (isBlacklisted("birthplace")) return {};
     $log("Getting birthplace...");
 
@@ -234,7 +236,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { [prop]: el.text() } as T;
   }
 
-  async function getAvatar() {
+  async function getAvatar(): Promise<Partial<{ avatar: string; thumbnail: string }>> {
     if (args.dry) return {};
     if (isBlacklisted("avatar")) return {};
     $log("Getting avatar...");
@@ -258,7 +260,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     }
   }
 
-  function getAge() {
+  function getAge(): Partial<{ bornOn: number }> {
     if (isBlacklisted("bornOn")) return {};
     $log("Getting age...");
 
@@ -280,7 +282,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     }
   }
 
-  function getAlias() {
+  function getAlias(): Partial<{ aliases: string[] }> {
     if (isBlacklisted("aliases")) return {};
     $log("Getting aliases...");
 
@@ -293,7 +295,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { aliases };
   }
 
-  function scrapeMeasurements() {
+  function scrapeMeasurements(): Measurements | null {
     const measurementParts: string[] = [];
     $('[data-test="p-measurements"] .text-underline-always').each(function (
       this: cheerio.Element,
@@ -308,25 +310,29 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   const measurements = scrapeMeasurements();
 
-  function getMeasurements() {
+  function getMeasurements(): Partial<{ measurements: string }> {
     if (isBlacklisted("measurements")) return {};
     $log("Getting measurements...");
     return measurements ? { measurements: measurements.toString() } : {};
   }
 
-  function getWaistSize() {
+  function getWaistSize(): Partial<{ ["waist size"]: number }> {
     if (isBlacklisted("measurements")) return {};
     $log("Getting waist size...");
     return measurements ? { "waist size": measurements.waist } : {};
   }
 
-  function getHipSize() {
+  function getHipSize(): Partial<{ ["hip size"]: number }> {
     if (isBlacklisted("measurements")) return {};
     $log("Getting hip size...");
     return measurements ? { "hip size": measurements.hip } : {};
   }
 
-  function getBraSize() {
+  function getBraSize(): Partial<{
+    ["cup size"]: string;
+    ["bra size"]: string;
+    ["bust size"]: number;
+  }> {
     if (isBlacklisted("measurements")) return {};
     $log("Getting bra/cup/bust size...");
     return measurements
@@ -338,18 +344,18 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
       : {};
   }
 
-  function getGender() {
+  function getGender(): Partial<{ sex: string; gender: string }> {
     if (isBlacklisted("gender")) return {};
     return { sex: "Female", gender: "Female" };
   }
 
-  function getTattoos() {
+  function getTattoos(): Partial<{ tattoos: string }> {
     if (isBlacklisted("tattoos")) return {};
     let tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[cdata-test="p_has_tattoos"]');
     if (!tattooResult["tattoos"]) {
       tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[data-test="p_has_tattoos"]');
     }
-    const tattooText = tattooResult["tattoos"]?.trim();
+    const tattooText = tattooResult["tattoos"] ? tattooResult["tattoos"].trim() : "";
     if (!tattooText || /No Tattoos/i.test(tattooText)) {
       return {};
     }
@@ -357,20 +363,21 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { tattoos: tattooText };
   }
 
-  function getPiercings() {
+  function getPiercings(): Partial<{ piercings: string | string[] }> {
     if (isBlacklisted("piercings")) return {};
-    const piercingText = scrapeText<{ piercings: string }>(
+    const res: { piercings?: string } = scrapeText<{ piercings: string }>(
       "piercings",
       '[data-test="p_has_piercings"]'
-    )["piercings"]?.trim();
+    );
+    const piercingText = res["piercings"]?.trim();
     if (!piercingText || /No Piercings/i.test(piercingText)) {
       return {};
     }
 
-    if (args.piercingsType === 'array') {
+    if (args.piercingsType === "array") {
       return { piercings: piercingText.split(";").map((s) => s.trim()) };
     }
-    
+
     return { piercings: piercingText };
   }
 
@@ -400,13 +407,13 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     ...getPiercings(),
   };
 
-  const data = {
+  const data: ActorOutput = {
     ...getNationality(),
     ...getAge(),
     ...getAlias(),
     ...(await getAvatar()),
     custom,
-  } as ActorOutput;
+  };
 
   if (!isBlacklisted("labels")) {
     data.labels = [];
