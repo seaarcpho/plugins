@@ -52,9 +52,9 @@ describe("freeones", () => {
     expect(result.labels).to.not.contain("Tattoos");
   });
 
-  it("Search 'Whitney Wright, piercings as array'", async () => {
+  it.only("Search 'Whitney Wright, piercings as array'", async () => {
     console.log("Fetching freeones.com...");
-    const result = await searchWhitney({ piercings: "array" });
+    const result = await searchWhitney({ piercingsType: "array" });
     expect(result.custom).to.deep.equal({
       "hair color": "Brown",
       "eye color": "Hazel",
