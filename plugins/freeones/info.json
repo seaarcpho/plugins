@@ -39,6 +39,13 @@
       "required": false,
       "default": false,
       "description": "Use the discovered Actor Avatar as the Actor Thumbnail image"
+    },
+    {
+      "name": "piercingsType",
+      "type": "'string' | 'array'",
+      "required": false,
+      "default": "string",
+      "description": "How to return the piercings. Use 'array' if your custom field is a select or multi select"
     }
   ]
 }

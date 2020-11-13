@@ -8,6 +8,7 @@ interface MyContext extends ActorContext {
     dry?: boolean;
     useImperial?: boolean;
     useAvatarAsThumbnail?: boolean;
+    piercingsType?: "string" | "array";
   };
 }
 
@@ -366,6 +367,10 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
       return {};
     }
 
+    if (args.piercingsType === 'array') {
+      return { piercings: piercingText.split(";").map((s) => s.trim()) };
+    }
+    
     return { piercings: piercingText };
   }
 
