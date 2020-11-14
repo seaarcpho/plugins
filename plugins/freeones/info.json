@@ -46,6 +46,13 @@
       "required": false,
       "default": "string",
       "description": "How to return the piercings. Use 'array' if your custom field is a select or multi select"
+    },
+    {
+      "name": "tattoosType",
+      "type": "'string' | 'array'",
+      "required": false,
+      "default": "string",
+      "description": "How to return the tattoos. Use 'array' if your custom field is a select or multi select"
     }
   ]
 }

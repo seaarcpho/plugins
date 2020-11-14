@@ -14,6 +14,7 @@ Scrape data from freeones.com. Custom fields can only be named as follows (not c
 | useImperial          | Boolean            | false    | Use imperial units for height and weight                                                                                                                                                                                           |
 | useAvatarAsThumbnail | Boolean            | false    | Use the discovered Actor Avatar as the Actor Thumbnail image                                                                                                                                                                       |
 | piercingsType        | 'string' | 'array' | false    | How to return the piercings. Use 'array' if your custom field is a select or multi select                                                                                                                                          |
+| tattoosType          | 'string' | 'array' | false    | How to return the tattoos. Use 'array' if your custom field is a select or multi select                                                                                                                                            |
 
 ### Example installation with default arguments
 
@@ -31,7 +32,8 @@ Scrape data from freeones.com. Custom fields can only be named as follows (not c
           "blacklist": [],
           "useImperial": false,
           "useAvatarAsThumbnail": false,
-          "piercingsType": "string"
+          "piercingsType": "string",
+          "tattoosType": "string"
         }
       }
     },
@@ -62,6 +64,7 @@ plugins:
         useImperial: false
         useAvatarAsThumbnail: false
         piercingsType: string
+        tattoosType: string
   events:
     actorCreated:
       - freeones

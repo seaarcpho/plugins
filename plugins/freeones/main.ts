@@ -9,6 +9,7 @@ interface MyContext extends ActorContext {
     useImperial?: boolean;
     useAvatarAsThumbnail?: boolean;
     piercingsType?: "string" | "array";
+    tattoosType?: "string" | "array";
   };
 }
 
@@ -349,7 +350,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { sex: "Female", gender: "Female" };
   }
 
-  function getTattoos(): Partial<{ tattoos: string }> {
+  function getTattoos(): Partial<{ tattoos: string | string[] }> {
     if (isBlacklisted("tattoos")) return {};
     let tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[cdata-test="p_has_tattoos"]');
     if (!tattooResult["tattoos"]) {
@@ -358,6 +359,10 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     const tattooText = tattooResult["tattoos"] ? tattooResult["tattoos"].trim() : "";
     if (!tattooText || /No Tattoos/i.test(tattooText)) {
       return {};
+    }
+
+    if (args.tattoosType === "array") {
+      return { tattoos: tattooText.split(";").map((s) => s.trim()) };
     }
 
     return { tattoos: tattooText };
