@@ -38,6 +38,40 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
+    });
+    expect(result.nationality).to.equal("US");
+    expect(result.bornOn).to.be.a("number");
+    expect(result.avatar).to.be.a("string");
+    expect(result.thumbnail).to.be.undefined;
+    expect(result.labels).to.have.length.greaterThan(0);
+    expect(result.labels).to.contain("Brown Hair");
+    expect(result.labels).to.contain("Hazel Eyes");
+    expect(result.labels).to.contain("Caucasian");
+    expect(result.labels).to.contain("Piercings");
+    expect(result.labels).to.not.contain("Tattoos");
+  });
+
+  it("Search 'Whitney Wright, piercings as array'", async () => {
+    console.log("Fetching freeones.com...");
+    const result = await searchWhitney({ piercingsType: "array" });
+    expect(result.custom).to.deep.equal({
+      "hair color": "Brown",
+      "eye color": "Hazel",
+      ethnicity: "Caucasian",
+      height: 168,
+      weight: 57,
+      birthplace: "Oklahoma City, OK",
+      zodiac: "Virgo",
+      measurements: "32B-25-36",
+      "waist size": 25,
+      "hip size": 36,
+      "cup size": "B",
+      "bra size": "32B",
+      "bust size": 32,
+      gender: "Female",
+      sex: "Female",
+      piercings: ["Navel", "Left Ear, Vch"],
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -93,6 +127,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -126,6 +161,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -160,6 +196,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -193,6 +230,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -226,6 +264,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -259,6 +298,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -293,6 +333,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -327,6 +368,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -361,6 +403,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -390,6 +433,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.be.undefined;
     expect(result.bornOn).to.be.a("number");
@@ -425,6 +469,7 @@ describe("freeones", () => {
       "bust size": 32,
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -454,6 +499,7 @@ describe("freeones", () => {
       zodiac: "Virgo",
       gender: "Female",
       sex: "Female",
+      piercings: "Navel; Left Ear, Vch",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");

@@ -35,6 +35,7 @@ describe("freeones", () => {
       "bra size": "34C",
       gender: "Female",
       sex: "Female",
+      piercings: "Navel",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -67,6 +68,7 @@ describe("freeones", () => {
       zodiac: "Virgo",
       gender: "Female",
       sex: "Female",
+      piercings: "Navel",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
