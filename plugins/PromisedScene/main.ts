@@ -165,6 +165,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         try {
           sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
         } catch (err) {
+          $log("Could not download scene thumnail")
           delete sceneData.thumbnail;
         }
         
@@ -187,6 +188,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         try {
           sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
         } catch (err) {
+          $log("Could not download scene thumnail")
           delete sceneData.thumbnail;
         }
       }
