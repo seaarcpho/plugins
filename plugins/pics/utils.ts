@@ -47,19 +47,14 @@ export async function scanFolder(
         return;
       }
 
-      // The file is a match if both the query and the searchTerm are found
-      const itemsToMatch: MatchSource[] = [
-        {
-          _id: scrapeDefinition.prop,
-          name: query,
-        },
-      ];
-      if (scrapeDefinition.searchTerm) {
-        itemsToMatch.push({
-          _id: scrapeDefinition.prop,
-          name: scrapeDefinition.searchTerm,
-        });
-      }
+      // The file is a match if both the query and all searchTerms are found
+      // while no blacklisted terms are found
+      const itemsToMatch: MatchSource[] = [query, ...(scrapeDefinition.searchTerms || [])].map(
+        (el) => ({
+          _id: `${scrapeDefinition.prop} ${el}`,
+          name: el,
+        })
+      );
       const blacklistedItems: MatchSource[] = (scrapeDefinition.blacklistTerms || []).map(
         (str) => ({
           _id: str,

@@ -8,74 +8,26 @@ import { MovieContext } from "./../../types/movie";
 
 const baseScrapeDefinition = zod.object({
   path: zod.string().refine((val) => val && val.trim().length, "The path cannot be empty"),
-  searchTerm: zod.string().optional(),
+  searchTerms: zod.array(zod.string()).optional(),
   blacklistTerms: zod.array(zod.string()).optional(),
   getAllExtra: zod.boolean().optional(),
 });
 
-const ActorConf = baseScrapeDefinition
-  .extend({
-    prop: zod.enum(["thumbnail", "altThumbnail", "avatar", "hero", "extra"]),
-  })
-  .refine(
-    ({ prop, searchTerm }) => {
-      if (prop !== "extra" && !searchTerm) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: '"searchTerm" is required for non "extra" images',
-    }
-  );
+const ActorConf = baseScrapeDefinition.extend({
+  prop: zod.enum(["thumbnail", "altThumbnail", "avatar", "hero", "extra"]),
+});
 
-const SceneConf = baseScrapeDefinition
-  .extend({
-    prop: zod.enum(["thumbnail", "extra"]),
-  })
-  .refine(
-    ({ prop, searchTerm }) => {
-      if (prop !== "extra" && !searchTerm) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: '"searchTerm" is required for non "extra" images',
-    }
-  );
+const SceneConf = baseScrapeDefinition.extend({
+  prop: zod.enum(["thumbnail", "extra"]),
+});
 
-const MovieConf = baseScrapeDefinition
-  .extend({
-    prop: zod.enum(["backCover", "frontCover", "spineCover", "extra"]),
-  })
-  .refine(
-    ({ prop, searchTerm }) => {
-      if (prop !== "extra" && !searchTerm) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: '"searchTerm" is required for non "extra" images',
-    }
-  );
+const MovieConf = baseScrapeDefinition.extend({
+  prop: zod.enum(["backCover", "frontCover", "spineCover", "extra"]),
+});
 
-const StudioConf = baseScrapeDefinition
-  .extend({
-    prop: zod.enum(["thumbnail", "extra"]),
-  })
-  .refine(
-    ({ prop, searchTerm }) => {
-      if (prop !== "extra" && !searchTerm) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: '"searchTerm" is required for non "extra" images',
-    }
-  );
+const StudioConf = baseScrapeDefinition.extend({
+  prop: zod.enum(["thumbnail", "extra"]),
+});
 
 export const ArgsSchema = zod.object({
   dry: zod.boolean().optional(),

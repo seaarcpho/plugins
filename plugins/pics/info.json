@@ -49,11 +49,11 @@
       "description": "The path in which to search for this picture"
     },
     {
-      "name": "actors.[0].searchTerm",
-      "type": "string",
-      "required": true,
-      "default": "thumbnail",
-      "description": "The extra string that the picture path should contain. Does not need a value when the prop is `'extra'`"
+      "name": "actors.[0].searchTerms",
+      "type": "string[]",
+      "required": false,
+      "default": ["thumbnail"],
+      "description": "Extra terms that the picture path should contain"
     },
     {
       "name": "actors.[0].blacklistTerms",
@@ -98,11 +98,11 @@
       "description": "The path in which to search for this picture"
     },
     {
-      "name": "scenes.[0].searchTerm",
-      "type": "string",
-      "required": true,
-      "default": "thumbnail",
-      "description": "The extra string that the picture path should contain. Does not need a value when the prop is `'extra'`"
+      "name": "scenes.[0].searchTerms",
+      "type": "string[]",
+      "required": false,
+      "default": ["thumbnail"],
+      "description": "Extra terms that the picture path should contain"
     },
     {
       "name": "scenes.[0].blacklistTerms",
@@ -147,11 +147,11 @@
       "description": "The path in which to search for this picture"
     },
     {
-      "name": "movies.[0].searchTerm",
-      "type": "string",
-      "required": true,
-      "default": "thumbnail",
-      "description": "The extra string that the picture path should contain. Does not need a value when the prop is `'extra'`"
+      "name": "movies.[0].searchTerms",
+      "type": "string[]",
+      "required": false,
+      "default": ["thumbnail"],
+      "description": "Extra terms that the picture path should contain"
     },
     {
       "name": "movies.[0].blacklistTerms",
@@ -196,11 +196,11 @@
       "description": "The path in which to search for this picture"
     },
     {
-      "name": "studios.[0].searchTerm",
-      "type": "string",
-      "required": true,
-      "default": "thumbnail",
-      "description": "The extra string that the picture path should contain. Does not need a value when the prop is `'extra'`"
+      "name": "studios.[0].searchTerms",
+      "type": "string[]",
+      "required": false,
+      "default": ["thumbnail"],
+      "description": "Extra terms that the picture path should contain"
     },
     {
       "name": "studios.[0].blacklistTerms",
