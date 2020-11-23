@@ -3,7 +3,7 @@ import { MovieContext, MovieOutput } from "../../types/movie";
 import { SceneContext } from "../../types/scene";
 import { StudioContext } from "../../types/studio";
 import { MyContext, ScrapeDefinition } from "../pics/types";
-import { executeScape, validateArgs } from "./utils";
+import { executeScape, entries, validateArgs } from "./utils";
 
 interface ScrapeEventDefinition {
   events: string[];
@@ -73,13 +73,28 @@ module.exports = async (
     return {}; // return for type compatibility
   }
 
-  const result = await executeScape(ctx, query, scrapeDefs);
+  const scrapeResult = await executeScape(ctx, query, scrapeDefs);
 
   if (ctx.args?.dry) {
     ctx.$log("[PICS] MSG: Is 'dry' mode, would've returned:");
-    ctx.$log(result);
+    ctx.$log(scrapeResult);
     return {};
   }
 
-  return result;
+  const finalResult: Partial<
+    {
+      [key in Exclude<ScrapeDefinition["prop"], "extra">]: string;
+    }
+  > = {};
+  for (const [prop, image] of entries(scrapeResult)) {
+    if (prop !== "extra" && typeof image === "string") {
+      finalResult[prop] = await ctx.$createLocalImage(image, `${query} (${prop})`, true);
+    } else {
+      for (const extraImage of image as string[]) {
+        await ctx.$createLocalImage(extraImage, `${query} (extra)`, false);
+      }
+    }
+  }
+
+  return finalResult;
 };

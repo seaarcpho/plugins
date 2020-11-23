@@ -3,7 +3,7 @@ import path from "path";
 
 const context = {
   ...baseContext,
-  $createLocalImage: (path) => path,
+  $createLocalImage: (path, name) => `${path} ${name}`,
 };
 
 const baseArgs = {
@@ -126,7 +126,10 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+        "001 (thumbnail)"
+      ),
     },
   },
   {
@@ -146,7 +149,10 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: path.resolve("./plugins/pics/test/fixtures/image002.gif"),
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/image002.gif"),
+        "002 (thumbnail)"
+      ),
     },
   },
   {
@@ -166,7 +172,10 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: path.resolve("./plugins/pics/test/fixtures/deep/image004-dummy.jpg"),
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/deep/image004-dummy.jpg"),
+        "004 (thumbnail)"
+      ),
     },
   },
   {
@@ -223,7 +232,10 @@ export const actorFixtures = [
       },
     },
     result: {
-      hero: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+      hero: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+        "001 (hero)"
+      ),
     },
   },
   {
@@ -263,7 +275,10 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
+        "005 (thumbnail)"
+      ),
     },
   },
   {
@@ -283,7 +298,10 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: path.resolve("./plugins/pics/test/fixtures/deep/image006.gif"),
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/deep/image006.gif"),
+        "006 (thumbnail)"
+      ),
     },
   },
   {
@@ -322,7 +340,10 @@ export const actorFixtures = [
       },
     },
     result: {
-      hero: path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
+      hero: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
+        "005 (hero)"
+      ),
     },
   },
   {
@@ -422,7 +443,10 @@ export const sceneFixtures = [
       },
     },
     result: {
-      thumbnail: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+        "001 (thumbnail)"
+      ),
     },
   },
   {
@@ -464,7 +488,10 @@ export const movieFixtures = [
       },
     },
     result: {
-      backCover: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+      backCover: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+        "001 (backCover)"
+      ),
     },
   },
   {
@@ -503,7 +530,10 @@ export const movieFixtures = [
       },
     },
     result: {
-      frontCover: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+      frontCover: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+        "001 (frontCover)"
+      ),
     },
   },
   {
@@ -542,7 +572,10 @@ export const movieFixtures = [
       },
     },
     result: {
-      spineCover: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+      spineCover: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+        "001 (spineCover)"
+      ),
     },
   },
   {
@@ -583,7 +616,10 @@ export const studioFixtures = [
       },
     },
     result: {
-      thumbnail: path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
+        "001 (thumbnail)"
+      ),
     },
   },
   {

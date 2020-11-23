@@ -9,7 +9,7 @@ const {
   actorCreateImageFixtures,
 } = require("./fixtures/main.fixtures");
 
-describe("pics", () => {
+describe.only("pics", () => {
   describe("basic", () => {
     // eslint-disable-next-line mocha/no-setup-in-describe
     basicFixtures.forEach((fixture, fixtureIndex) => {

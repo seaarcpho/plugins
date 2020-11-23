@@ -10,9 +10,15 @@ export const validateArgs = (args): true | Error => {
   return true;
 };
 
-export interface ScrapeResult {
-  [imageProp: string]: string;
-}
+export type ScrapeResult = Partial<
+  {
+    [key in Exclude<ScrapeDefinition["prop"], "extra">]: string;
+  }
+> & { extra: string[] };
+
+type SingleScrapeResult = {
+  [key in Exclude<ScrapeDefinition["prop"], "extra">]: string;
+} & { extra: string };
 
 const IMAGE_EXTENSIONS = [".jpg", ".png", ".jpeg", ".gif"];
 
@@ -20,7 +26,7 @@ export async function scanFolder(
   ctx: MyContext,
   query: string,
   scrapeDefinition: ScrapeDefinition
-): Promise<Partial<ScrapeResult>> {
+): Promise<Partial<SingleScrapeResult>> {
   const queryPath = ctx.$path.resolve(scrapeDefinition.path);
 
   ctx.$log(
@@ -72,21 +78,8 @@ export async function scanFolder(
     `[PICS] MSG: Found "${scrapeDefinition.prop}" picture for "${query}": "${foundImagePath}"`
   );
 
-  const imageId = ctx.args.dry
-    ? `_would_have_created_image_${foundImagePath}`
-    : await ctx.$createLocalImage(
-        foundImagePath,
-        `${query} ${scrapeDefinition.prop}`,
-        scrapeDefinition.prop !== "extra"
-      );
-
-  if (scrapeDefinition.prop === "extra") {
-    // Extra images don't need to be returned
-    return {};
-  }
-
   return {
-    [scrapeDefinition.prop]: imageId,
+    [scrapeDefinition.prop]: foundImagePath,
   };
 }
 
@@ -101,12 +94,17 @@ export async function executeScape(
   query: string,
   scrapeDefinitions: ScrapeDefinition[]
 ): Promise<ScrapeResult> {
-  let result: ScrapeResult = {};
+  let result: ScrapeResult = { extra: [] };
 
   const scrapePromises = scrapeDefinitions.map((definition) =>
     scanFolder(ctx, query, definition)
       .then((scanRes) => {
-        Object.assign(result, scanRes);
+        const image = scanRes[definition.prop];
+        if (definition.prop !== "extra" && image) {
+          result[definition.prop] = image;
+        } else if (scanRes.extra) {
+          result.extra.push(scanRes.extra);
+        }
       })
       .catch((err) => {
         ctx.$log(err);
@@ -119,3 +117,5 @@ export async function executeScape(
 
   return result;
 }
+
+export const entries = Object.entries as <T>(o: T) => [Extract<keyof T, string>, T[keyof T]][];
