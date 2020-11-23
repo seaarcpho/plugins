@@ -407,6 +407,27 @@ export const actorCreateImageFixtures = [
     createImageCallCount: 2,
   },
   {
+    name: "Finds restricted extra, does not return in result",
+    context: {
+      ...context,
+      actorName: "001",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "extra",
+            searchTerm: "001",
+            path: "./plugins/pics/test/fixtures",
+            getAllExtra: true,
+            blacklistTerms: ["png"],
+          },
+        ],
+      },
+    },
+    result: {},
+    createImageCallCount: 1,
+  },
+  {
     name: "Should find extra, allows empty searchTerm",
     context: {
       ...context,

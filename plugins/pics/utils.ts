@@ -60,11 +60,18 @@ export async function scanFolder(
           name: scrapeDefinition.searchTerm,
         });
       }
+      const blacklistedItems: MatchSource[] = (scrapeDefinition.blacklistTerms || []).map(
+        (str) => ({
+          _id: str,
+          name: str,
+        })
+      );
 
-      const allSearchTermsFound =
+      const isMatch =
         ctx.$matcher.filterMatchingItems(itemsToMatch, imagePath, (el) => [el.name]).length ===
-        itemsToMatch.length;
-      if (!allSearchTermsFound) {
+          itemsToMatch.length &&
+        !ctx.$matcher.filterMatchingItems(blacklistedItems, imagePath, (el) => [el.name]).length;
+      if (!isMatch) {
         return;
       }
 

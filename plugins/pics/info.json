@@ -53,7 +53,14 @@
       "type": "string",
       "required": true,
       "default": "thumbnail",
-      "description": "The extra string that the picture path should contain. Does not need a value for when the prop is `'extra'`. Does not need a value for when the prop is `'extra'`"
+      "description": "The extra string that the picture path should contain. Does not need a value when the prop is `'extra'`"
+    },
+    {
+      "name": "actors.[0].blacklistTerms",
+      "type": "string",
+      "required": false,
+      "default": [],
+      "description": "Terms that should not be found in an image path"
     },
     {
       "name": "actors.[0].getAllExtra",
@@ -95,7 +102,14 @@
       "type": "string",
       "required": true,
       "default": "thumbnail",
-      "description": "The extra string that the picture path should contain. Does not need a value for when the prop is `'extra'`"
+      "description": "The extra string that the picture path should contain. Does not need a value when the prop is `'extra'`"
+    },
+    {
+      "name": "scenes.[0].blacklistTerms",
+      "type": "string",
+      "required": false,
+      "default": [],
+      "description": "Terms that should not be found in an image path"
     },
     {
       "name": "scenes.[0].getAllExtra",
@@ -137,7 +151,14 @@
       "type": "string",
       "required": true,
       "default": "thumbnail",
-      "description": "The extra string that the picture path should contain. Does not need a value for when the prop is `'extra'`"
+      "description": "The extra string that the picture path should contain. Does not need a value when the prop is `'extra'`"
+    },
+    {
+      "name": "movies.[0].blacklistTerms",
+      "type": "string",
+      "required": false,
+      "default": [],
+      "description": "Terms that should not be found in an image path"
     },
     {
       "name": "movies.[0].getAllExtra",
@@ -179,7 +200,14 @@
       "type": "string",
       "required": true,
       "default": "thumbnail",
-      "description": "The extra string that the picture path should contain. Does not need a value for when the prop is `'extra'`"
+      "description": "The extra string that the picture path should contain. Does not need a value when the prop is `'extra'`"
+    },
+    {
+      "name": "studios.[0].blacklistTerms",
+      "type": "string",
+      "required": false,
+      "default": [],
+      "description": "Terms that should not be found in an image path"
     },
     {
       "name": "studios.[0].getAllExtra",

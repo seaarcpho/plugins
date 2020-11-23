@@ -40,6 +40,7 @@ Example with multiple configurations & fallback:
             {
               "prop": "extra",
               "path": "./path/to/all/extra/pictures",
+              "blacklistTerms": ["thumbnail", "hero", "avatar"],
               "getAllExtra": true
             }
           ]
