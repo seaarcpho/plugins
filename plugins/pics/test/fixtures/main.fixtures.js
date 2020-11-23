@@ -1,9 +1,16 @@
 import baseContext from "../../../../context";
-import path from 'path';
+import path from "path";
 
 const context = {
   ...baseContext,
   $createLocalImage: (path) => path,
+};
+
+const baseArgs = {
+  actors: [],
+  scenes: [],
+  movies: [],
+  studios: [],
 };
 
 export const basicFixtures = [
@@ -30,9 +37,13 @@ export const basicFixtures = [
       ...context,
       actorName: "",
       args: {
-        actors: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     errored: true,
@@ -43,12 +54,30 @@ export const basicFixtures = [
     context: {
       ...context,
       actorName: "",
-      args: {
-        actors: undefined,
-      },
+      args: { ...baseArgs, actors: undefined },
     },
     errored: true,
     errorMessage: "cannot run plugin",
+  },
+  {
+    name: "throws when args not conform to schema",
+    context: {
+      ...context,
+      actorName: "",
+      args: { ...baseArgs, actors: [{ prop: "test" }] },
+    },
+    errored: true,
+    errorMessage: "cannot run plugin",
+  },
+  {
+    name: "does not throw when args conform to schema",
+    context: {
+      ...context,
+      event: "actorCreated",
+      actorName: "test actor",
+      args: { ...baseArgs, actors: [{ prop: "thumbnail", path: "./plugins/pics/test/fixtures" }] },
+    },
+    errored: false,
   },
 ];
 
@@ -60,9 +89,13 @@ export const actorFixtures = [
       ...context,
       actorName: "001",
       args: {
-        actors: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -75,9 +108,13 @@ export const actorFixtures = [
       ...context,
       actorName: "002",
       args: {
-        actors: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -85,14 +122,56 @@ export const actorFixtures = [
     },
   },
   {
+    name: "Should find when searchTerm",
+    context: {
+      ...context,
+      actorName: "004",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+            searchTerm: "dummy",
+          },
+        ],
+      },
+    },
+    result: {
+      thumbnail: path.resolve("./plugins/pics/test/fixtures/deep/image004-dummy.jpg"),
+    },
+  },
+  {
+    name: "Should not find when no file with searchTerm",
+    context: {
+      ...context,
+      actorName: "004",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+            searchTerm: "not_exist",
+          },
+        ],
+      },
+    },
+    result: {},
+  },
+  {
     name: "Should find no image",
     context: {
       ...context,
       actorName: "003",
       args: {
-        actors: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},
@@ -104,9 +183,13 @@ export const actorFixtures = [
       ...context,
       actorName: "001",
       args: {
-        actors: {
-          path_hero: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "hero",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -119,9 +202,13 @@ export const actorFixtures = [
       ...context,
       actorName: "003",
       args: {
-        actors: {
-          path_hero: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "hero",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},
@@ -134,9 +221,13 @@ export const actorFixtures = [
       ...context,
       actorName: "005",
       args: {
-        actors: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -149,9 +240,13 @@ export const actorFixtures = [
       ...context,
       actorName: "006",
       args: {
-        actors: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -164,9 +259,13 @@ export const actorFixtures = [
       ...context,
       actorName: "007",
       args: {
-        actors: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},
@@ -178,9 +277,13 @@ export const actorFixtures = [
       ...context,
       actorName: "005",
       args: {
-        actors: {
-          path_hero: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "hero",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -193,12 +296,55 @@ export const actorFixtures = [
       ...context,
       actorName: "007",
       args: {
-        actors: {
-          path_hero: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        actors: [
+          {
+            prop: "hero",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},
+  },
+];
+
+export const actorCreateImageFixtures = [
+  {
+    name: "Should find extra, does not return in result",
+    context: {
+      ...context,
+      actorName: "001",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "extra",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
+      },
+    },
+    result: {},
+    createImageCalled: true,
+  },
+  {
+    name: "Should not find extra",
+    context: {
+      ...context,
+      actorName: "003",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "extra",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
+      },
+    },
+    result: {},
+    createImageCalled: false,
   },
 ];
 
@@ -209,9 +355,13 @@ export const sceneFixtures = [
       ...context,
       sceneName: "001",
       args: {
-        scenes: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        scenes: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -224,9 +374,13 @@ export const sceneFixtures = [
       ...context,
       sceneName: "003",
       args: {
-        scenes: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        scenes: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},
@@ -234,16 +388,20 @@ export const sceneFixtures = [
 ];
 
 export const movieFixtures = [
-  // path_back_cover
+  // backCover
   {
     name: "Should find a thumbnail",
     context: {
       ...context,
       movieName: "001",
       args: {
-        movies: {
-          path_back_cover: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        movies: [
+          {
+            prop: "backCover",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -256,23 +414,31 @@ export const movieFixtures = [
       ...context,
       movieName: "003",
       args: {
-        movies: {
-          path_back_cover: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        movies: [
+          {
+            prop: "backCover",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},
   },
-  // path_front_cover
+  // frontCover
   {
-    name: "Should find a thumbnail 2",
+    name: "Should find a frontCover 1",
     context: {
       ...context,
       movieName: "001",
       args: {
-        movies: {
-          path_front_cover: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        movies: [
+          {
+            prop: "frontCover",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -280,28 +446,36 @@ export const movieFixtures = [
     },
   },
   {
-    name: "Should find no image 2",
+    name: "Should find no frontCover 2",
     context: {
       ...context,
       movieName: "003",
       args: {
-        movies: {
-          path_front_cover: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        movies: [
+          {
+            prop: "frontCover",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},
   },
-  // path_spine_cover
+  // spineCover
   {
-    name: "Should find a thumbnail 3",
+    name: "Should find a spineCover 1",
     context: {
       ...context,
       movieName: "001",
       args: {
-        movies: {
-          path_spine_cover: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        movies: [
+          {
+            prop: "spineCover",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -309,14 +483,18 @@ export const movieFixtures = [
     },
   },
   {
-    name: "Should find no image 3",
+    name: "Should find spineCover",
     context: {
       ...context,
       movieName: "003",
       args: {
-        movies: {
-          path_spine_cover: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        movies: [
+          {
+            prop: "spineCover",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},
@@ -330,9 +508,13 @@ export const studioFixtures = [
       ...context,
       studioName: "001",
       args: {
-        studios: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        studios: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {
@@ -345,9 +527,13 @@ export const studioFixtures = [
       ...context,
       studioName: "003",
       args: {
-        studios: {
-          path_thumb: "./plugins/pics/test/fixtures",
-        },
+        ...baseArgs,
+        studios: [
+          {
+            prop: "thumbnail",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
       },
     },
     result: {},

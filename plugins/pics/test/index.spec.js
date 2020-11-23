@@ -6,13 +6,14 @@ const {
   studioFixtures,
   sceneFixtures,
   basicFixtures,
+  actorCreateImageFixtures,
 } = require("./fixtures/main.fixtures");
 
-describe.only("pics", () => {
+describe("pics", () => {
   describe("basic", () => {
     // eslint-disable-next-line mocha/no-setup-in-describe
     basicFixtures.forEach((fixture, fixtureIndex) => {
-      it(`[${fixtureIndex}] ${fixture.name}`, async () => {
+      it(`${fixtureIndex} ${fixture.name}`, async () => {
         let errored = false;
 
         try {
@@ -24,11 +25,12 @@ describe.only("pics", () => {
             expect(err.message.includes(fixture.errorMessage)).to.be.true;
           }
           errored = true;
+          if (!fixture.errored) {
+            console.error(err);
+          }
         }
 
-        if (fixture.errored) {
-          expect(errored).to.equal(fixture.errored);
-        }
+        expect(errored).to.equal(!!fixture.errored);
       });
     });
   });
@@ -38,16 +40,66 @@ describe.only("pics", () => {
     describe(event, () => {
       // eslint-disable-next-line mocha/no-setup-in-describe
       actorFixtures.forEach((fixture, fixtureIndex) => {
-        it(`[${fixtureIndex}] ${fixture.name}`, async () => {
-          const result = await plugin({
-            ...fixture.context,
-            event,
-          });
+        it(`${fixtureIndex} ${fixture.name}`, async () => {
+          let errored = false;
+          let result;
+
+          try {
+            result = await plugin({
+              ...fixture.context,
+              event,
+            });
+          } catch (err) {
+            if (fixture.errorMessage) {
+              expect(err.message.includes(fixture.errorMessage)).to.be.true;
+            }
+            errored = true;
+            if (!fixture.errored) {
+              console.error(err);
+            }
+          }
+
+          expect(errored).to.equal(!!fixture.errored);
 
           if (fixture.result) {
             expect(result).to.be.an("object");
             expect(result).to.deep.equal(fixture.result);
           }
+        });
+      });
+
+      // eslint-disable-next-line mocha/no-setup-in-describe
+      actorCreateImageFixtures.forEach((fixture, fixtureIndex) => {
+        it(`${fixtureIndex} ${fixture.name}`, async () => {
+          let errored = false;
+          let createImageCalled = false;
+          let result;
+
+          try {
+            result = await plugin({
+              ...fixture.context,
+              $createLocalImage: () => {
+                createImageCalled = true;
+              },
+              event,
+            });
+          } catch (err) {
+            if (fixture.errorMessage) {
+              expect(err.message.includes(fixture.errorMessage)).to.be.true;
+            }
+            errored = true;
+            if (!fixture.errored) {
+              console.error(err);
+            }
+          }
+
+          expect(errored).to.equal(!!fixture.errored);
+
+          if (fixture.result) {
+            expect(result).to.be.an("object");
+            expect(result).to.deep.equal(fixture.result);
+          }
+          expect(createImageCalled).to.equal(fixture.createImageCalled);
         });
       });
     });
@@ -58,11 +110,26 @@ describe.only("pics", () => {
     describe(event, () => {
       // eslint-disable-next-line mocha/no-setup-in-describe
       sceneFixtures.forEach((fixture, fixtureIndex) => {
-        it(`[${fixtureIndex}] ${fixture.name}`, async () => {
-          const result = await plugin({
-            ...fixture.context,
-            event,
-          });
+        it(`${fixtureIndex} ${fixture.name}`, async () => {
+          let errored = false;
+          let result;
+
+          try {
+            result = await plugin({
+              ...fixture.context,
+              event,
+            });
+          } catch (err) {
+            if (fixture.errorMessage) {
+              expect(err.message.includes(fixture.errorMessage)).to.be.true;
+            }
+            errored = true;
+            if (!fixture.errored) {
+              console.error(err);
+            }
+          }
+
+          expect(errored).to.equal(!!fixture.errored);
 
           if (fixture.result) {
             expect(result).to.be.an("object");
@@ -74,15 +141,30 @@ describe.only("pics", () => {
   });
 
   // eslint-disable-next-line mocha/no-setup-in-describe
-  ["movieCustom"].forEach((event) => {
+  ["movieCreated"].forEach((event) => {
     describe(event, () => {
       // eslint-disable-next-line mocha/no-setup-in-describe
       movieFixtures.forEach((fixture, fixtureIndex) => {
-        it(`[${fixtureIndex}] ${fixture.name}`, async () => {
-          const result = await plugin({
-            ...fixture.context,
-            event,
-          });
+        it(`${fixtureIndex} ${fixture.name}`, async () => {
+          let errored = false;
+          let result;
+
+          try {
+            result = await plugin({
+              ...fixture.context,
+              event,
+            });
+          } catch (err) {
+            if (fixture.errorMessage) {
+              expect(err.message.includes(fixture.errorMessage)).to.be.true;
+            }
+            errored = true;
+            if (!fixture.errored) {
+              console.error(err);
+            }
+          }
+
+          expect(errored).to.equal(!!fixture.errored);
 
           if (fixture.result) {
             expect(result).to.be.an("object");
@@ -98,11 +180,26 @@ describe.only("pics", () => {
     describe(event, () => {
       // eslint-disable-next-line mocha/no-setup-in-describe
       studioFixtures.forEach((fixture, fixtureIndex) => {
-        it(`[${fixtureIndex}] ${fixture.name}`, async () => {
-          const result = await plugin({
-            ...fixture.context,
-            event,
-          });
+        it(`${fixtureIndex} ${fixture.name}`, async () => {
+          let errored = false;
+          let result;
+
+          try {
+            result = await plugin({
+              ...fixture.context,
+              event,
+            });
+          } catch (err) {
+            if (fixture.errorMessage) {
+              expect(err.message.includes(fixture.errorMessage)).to.be.true;
+            }
+            errored = true;
+            if (!fixture.errored) {
+              console.error(err);
+            }
+          }
+
+          expect(errored).to.equal(!!fixture.errored);
 
           if (fixture.result) {
             expect(result).to.be.an("object");

@@ -15,7 +15,33 @@ import { promisify } from "util";
 import yaml from "yaml";
 import zod from "zod";
 
-import { Context } from "./types/plugin";
+import { Context, Matcher, MatchSource } from "./types/plugin";
+
+export const basicMatcher: Matcher = new (class BasicMatcher implements Matcher {
+  filterMatchingItems<T extends MatchSource>(
+    itemsToMatch: T[],
+    str: string,
+    getInputs: (matchSource: T) => string[],
+    sortByLongestMatch?: boolean | undefined
+  ): T[] {
+    const matchedItems = itemsToMatch.filter((item) => {
+      const itemInputs = getInputs(item);
+      return itemInputs.some((input) => str.toLowerCase().includes(input.toLowerCase()));
+    });
+    if (sortByLongestMatch) {
+      matchedItems.sort((a, b) => b.name.length - a.name.length);
+    }
+    return matchedItems;
+  }
+
+  isMatchingItem<T extends MatchSource>(
+    item: T,
+    str: string,
+    getInputs: (matchSource: T) => string[]
+  ): boolean {
+    return !!this.filterMatchingItems([item], str, getInputs).length;
+  }
+})();
 
 const readdirAsync = promisify(readdir);
 const statAsync = promisify(stat);
@@ -113,6 +139,7 @@ const context: Context = {
   $log: (...msgs) => {
     console.log(...msgs);
   },
+  $matcher: basicMatcher,
   $pluginPath: ".", // should be set in tests
   $require: (path) => require(path),
   $throw: (msg) => {

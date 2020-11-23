@@ -1,124 +1,116 @@
-import { MyContext } from "./types";
+import { MatchSource } from "../../types/plugin";
+import { MyContext, ScrapeDefinition, ArgsSchema } from "./types";
 
-export interface ScrapeDefinition {
-  path: string;
-  outputProp: string;
-}
+export const validateArgs = (args): true | Error => {
+  try {
+    ArgsSchema.parse(args);
+  } catch (err) {
+    return err as Error;
+  }
+  return true;
+};
 
 export interface ScrapeResult {
   [imageProp: string]: string;
 }
 
-export interface ScrapeMapping {
-  argProp: string;
-  outputProp: string;
-}
-
 const IMAGE_EXTENSIONS = [".jpg", ".png", ".jpeg", ".gif"];
 
-export async function scanFolder<T = { [imageProp: string]: string }>(
+export async function scanFolder(
   ctx: MyContext,
   query: string,
-  searchDir: string,
-  prop: string
-): Promise<T | {}> {
-  const path = ctx.$path.resolve(searchDir);
+  scrapeDefinition: ScrapeDefinition
+): Promise<Partial<ScrapeResult>> {
+  const queryPath = ctx.$path.resolve(scrapeDefinition.path);
 
-  ctx.$log(`[PICS]: MSG: Trying to find ${prop} pictures of ${query} in ${path}`);
+  ctx.$log(
+    `[PICS]: MSG: Trying to find "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
+  );
 
-  let didFindRes = false;
-  let res: T | null = null;
+  let foundImagePath: string = "";
 
   await ctx.$walk({
-    dir: path,
+    dir: queryPath,
     extensions: IMAGE_EXTENSIONS,
     exclude: [],
     cb: async (imagePath) => {
-      if (didFindRes) {
+      if (foundImagePath) {
         return;
       }
 
-      const isMatchingFile = imagePath.toLowerCase().includes(query.toLowerCase());
-      if (!isMatchingFile) {
+      // The file is a match if both the query and the searchTerm are found
+      const itemsToMatch: MatchSource[] = [
+        {
+          _id: scrapeDefinition.prop,
+          name: query,
+        },
+      ];
+      if (scrapeDefinition.searchTerm) {
+        itemsToMatch.push({
+          _id: scrapeDefinition.prop,
+          name: scrapeDefinition.searchTerm,
+        });
+      }
+
+      const allSearchTermsFound =
+        ctx.$matcher.filterMatchingItems(itemsToMatch, imagePath, (el) => [el.name]).length ===
+        itemsToMatch.length;
+      if (!allSearchTermsFound) {
         return;
       }
 
-      ctx.$log(`[PICS] MSG: Found ${prop} picture for ${query}`);
-
-      const image = ctx.args?.dry
-        ? `_would_have_created_image_${imagePath}`
-        : await ctx.$createLocalImage(imagePath, query, true);
-
-      res = ({
-        [prop]: image,
-      } as any) as T;
-      didFindRes = true;
+      foundImagePath = imagePath;
     },
   });
 
-  if (!res) {
-    ctx.$log(`[PICS]: MSG: No ${prop} pictures of ${query} in ${path}`);
+  if (!foundImagePath) {
+    ctx.$log(`[PICS]: MSG: No "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`);
     return {};
   }
 
-  return res;
-}
+  ctx.$log(
+    `[PICS] MSG: Found "${scrapeDefinition.prop}" picture for "${query}": "${foundImagePath}"`
+  );
 
-export const buildScrapeDefinitions = (
-  ctx: MyContext,
-  pathHolder: { [pathProp: string]: string | undefined },
-  scrapeMappings: ScrapeMapping[]
-): ScrapeDefinition[] => {
-  if (!pathHolder) {
-    return [];
+  const imageId = ctx.args.dry
+    ? `_would_have_created_image_${foundImagePath}`
+    : await ctx.$createLocalImage(
+        foundImagePath,
+        `${query} ${scrapeDefinition.prop}`,
+        scrapeDefinition.prop !== "extra"
+      );
+
+  if (scrapeDefinition.prop === "extra") {
+    // Extra images don't need to be returned
+    return {};
   }
 
-  // Declare a filter predicate so we can assert the return type of .filter
-  const predicate = (def?: {
-    path: string | undefined;
-    outputProp: string;
-  }): def is ScrapeDefinition => Boolean(def);
-
-  return scrapeMappings
-    .map((def) => {
-      const path = pathHolder[def.argProp];
-      const resolvedPath = path ? ctx.$path.resolve(path) : null;
-
-      if (!path || !resolvedPath) {
-        ctx.$log(`[PICS] MSG: no path for ${def.outputProp}, skipping`);
-        return undefined;
-      }
-
-      return { path: resolvedPath, outputProp: def.outputProp };
-    })
-    .filter(predicate);
-};
+  return {
+    [scrapeDefinition.prop]: imageId,
+  };
+}
 
 /**
  *
  * @param ctx - plugin context
- * @param queryProp - the property containing the name to search for. Ex: 'actorName'
- * @param pathsObj - the property containing the arguments for the paths
- * @param scrapeMappings - mapping from a path to a property to return
+ * @param query - the item name to search for
+ * @param scrapeDefinitions - definition of scrape props
  */
 export async function executeScape(
   ctx: MyContext,
   query: string,
-  pathsObj: { [pathProp: string]: string | undefined },
-  scrapeMappings: ScrapeMapping[]
+  scrapeDefinitions: ScrapeDefinition[]
 ): Promise<ScrapeResult> {
-  const scrapeDefinitions = buildScrapeDefinitions(ctx, pathsObj, scrapeMappings);
-
   let result: ScrapeResult = {};
 
   const scrapePromises = scrapeDefinitions.map((definition) =>
-    scanFolder(ctx, query, definition.path, definition.outputProp)
+    scanFolder(ctx, query, definition)
       .then((scanRes) => {
         Object.assign(result, scanRes);
       })
       .catch((err) => {
         ctx.$log(err);
-        ctx.$log(`[PICS] ERR: scrape ${definition.path} for ${definition.outputProp} failed`);
+        ctx.$log(`[PICS] ERR: scrape "${definition.prop}" in "${definition.path}" failed`);
         return {};
       })
   );

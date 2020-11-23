@@ -1,27 +1,60 @@
-import { MovieContext } from "./../../types/movie";
-import { ActorContext } from "./../../types/actor";
-import { DeepPartial } from "../../types/plugin";
+import * as zod from "zod";
+
 import { SceneContext } from "../../types/scene";
 import { StudioContext } from "../../types/studio";
+import { ActorContext } from "./../../types/actor";
+import { MovieContext } from "./../../types/movie";
+import { DeepPartial } from "./../traxxx/types";
 
-export interface ActorSettings {
-  path_thumb: string;
-  path_alt: string;
-  path_avatar: string;
-  path_hero: string;
-}
+const baseScrapeDefinition = zod.object({
+  path: zod.string().refine((val) => val && val.trim().length, "The path cannot be empty"),
+  searchTerm: zod.string().optional(),
+});
 
-export interface Args {
-  dry: boolean;
-  actors: ActorSettings;
-}
+export const ArgsSchema = zod.object({
+  dry: zod.boolean(),
+  actors: zod.array(
+    baseScrapeDefinition.extend({
+      prop: zod.enum(["thumbnail", "altThumbnail", "avatar", "hero", "extra"]),
+    })
+  ),
+  scenes: zod.array(
+    baseScrapeDefinition.extend({
+      prop: zod.enum(["thumbnail", "extra"]),
+    })
+  ),
+  movies: zod.array(
+    baseScrapeDefinition.extend({
+      prop: zod.enum(["backCover", "frontCover", "spineCover", "extra"]),
+    })
+  ),
+  studios: zod.array(
+    baseScrapeDefinition.extend({
+      prop: zod.enum(["thumbnail", "extra"]),
+    })
+  ),
+});
 
-export interface ExtendedContext {
-  args: Args;
-}
+export type ActorPicsSchema = zod.infer<typeof ArgsSchema.shape.actors>;
 
-export type MyValidatedContext = (ActorContext | SceneContext | MovieContext | StudioContext) &
-  ExtendedContext;
+export type ScenePicsSchema = zod.infer<typeof ArgsSchema.shape.actors>;
 
-export type MyContext = (ActorContext | SceneContext | MovieContext | StudioContext) &
-  DeepPartial<ExtendedContext>;
+export type MoviePicsSchema = zod.infer<typeof ArgsSchema.shape.actors>;
+
+export type StudioPicsSchema = zod.infer<typeof ArgsSchema.shape.actors>;
+
+export type ScrapeDefinition =
+  | ActorPicsSchema[0]
+  | ScenePicsSchema[0]
+  | MoviePicsSchema[0]
+  | StudioPicsSchema[0];
+
+export type ArgsSchemaType = zod.infer<typeof ArgsSchema>;
+
+export type MyValidatedContext = (ActorContext | SceneContext | MovieContext | StudioContext) & {
+  args: DeepPartial<ArgsSchemaType>;
+};
+
+export type MyContext = (ActorContext | SceneContext | MovieContext | StudioContext) & {
+  args: DeepPartial<ArgsSchemaType>;
+};
