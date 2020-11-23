@@ -12,26 +12,74 @@ const baseScrapeDefinition = zod.object({
 });
 
 export const ArgsSchema = zod.object({
-  dry: zod.boolean(),
+  dry: zod.boolean().optional(),
   actors: zod.array(
-    baseScrapeDefinition.extend({
-      prop: zod.enum(["thumbnail", "altThumbnail", "avatar", "hero", "extra"]),
-    })
+    baseScrapeDefinition
+      .extend({
+        prop: zod.enum(["thumbnail", "altThumbnail", "avatar", "hero", "extra"]),
+      })
+      .refine(
+        ({ prop, searchTerm }) => {
+          if (prop !== "extra" && !searchTerm) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: '"searchTerm" is required for non "extra" images',
+        }
+      )
   ),
   scenes: zod.array(
-    baseScrapeDefinition.extend({
-      prop: zod.enum(["thumbnail", "extra"]),
-    })
+    baseScrapeDefinition
+      .extend({
+        prop: zod.enum(["thumbnail", "extra"]),
+      })
+      .refine(
+        ({ prop, searchTerm }) => {
+          if (prop !== "extra" && !searchTerm) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: '"searchTerm" is required for non "extra" images',
+        }
+      )
   ),
   movies: zod.array(
-    baseScrapeDefinition.extend({
-      prop: zod.enum(["backCover", "frontCover", "spineCover", "extra"]),
-    })
+    baseScrapeDefinition
+      .extend({
+        prop: zod.enum(["backCover", "frontCover", "spineCover", "extra"]),
+      })
+      .refine(
+        ({ prop, searchTerm }) => {
+          if (prop !== "extra" && !searchTerm) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: '"searchTerm" is required for non "extra" images',
+        }
+      )
   ),
   studios: zod.array(
-    baseScrapeDefinition.extend({
-      prop: zod.enum(["thumbnail", "extra"]),
-    })
+    baseScrapeDefinition
+      .extend({
+        prop: zod.enum(["thumbnail", "extra"]),
+      })
+      .refine(
+        ({ prop, searchTerm }) => {
+          if (prop !== "extra" && !searchTerm) {
+            return false;
+          }
+          return true;
+        },
+        {
+          message: '"searchTerm" is required for non "extra" images',
+        }
+      )
   ),
 });
 

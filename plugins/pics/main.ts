@@ -3,7 +3,7 @@ import { MovieContext, MovieOutput } from "../../types/movie";
 import { SceneContext } from "../../types/scene";
 import { StudioContext } from "../../types/studio";
 import { MyContext, ScrapeDefinition } from "../pics/types";
-import { executeScape } from "./utils";
+import { executeScape, validateArgs } from "./utils";
 
 interface ScrapeEventDefinition {
   events: string[];
@@ -47,12 +47,12 @@ module.exports = async (
     return {};
   }
 
-  // const res = validateArgs(ctx.args);
-  // if (res !== true) {
-  //   ctx.$log(res.message);
-  //   ctx.$throw(`[PICS] ERR: "args" schema is incorrect`);
-  //   return {};
-  // }
+  const res = validateArgs(ctx.args);
+  if (res !== true) {
+    ctx.$log(res.message);
+    ctx.$throw(`[PICS] ERR: "args" schema is incorrect`);
+    return {};
+  }
 
   const query = ctx[eventScraperDefinition.queryProp] as string | undefined;
   if (!query) {

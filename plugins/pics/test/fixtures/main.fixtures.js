@@ -38,9 +38,11 @@ export const basicFixtures = [
       actorName: "",
       args: {
         ...baseArgs,
+        event: "actorCreated",
         actors: [
           {
             prop: "thumbnail",
+            searchTerm: "thumbnail",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -53,21 +55,40 @@ export const basicFixtures = [
     name: "throws when missing event args paths",
     context: {
       ...context,
+      event: "actorCreated",
       actorName: "",
-      args: { ...baseArgs, actors: undefined },
+      args: { ...baseArgs, actors: null },
     },
     errored: true,
-    errorMessage: "cannot run plugin",
+    errorMessage: "schema is incorrect",
   },
   {
     name: "throws when args not conform to schema",
     context: {
       ...context,
+      event: "actorCreated",
       actorName: "",
-      args: { ...baseArgs, actors: [{ prop: "test" }] },
+      args: {
+        ...baseArgs,
+        actors: [{ prop: "test", path: "./plugins/pics/test/fixtures" }],
+      },
     },
     errored: true,
-    errorMessage: "cannot run plugin",
+    errorMessage: "schema is incorrect",
+  },
+  {
+    name: "throws when args not conform to schema 2",
+    context: {
+      ...context,
+      event: "actorCreated",
+      actorName: "",
+      args: {
+        ...baseArgs,
+        actors: [{ prop: "test", searchTerm: "", path: "./plugins/pics/test/fixtures" }],
+      },
+    },
+    errored: true,
+    errorMessage: "schema is incorrect",
   },
   {
     name: "does not throw when args conform to schema",
@@ -75,7 +96,12 @@ export const basicFixtures = [
       ...context,
       event: "actorCreated",
       actorName: "test actor",
-      args: { ...baseArgs, actors: [{ prop: "thumbnail", path: "./plugins/pics/test/fixtures" }] },
+      args: {
+        ...baseArgs,
+        actors: [
+          { prop: "thumbnail", searchTerm: "thumbnail", path: "./plugins/pics/test/fixtures" },
+        ],
+      },
     },
     errored: false,
   },
@@ -93,6 +119,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "thumbnail",
+            searchTerm: "001",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -112,6 +139,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "thumbnail",
+            searchTerm: "002",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -169,6 +197,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "thumbnail",
+            searchTerm: "003",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -187,6 +216,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "hero",
+            searchTerm: "001",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -206,6 +236,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "hero",
+            searchTerm: "003",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -225,6 +256,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "thumbnail",
+            searchTerm: "005",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -244,6 +276,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "thumbnail",
+            searchTerm: "006",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -263,6 +296,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "thumbnail",
+            searchTerm: "007",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -281,6 +315,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "hero",
+            searchTerm: "005",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -300,6 +335,7 @@ export const actorFixtures = [
         actors: [
           {
             prop: "hero",
+            searchTerm: "007",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -312,6 +348,25 @@ export const actorFixtures = [
 export const actorCreateImageFixtures = [
   {
     name: "Should find extra, does not return in result",
+    context: {
+      ...context,
+      actorName: "001",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "extra",
+            searchTerm: "001",
+            path: "./plugins/pics/test/fixtures",
+          },
+        ],
+      },
+    },
+    result: {},
+    createImageCalled: true,
+  },
+  {
+    name: "Should find extra, allows empty searchTerm",
     context: {
       ...context,
       actorName: "001",
@@ -338,6 +393,7 @@ export const actorCreateImageFixtures = [
         actors: [
           {
             prop: "extra",
+            searchTerm: "003",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -359,6 +415,7 @@ export const sceneFixtures = [
         scenes: [
           {
             prop: "thumbnail",
+            searchTerm: "001",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -378,6 +435,7 @@ export const sceneFixtures = [
         scenes: [
           {
             prop: "thumbnail",
+            searchTerm: "003",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -399,6 +457,7 @@ export const movieFixtures = [
         movies: [
           {
             prop: "backCover",
+            searchTerm: "001",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -418,6 +477,7 @@ export const movieFixtures = [
         movies: [
           {
             prop: "backCover",
+            searchTerm: "003",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -436,6 +496,7 @@ export const movieFixtures = [
         movies: [
           {
             prop: "frontCover",
+            searchTerm: "001",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -455,6 +516,7 @@ export const movieFixtures = [
         movies: [
           {
             prop: "frontCover",
+            searchTerm: "003",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -473,6 +535,7 @@ export const movieFixtures = [
         movies: [
           {
             prop: "spineCover",
+            searchTerm: "001",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -492,6 +555,7 @@ export const movieFixtures = [
         movies: [
           {
             prop: "spineCover",
+            searchTerm: "003",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -512,6 +576,7 @@ export const studioFixtures = [
         studios: [
           {
             prop: "thumbnail",
+            searchTerm: "001",
             path: "./plugins/pics/test/fixtures",
           },
         ],
@@ -531,6 +596,7 @@ export const studioFixtures = [
         studios: [
           {
             prop: "thumbnail",
+            searchTerm: "003",
             path: "./plugins/pics/test/fixtures",
           },
         ],
