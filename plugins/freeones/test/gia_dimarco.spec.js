@@ -12,7 +12,7 @@ function search(args = {}) {
 
 describe("freeones", () => {
   it("Search 'Gia DiMarco'", async () => {
-    console.log("Fetching freeones.xxx...");
+    console.log("Fetching freeones.com...");
     const result = await search({
       dry: false,
       blacklist: [],
@@ -35,6 +35,7 @@ describe("freeones", () => {
       "bra size": "34C",
       gender: "Female",
       sex: "Female",
+      piercings: "Navel",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -50,7 +51,7 @@ describe("freeones", () => {
   });
 
   it("Search 'Gia DiMarco' without measurements", async () => {
-    console.log("Fetching freeones.xxx...");
+    console.log("Fetching freeones.com...");
     const result = await search({
       dry: false,
       blacklist: ["measurements"],
@@ -67,6 +68,7 @@ describe("freeones", () => {
       zodiac: "Virgo",
       gender: "Female",
       sex: "Female",
+      piercings: "Navel",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
