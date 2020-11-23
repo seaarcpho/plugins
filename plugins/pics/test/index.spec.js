@@ -9,7 +9,7 @@ const {
   actorCreateImageFixtures,
 } = require("./fixtures/main.fixtures");
 
-describe.only("pics", () => {
+describe("pics", () => {
   describe("basic", () => {
     // eslint-disable-next-line mocha/no-setup-in-describe
     basicFixtures.forEach((fixture, fixtureIndex) => {
@@ -72,14 +72,14 @@ describe.only("pics", () => {
       actorCreateImageFixtures.forEach((fixture, fixtureIndex) => {
         it(`${fixtureIndex} ${fixture.name}`, async () => {
           let errored = false;
-          let createImageCalled = false;
+          let createImageCallCount = 0;
           let result;
 
           try {
             result = await plugin({
               ...fixture.context,
               $createLocalImage: () => {
-                createImageCalled = true;
+                createImageCallCount++;
               },
               event,
             });
@@ -99,7 +99,7 @@ describe.only("pics", () => {
             expect(result).to.be.an("object");
             expect(result).to.deep.equal(fixture.result);
           }
-          expect(createImageCalled).to.equal(fixture.createImageCalled);
+          expect(createImageCallCount).to.equal(fixture.createImageCallCount);
         });
       });
     });

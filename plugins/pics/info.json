@@ -56,6 +56,13 @@
       "description": "The extra string that the picture path should contain. Does not need a value for when the prop is `'extra'`. Does not need a value for when the prop is `'extra'`"
     },
     {
+      "name": "actors.[0].getAllExtra",
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Only needed for an `'extra'` search configuration: if all results should be created. You can otherwise omit this property"
+    },
+    {
       "name": "scenes",
       "type": "Array",
       "required": true,
@@ -89,6 +96,13 @@
       "required": true,
       "default": "thumbnail",
       "description": "The extra string that the picture path should contain. Does not need a value for when the prop is `'extra'`"
+    },
+    {
+      "name": "scenes.[0].getAllExtra",
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Only needed for an `'extra'` search configuration: if all results should be created. You can otherwise omit this property"
     },
     {
       "name": "movies",
@@ -126,6 +140,13 @@
       "description": "The extra string that the picture path should contain. Does not need a value for when the prop is `'extra'`"
     },
     {
+      "name": "movies.[0].getAllExtra",
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Only needed for an `'extra'` search configuration: if all results should be created. You can otherwise omit this property"
+    },
+    {
       "name": "studios",
       "type": "Array",
       "required": true,
@@ -159,6 +180,13 @@
       "required": true,
       "default": "thumbnail",
       "description": "The extra string that the picture path should contain. Does not need a value for when the prop is `'extra'`"
+    },
+    {
+      "name": "studios.[0].getAllExtra",
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "Only needed for an `'extra'` search configuration: if all results should be created. You can otherwise omit this property"
     }
   ]
 }

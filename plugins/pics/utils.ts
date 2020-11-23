@@ -18,7 +18,7 @@ export type ScrapeResult = Partial<
 
 type SingleScrapeResult = {
   [key in Exclude<ScrapeDefinition["prop"], "extra">]: string;
-} & { extra: string };
+} & { extra: string[] };
 
 const IMAGE_EXTENSIONS = [".jpg", ".png", ".jpeg", ".gif"];
 
@@ -33,14 +33,17 @@ export async function scanFolder(
     `[PICS]: MSG: Trying to find "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
   );
 
-  let foundImagePath: string = "";
+  let foundImagePaths: string[] = [];
 
   await ctx.$walk({
     dir: queryPath,
     extensions: IMAGE_EXTENSIONS,
     exclude: [],
     cb: async (imagePath) => {
-      if (foundImagePath) {
+      if (
+        foundImagePaths.length &&
+        (scrapeDefinition.prop !== "extra" || !scrapeDefinition.getAllExtra)
+      ) {
         return;
       }
 
@@ -65,21 +68,24 @@ export async function scanFolder(
         return;
       }
 
-      foundImagePath = imagePath;
+      foundImagePaths.push(imagePath);
     },
   });
 
-  if (!foundImagePath) {
+  if (!foundImagePaths.length) {
     ctx.$log(`[PICS]: MSG: No "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`);
     return {};
   }
 
   ctx.$log(
-    `[PICS] MSG: Found "${scrapeDefinition.prop}" picture for "${query}": "${foundImagePath}"`
+    `[PICS] MSG: Found ${foundImagePaths.length} "${
+      scrapeDefinition.prop
+    }" picture(s) for "${query}": ${JSON.stringify(foundImagePaths)}`
   );
 
   return {
-    [scrapeDefinition.prop]: foundImagePath,
+    [scrapeDefinition.prop]:
+      scrapeDefinition.prop === "extra" ? foundImagePaths : foundImagePaths[0],
   };
 }
 
@@ -100,10 +106,14 @@ export async function executeScape(
     scanFolder(ctx, query, definition)
       .then((scanRes) => {
         const image = scanRes[definition.prop];
-        if (definition.prop !== "extra" && image) {
+        if (definition.prop !== "extra" && image && typeof image === "string") {
           result[definition.prop] = image;
         } else if (scanRes.extra) {
-          result.extra.push(scanRes.extra);
+          if (definition.getAllExtra) {
+            result.extra.push(...scanRes.extra);
+          } else {
+            result.extra = scanRes.extra;
+          }
         }
       })
       .catch((err) => {

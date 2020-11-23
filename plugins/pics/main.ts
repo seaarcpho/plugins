@@ -63,8 +63,11 @@ module.exports = async (
   }
 
   const scrapeDefs = ctx.args[eventScraperDefinition.definitionObj] as
-    | unknown
-    | ScrapeDefinition[]
+    | Partial<
+        {
+          [key in ScrapeDefinition["prop"]]: ScrapeDefinition;
+        }
+      >
     | undefined;
   if (!scrapeDefs || !Array.isArray(scrapeDefs) || !scrapeDefs.length) {
     ctx.$throw(
@@ -89,8 +92,8 @@ module.exports = async (
   for (const [prop, image] of entries(scrapeResult)) {
     if (prop !== "extra" && typeof image === "string") {
       finalResult[prop] = await ctx.$createLocalImage(image, `${query} (${prop})`, true);
-    } else {
-      for (const extraImage of image as string[]) {
+    } else if (Array.isArray(image)) {
+      for (const extraImage of image) {
         await ctx.$createLocalImage(extraImage, `${query} (extra)`, false);
       }
     }

@@ -384,7 +384,27 @@ export const actorCreateImageFixtures = [
       },
     },
     result: {},
-    createImageCalled: true,
+    createImageCallCount: 1,
+  },
+  {
+    name: "Should find multple extra, does not return in result",
+    context: {
+      ...context,
+      actorName: "001",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "extra",
+            searchTerm: "001",
+            path: "./plugins/pics/test/fixtures",
+            getAllExtra: true,
+          },
+        ],
+      },
+    },
+    result: {},
+    createImageCallCount: 2,
   },
   {
     name: "Should find extra, allows empty searchTerm",
@@ -402,7 +422,7 @@ export const actorCreateImageFixtures = [
       },
     },
     result: {},
-    createImageCalled: true,
+    createImageCallCount: 1,
   },
   {
     name: "Should not find extra",
@@ -421,7 +441,7 @@ export const actorCreateImageFixtures = [
       },
     },
     result: {},
-    createImageCalled: false,
+    createImageCallCount: 0,
   },
 ];
 
