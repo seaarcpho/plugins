@@ -33,20 +33,13 @@ export async function scanFolder(
     `[PICS]: MSG: Trying to find "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
   );
 
-  let foundImagePaths: string[] = [];
+  const foundImagePaths: string[] = [];
 
   await ctx.$walk({
     dir: queryPath,
     extensions: IMAGE_EXTENSIONS,
     exclude: [],
     cb: async (imagePath) => {
-      if (
-        foundImagePaths.length &&
-        (scrapeDefinition.prop !== "extra" || !scrapeDefinition.getAllExtra)
-      ) {
-        return;
-      }
-
       // The file is a match if both the query and all searchTerms are found
       // while no blacklisted terms are found
       const itemsToMatch: MatchSource[] = [query, ...(scrapeDefinition.searchTerms || [])].map(
@@ -71,6 +64,10 @@ export async function scanFolder(
       }
 
       foundImagePaths.push(imagePath);
+      if (scrapeDefinition.prop !== "extra" || !scrapeDefinition.getAllExtra) {
+        // Returning a truthy value will stop the walk
+        return true;
+      }
     },
   });
 
