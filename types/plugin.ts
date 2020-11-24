@@ -83,9 +83,9 @@ export interface Context<Data = unknown> {
   $walk: (opts: {
     dir: string;
     extensions: string[];
-    cb: (file: string) => void | Promise<void>;
+    cb: (file: string) => void | Promise<void | unknown> | unknown;
     exclude: string[];
-  }) => Promise<void>;
+  }) => Promise<void | string>;
   // Plugin
   args?: unknown;
   data: Partial<Data>;

@@ -54,11 +54,11 @@ const validExtension = (exts: string[], path: string) => exts.includes(extname(p
 export interface IWalkOptions {
   dir: string;
   extensions: string[];
-  cb: (file: string) => void | Promise<void>;
+  cb: (file: string) => void | Promise<void | unknown> | unknown;
   exclude: string[];
 }
 
-export async function walk(options: IWalkOptions): Promise<void> {
+export async function walk(options: IWalkOptions): Promise<void | string> {
   const root = resolve(options.dir);
 
   const folderStack = [] as string[];
@@ -94,7 +94,11 @@ export async function walk(options: IWalkOptions): Promise<void> {
           folderStack.push(path);
         } else if (validExtension(options.extensions, file)) {
           console.log(`Found file ${file}`);
-          await options.cb(resolve(path));
+          const resolvedPath = resolve(path);
+          const res = await options.cb(resolvedPath);
+          if (res) {
+            return resolvedPath;
+          }
         }
       } catch (err) {
         const _err = err as Error & { code: string };
