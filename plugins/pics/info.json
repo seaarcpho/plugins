@@ -36,7 +36,7 @@
     },
     {
       "name": "actors.[0].prop",
-      "type": "`'thumbnail' | 'altThumbnail' | 'avatar' | 'hero' | 'extra'`",
+      "type": "`'thumbnail' \\| 'altThumbnail' \\| 'avatar' \\| 'hero' \\| 'extra'`",
       "required": true,
       "default": "thumbnail",
       "description": "The type of picture that should be attached to the actor. Set to `'extra'` to add any image you want to the gallery"
@@ -85,7 +85,7 @@
     },
     {
       "name": "scenes.[0].prop",
-      "type": "`'thumbnail' | 'extra'`",
+      "type": "`'thumbnail' \\| 'extra'`",
       "required": true,
       "default": "thumbnail",
       "description": "The type of picture that should be attached to the scene. Set to `'extra'` to add any image you want to the gallery"
@@ -134,7 +134,7 @@
     },
     {
       "name": "movies.[0].prop",
-      "type": "`'backCover' | 'frontCover' | 'spineCover' | 'extra'`",
+      "type": "`'backCover' \\| 'frontCover' \\| 'spineCover' \\| 'extra'`",
       "required": true,
       "default": "thumbnail",
       "description": "The type of picture that should be attached to the movie. Set to `'extra'` to add any image you want to the gallery"
@@ -183,7 +183,7 @@
     },
     {
       "name": "studios.[0].prop",
-      "type": "`'thumbnail' | 'extra'`",
+      "type": "`'thumbnail' \\| 'extra'`",
       "required": true,
       "default": "thumbnail",
       "description": "The type of picture that should be attached to the studio. Set to `'extra'` to add any image you want to the gallery"
