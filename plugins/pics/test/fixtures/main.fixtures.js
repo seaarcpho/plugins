@@ -368,7 +368,7 @@ export const actorFixtures = [
 
 export const actorCreateImageFixtures = [
   {
-    name: "Should find extra, does not return in result",
+    name: "Should find all extra when no max, does not return in result",
     context: {
       ...context,
       actorName: "001",
@@ -379,32 +379,52 @@ export const actorCreateImageFixtures = [
             prop: "extra",
             searchTerms: ["001"],
             path: "./plugins/pics/test/fixtures",
-          },
-        ],
-      },
-    },
-    result: {},
-    createImageCallCount: 1,
-  },
-  {
-    name: "Should find multple extra, does not return in result",
-    context: {
-      ...context,
-      actorName: "001",
-      args: {
-        ...baseArgs,
-        actors: [
-          {
-            prop: "extra",
-            searchTerms: ["001"],
-            path: "./plugins/pics/test/fixtures",
-            getAllExtra: true,
           },
         ],
       },
     },
     result: {},
     createImageCallCount: 2,
+  },
+  {
+    name: "Should find all extra when max negative, does not return in result",
+    context: {
+      ...context,
+      actorName: "001",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "extra",
+            searchTerms: ["001"],
+            path: "./plugins/pics/test/fixtures",
+            max: -1,
+          },
+        ],
+      },
+    },
+    result: {},
+    createImageCallCount: 2,
+  },
+  {
+    name: "Should find only 1 extra when given max, does not return in result",
+    context: {
+      ...context,
+      actorName: "001",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "extra",
+            searchTerms: ["001"],
+            path: "./plugins/pics/test/fixtures",
+            max: 1,
+          },
+        ],
+      },
+    },
+    result: {},
+    createImageCallCount: 1,
   },
   {
     name: "Finds restricted extra, does not return in result",
@@ -418,7 +438,7 @@ export const actorCreateImageFixtures = [
             prop: "extra",
             searchTerms: ["001"],
             path: "./plugins/pics/test/fixtures",
-            getAllExtra: true,
+            max: -1,
             blacklistTerms: ["png"],
           },
         ],
@@ -443,7 +463,7 @@ export const actorCreateImageFixtures = [
       },
     },
     result: {},
-    createImageCallCount: 1,
+    createImageCallCount: 2,
   },
   {
     name: "Should not find extra",

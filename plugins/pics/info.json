@@ -63,11 +63,11 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "actors.[0].getAllExtra",
-      "type": "boolean",
+      "name": "actors.[0].max ",
+      "type": "number",
       "required": false,
-      "default": true,
-      "description": "Only needed for an `'extra'` search configuration: if all results should be created. You can otherwise omit this property"
+      "default": -1,
+      "description": "Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property"
     },
     {
       "name": "scenes",
@@ -112,11 +112,11 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "scenes.[0].getAllExtra",
-      "type": "boolean",
+      "name": "scenes.[0].max",
+      "type": "number",
       "required": false,
-      "default": true,
-      "description": "Only needed for an `'extra'` search configuration: if all results should be created. You can otherwise omit this property"
+      "default": -1,
+      "description": "Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property"
     },
     {
       "name": "movies",
@@ -161,11 +161,11 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "movies.[0].getAllExtra",
-      "type": "boolean",
+      "name": "movies.[0].max",
+      "type": "number",
       "required": false,
-      "default": true,
-      "description": "Only needed for an `'extra'` search configuration: if all results should be created. You can otherwise omit this property"
+      "default": -1,
+      "description": "Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property"
     },
     {
       "name": "studios",
@@ -210,11 +210,11 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "studios.[0].getAllExtra",
-      "type": "boolean",
+      "name": "studios.[0].max",
+      "type": "number",
       "required": false,
-      "default": true,
-      "description": "Only needed for an `'extra'` search configuration: if all results should be created. You can otherwise omit this property"
+      "default": -1,
+      "description": "Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property"
     }
   ]
 }

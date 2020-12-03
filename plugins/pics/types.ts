@@ -10,7 +10,7 @@ const baseScrapeDefinition = zod.object({
   path: zod.string().refine((val) => val && val.trim().length, "The path cannot be empty"),
   searchTerms: zod.array(zod.string()).optional(),
   blacklistTerms: zod.array(zod.string()).optional(),
-  getAllExtra: zod.boolean().optional(),
+  max: zod.number().optional(),
 });
 
 const ActorConf = baseScrapeDefinition.extend({

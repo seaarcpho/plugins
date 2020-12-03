@@ -33,6 +33,11 @@ export async function scanFolder(
     `[PICS]: MSG: Trying to find "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
   );
 
+  if (scrapeDefinition.prop === "extra" && scrapeDefinition.max === 0) {
+    ctx.$log(`[PICS]: MSG: "max" is 0, will not search`);
+    return {};
+  }
+
   const foundImagePaths: string[] = [];
 
   await ctx.$walk({
@@ -64,7 +69,12 @@ export async function scanFolder(
       }
 
       foundImagePaths.push(imagePath);
-      if (scrapeDefinition.prop !== "extra" || !scrapeDefinition.getAllExtra) {
+      if (
+        scrapeDefinition.prop !== "extra" ||
+        (scrapeDefinition.max &&
+          scrapeDefinition.max > 0 &&
+          foundImagePaths.length >= scrapeDefinition.max)
+      ) {
         // Returning a truthy value will stop the walk
         return true;
       }
@@ -108,11 +118,7 @@ export async function executeScape(
         if (definition.prop !== "extra" && image && typeof image === "string") {
           result[definition.prop] = image;
         } else if (scanRes.extra) {
-          if (definition.getAllExtra) {
-            result.extra.push(...scanRes.extra);
-          } else {
-            result.extra = scanRes.extra;
-          }
+          result.extra.push(...scanRes.extra);
         }
       })
       .catch((err) => {
