@@ -63,7 +63,7 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "actors.[0].max ",
+      "name": "actors.[0].max",
       "type": "number",
       "required": false,
       "default": -1,
