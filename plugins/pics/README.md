@@ -125,7 +125,7 @@ Example with multiple configurations & fallback:
                 "thumbnail"
               ],
               "blacklistTerms": [],
-              "max ": -1
+              "max": -1
             }
           ],
           "scenes": [
@@ -207,7 +207,7 @@ plugins:
             searchTerms:
               - thumbnail
             blacklistTerms: []
-            "max ": -1
+            max: -1
         scenes:
           - prop: thumbnail
             path: ./path/to/all/scene/pictures
