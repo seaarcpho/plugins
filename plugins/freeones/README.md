@@ -1,4 +1,4 @@
-## freeones 0.9.1
+## freeones 0.9.0
 
 by boi123212321, john4valor, pizzajohnny, leadwolf
 
