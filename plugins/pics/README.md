@@ -17,13 +17,11 @@ This plugin retrieves pictures for actors, scenes, movies or studios
 - - The name, searchTerms and blackListTerms are all checked for, via `$matcher`:  the matcher configured by `matching.matcher.type` in your config file (config.json/config.yaml)
 - - For a file to be considered a match, the name and all search terms must be found, with none of the blacklisted terms being found.
 - - Files are searched for recursively from the given `path`
-- You may have multiple configurations of the same `'prop'`, to act as fallbacks if the previous configuration for that type had no results.
-- - Only the last image found for a given `'prop'` will be created.
+- You may have multiple configurations of the same `'prop'`.
+- - Only the **last** image found for a given `'prop'` will be created.
 - - If you have multiple `'extra'` configurations, all images found across those configurations will be created.
 
-> Note: the example only shows a single search configuration for every type of item, but you can add as little or as many as you want
-
-Example with multiple configurations & fallback:
+Example with multiple configurations:
 
 ```javascript
 ---
