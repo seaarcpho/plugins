@@ -1,9 +1,42 @@
-import { MatchSource } from "../../types/plugin";
-import { MyContext, ScrapeDefinition, ArgsSchema } from "./types";
+import { Context, MatchSource } from "../../types/plugin";
+import { ScrapeDefinition } from "./types";
 
-export const validateArgs = (args): true | Error => {
+export const validateArgs = (ctx: Context): true | Error => {
+  // WARNING: the zod schema should always match the interface exported from types.ts
+
+  const baseScrapeDefinition = ctx.$zod.object({
+    path: ctx.$zod.string().refine((val) => val && val.trim().length, "The path cannot be empty"),
+    searchTerms: ctx.$zod.array(ctx.$zod.string()).optional(),
+    blacklistTerms: ctx.$zod.array(ctx.$zod.string()).optional(),
+    max: ctx.$zod.number().optional(),
+  });
+
+  const ActorConf = baseScrapeDefinition.extend({
+    prop: ctx.$zod.enum(["thumbnail", "altThumbnail", "avatar", "hero", "extra"]),
+  });
+
+  const SceneConf = baseScrapeDefinition.extend({
+    prop: ctx.$zod.enum(["thumbnail", "extra"]),
+  });
+
+  const MovieConf = baseScrapeDefinition.extend({
+    prop: ctx.$zod.enum(["backCover", "frontCover", "spineCover", "extra"]),
+  });
+
+  const StudioConf = baseScrapeDefinition.extend({
+    prop: ctx.$zod.enum(["thumbnail", "extra"]),
+  });
+
+  const ArgsSchema = ctx.$zod.object({
+    dry: ctx.$zod.boolean().optional(),
+    actors: ctx.$zod.array(ActorConf).optional(),
+    scenes: ctx.$zod.array(SceneConf).optional(),
+    movies: ctx.$zod.array(MovieConf).optional(),
+    studios: ctx.$zod.array(StudioConf).optional(),
+  });
+
   try {
-    ArgsSchema.parse(args);
+    ArgsSchema.parse(ctx.args);
   } catch (err) {
     return err as Error;
   }
@@ -23,7 +56,7 @@ type SingleScrapeResult = {
 const IMAGE_EXTENSIONS = [".jpg", ".png", ".jpeg", ".gif"];
 
 export async function scanFolder(
-  ctx: MyContext,
+  ctx: Context,
   query: string,
   scrapeDefinition: ScrapeDefinition
 ): Promise<Partial<SingleScrapeResult>> {
@@ -105,7 +138,7 @@ export async function scanFolder(
  * @param scrapeDefinitions - definition of scrape props
  */
 export async function executeScape(
-  ctx: MyContext,
+  ctx: Context,
   query: string,
   scrapeDefinitions: ScrapeDefinition[]
 ): Promise<ScrapeResult> {
