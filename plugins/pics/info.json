@@ -1,6 +1,6 @@
 {
   "name": "pics",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "authors": ["boi123212321", "john4valor", "leadwolf"],
   "description": "Find actor, scene, movie, studio images based on local files. GIF support.",
   "pluginEvents": [
@@ -63,6 +63,13 @@
       "description": "Terms that should not be found in an image path"
     },
     {
+      "name": "actors.[0].mustMatchInFilename",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "If the name of the actor and the `searchTerms` must be matched against the filename, instead of the file path"
+    },
+    {
       "name": "actors.[0].max",
       "type": "number",
       "required": false,
@@ -110,6 +117,13 @@
       "required": false,
       "default": [],
       "description": "Terms that should not be found in an image path"
+    },
+    {
+      "name": "scenes.[0].mustMatchInFilename",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "If the name of the scene and the `searchTerms` must be matched against the filename, instead of the file path"
     },
     {
       "name": "scenes.[0].max",
@@ -161,6 +175,13 @@
       "description": "Terms that should not be found in an image path"
     },
     {
+      "name": "actors.[0].mustMatchInFilename",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "If the name of the movie and the `searchTerms` must be matched against the filename, instead of the file path"
+    },
+    {
       "name": "movies.[0].max",
       "type": "number",
       "required": false,
@@ -208,6 +229,13 @@
       "required": false,
       "default": [],
       "description": "Terms that should not be found in an image path"
+    },
+    {
+      "name": "studios.[0].mustMatchInFilename",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "If the name of the studio and the `searchTerms` must be matched against the filename, instead of the file path"
     },
     {
       "name": "studios.[0].max",
