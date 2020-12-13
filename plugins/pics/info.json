@@ -67,7 +67,7 @@
       "type": "boolean",
       "required": false,
       "default": false,
-      "description": "If the name of the actor and the searchTerms must exist in the basename of the file, instead of anywhere in the path"
+      "description": "If the name of the actor and the `searchTerms` must exist in the basename of the file, instead of anywhere in the path"
     },
     {
       "name": "actors.[0].max",
