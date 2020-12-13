@@ -80,7 +80,7 @@ Example with multiple configurations:
 | actors.[0].path             | string                                                           | true     | The path in which to search for this picture                                                                                                                           |
 | actors.[0].searchTerms      | string[]                                                         | false    | Extra terms that the picture path should contain                                                                                                                       |
 | actors.[0].blacklistTerms   | string                                                           | false    | Terms that should not be found in an image path                                                                                                                        |
-| actors.[0].matchInBasename  | boolean                                                          | false    | If the name of the actor and the searchTerms must exist in the basename of the file, instead of anywhere in the path                                                   |
+| actors.[0].mustMatchInFilename  | boolean                                                          | false    | If the name of the actor and the searchTerms must exist in the filename, instead of anywhere in the file path                                                   |
 | actors.[0].max              | number                                                           | false    | Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property |
 | scenes                      | Array                                                            | true     | Array of picture search configurations for scenes                                                                                                                      |
 | scenes.[0]                  | Object                                                           | true     | One configuration for a type of scene picture                                                                                                                          |
@@ -88,7 +88,7 @@ Example with multiple configurations:
 | scenes.[0].path             | string                                                           | true     | The path in which to search for this picture                                                                                                                           |
 | scenes.[0].searchTerms      | string[]                                                         | false    | Extra terms that the picture path should contain                                                                                                                       |
 | scenes.[0].blacklistTerms   | string                                                           | false    | Terms that should not be found in an image path                                                                                                                        |
-| scenes.[0].matchInBasename  | boolean                                                          | false    | If the name of the scene and the `searchTerms` must exist in the basename of the file, instead of anywhere in the path                                                 |
+| scenes.[0].mustMatchInFilename  | boolean                                                          | false    | If the name of the scene and the `searchTerms` must exist in the filename, instead of anywhere in the file path                                                 |
 | scenes.[0].max              | number                                                           | false    | Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property |
 | movies                      | Array                                                            | true     | Array of picture search configurations for movies                                                                                                                      |
 | movies.[0]                  | Object                                                           | true     | One configuration for a type of movie picture                                                                                                                          |
@@ -96,7 +96,7 @@ Example with multiple configurations:
 | movies.[0].path             | string                                                           | true     | The path in which to search for this picture                                                                                                                           |
 | movies.[0].searchTerms      | string[]                                                         | false    | Extra terms that the picture path should contain                                                                                                                       |
 | movies.[0].blacklistTerms   | string                                                           | false    | Terms that should not be found in an image path                                                                                                                        |
-| actors.[0].matchInBasename  | boolean                                                          | false    | If the name of the movie and the `searchTerms` must exist in the basename of the file, instead of anywhere in the path                                                 |
+| actors.[0].mustMatchInFilename  | boolean                                                          | false    | If the name of the movie and the `searchTerms` must exist in the filename, instead of anywhere in the file path                                                 |
 | movies.[0].max              | number                                                           | false    | Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property |
 | studios                     | Array                                                            | true     | Array of picture search configurations for studios                                                                                                                     |
 | studios.[0]                 | Object                                                           | true     | One configuration for a type of studio picture                                                                                                                         |
@@ -104,7 +104,7 @@ Example with multiple configurations:
 | studios.[0].path            | string                                                           | true     | The path in which to search for this picture                                                                                                                           |
 | studios.[0].searchTerms     | string[]                                                         | false    | Extra terms that the picture path should contain                                                                                                                       |
 | studios.[0].blacklistTerms  | string                                                           | false    | Terms that should not be found in an image path                                                                                                                        |
-| studios.[0].matchInBasename | boolean                                                          | false    | If the name of the studio and the `searchTerms` must exist in the basename of the file, instead of anywhere in the path                                                |
+| studios.[0].mustMatchInFilename | boolean                                                          | false    | If the name of the studio and the `searchTerms` must exist in the filename, instead of anywhere in the file path                                                |
 | studios.[0].max             | number                                                           | false    | Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property |
 
 ### Example installation with default arguments
@@ -127,7 +127,7 @@ Example with multiple configurations:
                 "thumbnail"
               ],
               "blacklistTerms": [],
-              "matchInBasename": false,
+              "mustMatchInFilename": false,
               "max": -1
             }
           ],
@@ -139,7 +139,7 @@ Example with multiple configurations:
                 "thumbnail"
               ],
               "blacklistTerms": [],
-              "matchInBasename": false,
+              "mustMatchInFilename": false,
               "max": -1
             }
           ],
@@ -162,7 +162,7 @@ Example with multiple configurations:
                 "thumbnail"
               ],
               "blacklistTerms": [],
-              "matchInBasename": false,
+              "mustMatchInFilename": false,
               "max": -1
             }
           ]
@@ -212,7 +212,7 @@ plugins:
             searchTerms:
               - thumbnail
             blacklistTerms: []
-            matchInBasename: false
+            mustMatchInFilename: false
             max: -1
         scenes:
           - prop: thumbnail
@@ -220,7 +220,7 @@ plugins:
             searchTerms:
               - thumbnail
             blacklistTerms: []
-            matchInBasename: false
+            mustMatchInFilename: false
             max: -1
         movies:
           - prop: thumbnail
@@ -235,7 +235,7 @@ plugins:
             searchTerms:
               - thumbnail
             blacklistTerms: []
-            matchInBasename: false
+            mustMatchInFilename: false
             max: -1
   events:
     actorCreated:

@@ -293,7 +293,7 @@ export const actorFixtures = [
             prop: "thumbnail",
             searchTerms: ["deep", "dummy"],
             path: "./plugins/pics/test/fixtures",
-            matchInBasename: false,
+            mustMatchInFilename: false,
           },
         ],
       },
@@ -317,7 +317,7 @@ export const actorFixtures = [
             prop: "thumbnail",
             searchTerms: ["deep", "dummy"],
             path: "./plugins/pics/test/fixtures",
-            matchInBasename: true,
+            mustMatchInFilename: true,
           },
         ],
       },
@@ -365,7 +365,7 @@ export const actorFixtures = [
     },
     result: {},
   },
-  // Deep > matchInBasename
+  // Deep > mustMatchInFilename
   {
     name: "deep: Should find image when term in path",
     context: {
@@ -378,7 +378,7 @@ export const actorFixtures = [
             prop: "thumbnail",
             searchTerms: ["deep"],
             path: "./plugins/pics/test/fixtures",
-            matchInBasename: false,
+            mustMatchInFilename: false,
           },
         ],
       },
@@ -391,7 +391,7 @@ export const actorFixtures = [
     },
   },
   {
-    name: "deep: Should NOT find image when term not in basename and matchInBasename",
+    name: "deep: Should NOT find image when term not in basename and mustMatchInFilename",
     context: {
       ...context,
       actorName: "005",
@@ -402,7 +402,7 @@ export const actorFixtures = [
             prop: "thumbnail",
             searchTerms: ["deep"],
             path: "./plugins/pics/test/fixtures",
-            matchInBasename: true,
+            mustMatchInFilename: true,
           },
         ],
       },

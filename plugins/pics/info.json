@@ -63,7 +63,7 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "actors.[0].matchInBasename",
+      "name": "actors.[0].mustMatchInFilename",
       "type": "boolean",
       "required": false,
       "default": false,
@@ -119,7 +119,7 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "scenes.[0].matchInBasename",
+      "name": "scenes.[0].mustMatchInFilename",
       "type": "boolean",
       "required": false,
       "default": false,
@@ -175,7 +175,7 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "actors.[0].matchInBasename",
+      "name": "actors.[0].mustMatchInFilename",
       "type": "boolean",
       "required": false,
       "default": false,
@@ -231,7 +231,7 @@
       "description": "Terms that should not be found in an image path"
     },
     {
-      "name": "studios.[0].matchInBasename",
+      "name": "studios.[0].mustMatchInFilename",
       "type": "boolean",
       "required": false,
       "default": false,

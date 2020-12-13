@@ -9,7 +9,7 @@ export const validateArgs = (ctx: Context): true | Error => {
     searchTerms: ctx.$zod.array(ctx.$zod.string()).optional(),
     blacklistTerms: ctx.$zod.array(ctx.$zod.string()).optional(),
     max: ctx.$zod.number().optional(),
-    matchInBasename: ctx.$zod.boolean().optional(),
+    mustMatchInFilename: ctx.$zod.boolean().optional(),
   });
 
   const ActorConf = baseScrapeDefinition.extend({
@@ -94,7 +94,7 @@ export async function scanFolder(
         })
       );
 
-      const pathToMatch = scrapeDefinition.matchInBasename
+      const pathToMatch = scrapeDefinition.mustMatchInFilename
         ? ctx.$path.basename(imagePath)
         : imagePath;
 

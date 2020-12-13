@@ -10,7 +10,7 @@ This plugin retrieves pictures for actors, scenes, movies or studios
 - - For a file to be considered a match, the name and all search terms must be found, with none of the blacklisted terms being found.
 - - Files are searched for recursively from the given `path`
 - -  🚨 `WARNING`: if you have a folder for a category/studio... that contains an image with it's own name and other sub categories/studios..., a "wrong" image may be found. Example: if you have a folder "evil-angel" that contains "blackmailed.png" and "evil-angel.png". When searching for "Evil Angel", the plugin might return "blackmailed.png".  
-Make sure to use the `matchInBasename` option for the search configuration. This ensures that only "evil-angel.png" will be returned.
+Make sure to use the `mustMatchInFilename` option for the search configuration. This ensures that only "evil-angel.png" will be returned.
 - You may have multiple configurations of the same `'prop'`.
 - - Only the **last** image found for a given `'prop'` will be created.
 - - If you have multiple `'extra'` configurations, all images found across those configurations will be created.

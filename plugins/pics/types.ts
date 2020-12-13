@@ -11,7 +11,7 @@ interface BaseScrapeDefinition {
   searchTerms?: string[];
   blacklistTerms?: string[];
   max?: number;
-  matchInBasename?: boolean;
+  mustMatchInFilename?: boolean;
 }
 
 export type ActorScrapeDefinition = BaseScrapeDefinition & {
