@@ -17,6 +17,8 @@ This plugin retrieves pictures for actors, scenes, movies or studios
 - - The name, searchTerms and blackListTerms are all checked for, via `$matcher`:  the matcher configured by `matching.matcher.type` in your config file (config.json/config.yaml)
 - - For a file to be considered a match, the name and all search terms must be found, with none of the blacklisted terms being found.
 - - Files are searched for recursively from the given `path`
+- -  🚨 `WARNING`: if you have a folder for a category/studio... that contains an image with it's own name and other sub categories/studios..., a "wrong" image may be found. Example: if you have a folder "evil-angel" that contains "blackmailed.png" and "evil-angel.png". When searching for "Evil Angel", the plugin might return "blackmailed.png".  
+Make sure to use the `matchInBasename` option for the search configuration. This ensures that only "evil-angel.png" will be returned.
 - You may have multiple configurations of the same `'prop'`.
 - - Only the **last** image found for a given `'prop'` will be created.
 - - If you have multiple `'extra'` configurations, all images found across those configurations will be created.
@@ -80,7 +82,7 @@ Example with multiple configurations:
 | actors.[0].path             | string                                                           | true     | The path in which to search for this picture                                                                                                                           |
 | actors.[0].searchTerms      | string[]                                                         | false    | Extra terms that the picture path should contain                                                                                                                       |
 | actors.[0].blacklistTerms   | string                                                           | false    | Terms that should not be found in an image path                                                                                                                        |
-| actors.[0].matchInBasename  | boolean                                                          | false    | If the name of the actor and the searchTerms must exist in the basename of the file, instead of anywhere in the path                                                   |
+| actors.[0].matchInBasename  | boolean                                                          | false    | If the name of the actor and the `searchTerms` must exist in the basename of the file, instead of anywhere in the path                                                 |
 | actors.[0].max              | number                                                           | false    | Only needed for an `'extra'` search configuration: how many max images to get. Do not define or use a negative number to get all. You can otherwise omit this property |
 | scenes                      | Array                                                            | true     | Array of picture search configurations for scenes                                                                                                                      |
 | scenes.[0]                  | Object                                                           | true     | One configuration for a type of scene picture                                                                                                                          |
