@@ -282,6 +282,49 @@ export const actorFixtures = [
     },
   },
   {
+    name: "deep: Should find a thumbnail 2",
+    context: {
+      ...context,
+      actorName: "004",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            searchTerms: ["deep", "dummy"],
+            path: "./plugins/pics/test/fixtures",
+            matchInBasename: false,
+          },
+        ],
+      },
+    },
+    result: {
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/deep/image004-dummy.jpg"),
+        "004 (thumbnail)"
+      ),
+    },
+  },
+  {
+    name: "deep: Should not find a thumbnail when term not in basename",
+    context: {
+      ...context,
+      actorName: "004",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            searchTerms: ["deep", "dummy"],
+            path: "./plugins/pics/test/fixtures",
+            matchInBasename: true,
+          },
+        ],
+      },
+    },
+    result: {},
+  },
+  {
     name: "deep: Should find another thumbnail",
     context: {
       ...context,
@@ -316,6 +359,50 @@ export const actorFixtures = [
             prop: "thumbnail",
             searchTerms: ["007"],
             path: "./plugins/pics/test/fixtures",
+          },
+        ],
+      },
+    },
+    result: {},
+  },
+  // Deep > matchInBasename
+  {
+    name: "deep: Should find image when term in path",
+    context: {
+      ...context,
+      actorName: "005",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            searchTerms: ["deep"],
+            path: "./plugins/pics/test/fixtures",
+            matchInBasename: false,
+          },
+        ],
+      },
+    },
+    result: {
+      thumbnail: context.$createLocalImage(
+        path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
+        "005 (thumbnail)"
+      ),
+    },
+  },
+  {
+    name: "deep: Should NOT find image when term not in basename and matchInBasename",
+    context: {
+      ...context,
+      actorName: "005",
+      args: {
+        ...baseArgs,
+        actors: [
+          {
+            prop: "thumbnail",
+            searchTerms: ["deep"],
+            path: "./plugins/pics/test/fixtures",
+            matchInBasename: true,
           },
         ],
       },

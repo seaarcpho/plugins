@@ -9,6 +9,7 @@ export const validateArgs = (ctx: Context): true | Error => {
     searchTerms: ctx.$zod.array(ctx.$zod.string()).optional(),
     blacklistTerms: ctx.$zod.array(ctx.$zod.string()).optional(),
     max: ctx.$zod.number().optional(),
+    matchInBasename: ctx.$zod.boolean().optional(),
   });
 
   const ActorConf = baseScrapeDefinition.extend({
@@ -93,10 +94,14 @@ export async function scanFolder(
         })
       );
 
+      const pathToMatch = scrapeDefinition.matchInBasename
+        ? ctx.$path.basename(imagePath)
+        : imagePath;
+
       const isMatch =
-        ctx.$matcher.filterMatchingItems(itemsToMatch, imagePath, (el) => [el.name]).length ===
+        ctx.$matcher.filterMatchingItems(itemsToMatch, pathToMatch, (el) => [el.name]).length ===
           itemsToMatch.length &&
-        !ctx.$matcher.filterMatchingItems(blacklistedItems, imagePath, (el) => [el.name]).length;
+        !ctx.$matcher.filterMatchingItems(blacklistedItems, pathToMatch, (el) => [el.name]).length;
       if (!isMatch) {
         return;
       }

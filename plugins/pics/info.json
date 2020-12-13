@@ -63,6 +63,13 @@
       "description": "Terms that should not be found in an image path"
     },
     {
+      "name": "actors.[0].matchInBasename",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "If the name of the actor and the searchTerms must exist in the basename of the file, instead of anywhere in the path"
+    },
+    {
       "name": "actors.[0].max",
       "type": "number",
       "required": false,
@@ -110,6 +117,13 @@
       "required": false,
       "default": [],
       "description": "Terms that should not be found in an image path"
+    },
+    {
+      "name": "scenes.[0].matchInBasename",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "If the name of the scene and the `searchTerms` must exist in the basename of the file, instead of anywhere in the path"
     },
     {
       "name": "scenes.[0].max",
@@ -161,6 +175,13 @@
       "description": "Terms that should not be found in an image path"
     },
     {
+      "name": "actors.[0].matchInBasename",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "If the name of the movie and the `searchTerms` must exist in the basename of the file, instead of anywhere in the path"
+    },
+    {
       "name": "movies.[0].max",
       "type": "number",
       "required": false,
@@ -208,6 +229,13 @@
       "required": false,
       "default": [],
       "description": "Terms that should not be found in an image path"
+    },
+    {
+      "name": "studios.[0].matchInBasename",
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "If the name of the studio and the `searchTerms` must exist in the basename of the file, instead of anywhere in the path"
     },
     {
       "name": "studios.[0].max",
