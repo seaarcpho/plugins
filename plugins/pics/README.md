@@ -1,4 +1,4 @@
-## pics 2.0.0
+## pics 2.1.0
 
 by boi123212321, john4valor, leadwolf
 
