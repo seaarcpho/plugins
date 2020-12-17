@@ -1,5 +1,11 @@
 ## Porn Vault plugins
 
+### Create plugin
+
+Run `npm run setup` to scaffold a new plugin.
+
+### Plugin list
+
 | Plugin                                                                                                      | Description                                                                                                                                                                                                                                         |
 | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [adultempire](https://github.com/porn-vault/porn-vault-plugins/blob/master/plugins/adultempire/README.md)   | Scrape data from adultempire                                                                                                                                                                                                                        |
@@ -8,7 +14,3 @@
 | [pics](https://github.com/porn-vault/porn-vault-plugins/blob/master/plugins/pics/README.md)                 | Find actor, scene, movie, studio images based on local files. GIF support.                                                                                                                                                                          |
 | [resolution](https://github.com/porn-vault/porn-vault-plugins/blob/master/plugins/resolution/README.md)     | Add resolution labels to a scene                                                                                                                                                                                                                    |
 | [traxxx](https://github.com/porn-vault/porn-vault-plugins/blob/master/plugins/traxxx/README.md)             | Scrape data from traxxx                                                                                                                                                                                                                             |
-
-### Create plugin
-
-Run `npm run setup` to scaffold a new plugin.
