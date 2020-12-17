@@ -1,11 +1,5 @@
 ## Porn Vault plugins
 
-### Create plugin
-
-Run `npm run setup` to scaffold a new plugin.
-
-### Plugin list
-
 | Plugin                                                                                                      | Description                                                                                                                                                                                                                                         |
 | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [adultempire](https://github.com/porn-vault/porn-vault-plugins/blob/master/plugins/adultempire/README.md)   | Scrape data from adultempire                                                                                                                                                                                                                        |
