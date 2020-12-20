@@ -1010,7 +1010,7 @@ describe.only("PromisedScene", () => {
     it("should import without an image. and create an error", async () => {
       const result = await plugin({
         ...context,
-        $createImage: () => Promise.reject(new Error('test error')),
+        $createImage: () => Promise.reject(new Error("test error")),
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -1043,15 +1043,14 @@ describe.only("PromisedScene", () => {
           status: true,
         },
       });
-        expect(result).to.be.an("object");
-        expect(result).to.not.have.property('thumbnail');
-        expect(result.description).to.equal(
-          "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
-        );
-        expect(result.releaseDate).to.be.a("number");
-        expect(result.actors).to.be.a("Array");
-        expect(result.studio).to.equal("NEW SENSATIONS");
-        
+      expect(result).to.be.an("object");
+      expect(result).to.not.have.property("thumbnail");
+      expect(result.description).to.equal(
+        "Mia Malkova's back and more flexible more than ever. She is looking fine and is extremely horny for some sweet stud lovin'. Cum watch Mia Malkova work this hard cock to explosion of warm man chowder all across her face!"
+      );
+      expect(result.releaseDate).to.be.a("number");
+      expect(result.actors).to.be.a("Array");
+      expect(result.studio).to.equal("NEW SENSATIONS");
     });
 
     it("Should have DB files with Scene already -- No Studio or Actor -- manualTouch True -- Should find with correct answers", async () => {
