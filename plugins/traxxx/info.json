@@ -1,6 +1,6 @@
 {
   "name": "traxxx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": ["leadwolf"],
   "description": "Scrape data from traxxx",
   "pluginEvents": ["studioCreated", "studioCustom"],
@@ -31,7 +31,7 @@
       "type": "Boolean",
       "required": false,
       "default": true,
-      "description": "When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts. The suffixes obviously cannot be the same"
+      "description": "When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts. The suffixes obviously cannot be the same. If the studio name already has a suffix, it will be kept, even if this setting is false"
     },
     {
       "name": "studios.channelSuffix",

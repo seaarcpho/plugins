@@ -482,11 +482,11 @@ export const validationFixtures = [
 const DUMMY_IMAGE_ID = "dummy_thumb_id";
 
 const EvilAngelChannelUniqueNames = {
-  name: "Evil Angel (Channel)",
+  name: "Evil Angel",
   thumbnail: DUMMY_IMAGE_ID,
   parent: "Evil Angel (Network)",
   custom: {
-    "Traxxx Id": 291,
+    "Traxxx Slug": "evilangel",
     "Traxxx Type": "channel",
     Homepage: "https://www.evilangel.com",
   },
@@ -556,7 +556,7 @@ const Gamma = {
   thumbnail: DUMMY_IMAGE_ID,
   aliases: ["gammaentertainment"],
   custom: {
-    "Traxxx Id": 1,
+    "Traxxx Slug": "gamma",
     "Traxxx Type": "network",
     Homepage: "https://www.gammaentertainment.com",
   },
@@ -586,7 +586,7 @@ export const genericResultFixtures = [
   },
   // Name checks
   {
-    name: "returns channel name w/ suffix, when uniqueNames: true",
+    name: "returns channel name, when uniqueNames: true",
     context: {
       ...context,
       $createImage: () => DUMMY_IMAGE_ID,
@@ -595,11 +595,31 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
+      name: "Evil Angel",
+      thumbnail: DUMMY_IMAGE_ID,
+      parent: "Evil Angel (Network)",
+      custom: {
+        "Traxxx Slug": "evilangel",
+        "Traxxx Type": "channel",
+        Homepage: "https://www.evilangel.com",
+      },
+    },
+  },
+  {
+    name: "returns channel name w/ suffix, when uniqueNames: true",
+    context: {
+      ...context,
+      $createImage: () => DUMMY_IMAGE_ID,
+      studioName: "Evil Angel",
+      args: { studios: { uniqueNames: true, channelPriority: true, channelSuffix: " (Channel)" } },
+    },
+    errored: false,
+    result: {
       name: "Evil Angel (Channel)",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -632,7 +652,7 @@ export const genericResultFixtures = [
       name: "Evil Angel",
       thumbnail: DUMMY_IMAGE_ID,
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -654,7 +674,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
-        "Traxxx Id": 28,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "network",
         Homepage: "https://www.evilangel.com",
       },
@@ -676,7 +696,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
-        "Traxxx Id": 28,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "network",
         Homepage: "https://www.evilangel.com",
       },
@@ -684,20 +704,20 @@ export const genericResultFixtures = [
   },
   // Specific channel
   {
-    name: "when channel, returns channel name w/ suffix, when uniqueNames: true",
+    name: "when channel, returns channel name, when uniqueNames: true",
     context: {
       ...context,
       $createImage: () => DUMMY_IMAGE_ID,
-      studioName: "Evil Angel (Channel)",
+      studioName: "Evil Angel",
       args: { studios: { uniqueNames: true, channelPriority: true } },
     },
     errored: false,
     result: {
-      name: "Evil Angel (Channel)",
+      name: "Evil Angel",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -708,7 +728,7 @@ export const genericResultFixtures = [
     context: {
       ...context,
       $createImage: () => DUMMY_IMAGE_ID,
-      studioName: "Evil Angel (Channel)",
+      studioName: "Evil Angel",
       args: { studios: { uniqueNames: false, channelPriority: true } },
     },
     errored: false,
@@ -718,7 +738,7 @@ export const genericResultFixtures = [
       name: "Evil Angel",
       thumbnail: DUMMY_IMAGE_ID,
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -726,12 +746,12 @@ export const genericResultFixtures = [
   },
   {
     name:
-      "when channel, returns channel name w/ suffix, when uniqueNames: true, channelPriority: false",
+      "when channel with suffix, returns channel name w/ suffix, when uniqueNames: true, channelPriority: false",
     context: {
       ...context,
       $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Channel)",
-      args: { studios: { uniqueNames: true, channelPriority: false } },
+      args: { studios: { uniqueNames: true, channelPriority: false, channelSuffix: " (Channel)" } },
     },
     errored: false,
     result: {
@@ -739,7 +759,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -747,21 +767,23 @@ export const genericResultFixtures = [
   },
   {
     name:
-      "when channel, returns basic channel name, when uniqueNames: false, channelPriority: false",
+      "when channel with suffix, returns channel name w/suffix, when uniqueNames: false, channelPriority: false, does not touch name",
     context: {
       ...context,
       $createImage: () => DUMMY_IMAGE_ID,
       studioName: "Evil Angel (Channel)",
-      args: { studios: { uniqueNames: false, channelPriority: false } },
+      args: {
+        studios: { uniqueNames: false, channelPriority: false, channelSuffix: " (Channel)" },
+      },
     },
     errored: false,
     result: {
       // No 'parent' in result on purpose, since no unique names,
       // and they would conflict
-      name: "Evil Angel",
+      name: "Evil Angel (Channel)",
       thumbnail: DUMMY_IMAGE_ID,
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -785,7 +807,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
-        "Traxxx Id": 28,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "network",
         Homepage: "https://www.evilangel.com",
       },
@@ -801,14 +823,14 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      name: "Evil Angel",
+      name: "Evil Angel (Network)",
       description:
         "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
 
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
-        "Traxxx Id": 28,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "network",
         Homepage: "https://www.evilangel.com",
       },
@@ -832,7 +854,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
-        "Traxxx Id": 28,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "network",
         Homepage: "https://www.evilangel.com",
       },
@@ -849,14 +871,14 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      name: "Evil Angel",
+      name: "Evil Angel (Network)",
       description:
         "Welcome to the award winning Evil Angel website, home to the most popular pornstars of today, yesterday and tomorrow in their most extreme and hardcore porn scenes to date. We feature almost 30 years of rough sex videos and hardcore anal porn like you've never seen before, and have won countless AVN and XBiz awards including 'Best Site' and 'Best Studio'.",
 
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Gamma Entertainment",
       custom: {
-        "Traxxx Id": 28,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "network",
         Homepage: "https://www.evilangel.com",
       },
@@ -927,7 +949,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       aliases: ["dummy alias", "gammaentertainment"],
       custom: {
-        "Traxxx Id": 1,
+        "Traxxx Slug": "gamma",
         "Traxxx Type": "network",
         Homepage: "https://www.gammaentertainment.com",
       },
@@ -950,7 +972,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       aliases: ["gammaentertainment"],
       custom: {
-        "Traxxx Id": 1,
+        "Traxxx Slug": "gamma",
         "Traxxx Type": "network",
         Homepage: "https://www.gammaentertainment.com",
       },
@@ -973,7 +995,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       aliases: ["gammaentertainment"],
       custom: {
-        "Traxxx Id": 1,
+        "Traxxx Slug": "gamma",
         "Traxxx Type": "network",
         Homepage: "https://www.gammaentertainment.com",
       },
@@ -990,11 +1012,11 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      name: "Evil Angel (Channel)",
+      name: "Evil Angel",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -1013,7 +1035,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -1029,11 +1051,11 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      name: "Evil Angel (Channel)",
+      name: "Evil Angel",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -1049,9 +1071,9 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      name: "Evil Angel (Channel)",
+      name: "Evil Angel",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -1067,7 +1089,7 @@ export const genericResultFixtures = [
     errored: false,
     result: {
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -1087,11 +1109,11 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      name: "Evil Angel (Channel)",
+      name: "Evil Angel",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -1113,11 +1135,11 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      name: "Evil Angel (Channel)",
+      name: "Evil Angel",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -1139,11 +1161,11 @@ export const genericResultFixtures = [
     },
     errored: false,
     result: {
-      name: "Evil Angel (Channel)",
+      name: "Evil Angel",
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },
@@ -1165,7 +1187,7 @@ export const genericResultFixtures = [
       thumbnail: DUMMY_IMAGE_ID,
       parent: "Evil Angel (Network)",
       custom: {
-        "Traxxx Id": 291,
+        "Traxxx Slug": "evilangel",
         "Traxxx Type": "channel",
         Homepage: "https://www.evilangel.com",
       },

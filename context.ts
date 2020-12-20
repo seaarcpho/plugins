@@ -15,7 +15,33 @@ import { promisify } from "util";
 import yaml from "yaml";
 import zod from "zod";
 
-import { Context } from "./types/plugin";
+import { Context, Matcher, MatchSource } from "./types/plugin";
+
+export const basicMatcher: Matcher = new (class BasicMatcher implements Matcher {
+  filterMatchingItems<T extends MatchSource>(
+    itemsToMatch: T[],
+    str: string,
+    getInputs: (matchSource: T) => string[],
+    sortByLongestMatch?: boolean | undefined
+  ): T[] {
+    const matchedItems = itemsToMatch.filter((item) => {
+      const itemInputs = getInputs(item);
+      return itemInputs.some((input) => str.toLowerCase().includes(input.toLowerCase()));
+    });
+    if (sortByLongestMatch) {
+      matchedItems.sort((a, b) => b.name.length - a.name.length);
+    }
+    return matchedItems;
+  }
+
+  isMatchingItem<T extends MatchSource>(
+    item: T,
+    str: string,
+    getInputs: (matchSource: T) => string[]
+  ): boolean {
+    return !!this.filterMatchingItems([item], str, getInputs).length;
+  }
+})();
 
 const readdirAsync = promisify(readdir);
 const statAsync = promisify(stat);
@@ -28,11 +54,11 @@ const validExtension = (exts: string[], path: string) => exts.includes(extname(p
 export interface IWalkOptions {
   dir: string;
   extensions: string[];
-  cb: (file: string) => void | Promise<void>;
+  cb: (file: string) => void | Promise<void | unknown> | unknown;
   exclude: string[];
 }
 
-export async function walk(options: IWalkOptions): Promise<void> {
+export async function walk(options: IWalkOptions): Promise<void | string> {
   const root = resolve(options.dir);
 
   const folderStack = [] as string[];
@@ -68,7 +94,11 @@ export async function walk(options: IWalkOptions): Promise<void> {
           folderStack.push(path);
         } else if (validExtension(options.extensions, file)) {
           console.log(`Found file ${file}`);
-          await options.cb(resolve(path));
+          const resolvedPath = resolve(path);
+          const res = await options.cb(resolvedPath);
+          if (res) {
+            return resolvedPath;
+          }
         }
       } catch (err) {
         const _err = err as Error & { code: string };
@@ -113,6 +143,7 @@ const context: Context = {
   $log: (...msgs) => {
     console.log(...msgs);
   },
+  $matcher: basicMatcher,
   $pluginPath: ".", // should be set in tests
   $require: (path) => require(path),
   $throw: (msg) => {

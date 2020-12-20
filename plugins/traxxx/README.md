@@ -1,4 +1,4 @@
-## traxxx 0.1.0
+## traxxx 0.1.1
 
 by leadwolf
 
@@ -19,7 +19,7 @@ This plugin retrieves data from Traxxx.
     * `aliases` : aliases of the studio
     * `parent`: the parent channel/network
     * `custom` : custom fields:
-        * `Traxxx Id` : the matched id (for use by plugins)
+        * `Traxxx Slug` : the slug identifier (for use by plugins)
         * `Traxxx Type` : the type of channel/network (for use by plugins)
         * `Homepage` : the Homepage of the studio
 
@@ -45,7 +45,7 @@ Example: plugin `A` returns `custom.myField: 'a string'`. and plugin `B` *would*
 | dry                       | Boolean  | false    | Whether to commit data changes                                                                                                                                                                                                                                                                |
 | studios                   | Object   | false    | Configuration for studio events                                                                                                                                                                                                                                                               |
 | studios.channelPriority   | Boolean  | false    | When the studio type is unknown, and the name corresponds to both a channel & a network, whether to prefer the channel or the network                                                                                                                                                         |
-| studios.uniqueNames       | Boolean  | false    | When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts. The suffixes obviously cannot be the same                                                                                                                          |
+| studios.uniqueNames       | Boolean  | false    | When the studio name corresponds to both a channel & a network, whether to append suffixes to the name to avoid conflicts. The suffixes obviously cannot be the same. If the studio name already has a suffix, it will be kept, even if this setting is false                                 |
 | studios.channelSuffix     | String   | false    | When `studios.uniqueNames` is active returning a **channel** name that also corresponds to a network, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added                                                                                 |
 | studios.networkSuffix     | String   | false    | When `studios.uniqueNames` is active and returning a **network** name that also corresponds to a channel, will be appended to the name. WARNING: spaces between the name & suffix will not be automatically added                                                                             |
 | studios.mergeAliases      | Boolean  | false    | When the previous plugin returned aliases, if our plugins aliases should be merged with them or override them                                                                                                                                                                                 |
