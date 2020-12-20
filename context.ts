@@ -13,7 +13,7 @@ import readline from "readline";
 import semver from "semver";
 import { promisify } from "util";
 import yaml from "yaml";
-import zod from "zod";
+import * as zod from "zod";
 
 import { Context, Matcher, MatchSource } from "./types/plugin";
 

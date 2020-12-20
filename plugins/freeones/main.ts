@@ -412,6 +412,10 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     ...getPiercings(),
   };
 
+  if (custom.tattoos === "Unknown") {
+    delete custom.tattoos;
+  }
+
   const data: ActorOutput = {
     ...getNationality(),
     ...getAge(),
@@ -422,12 +426,24 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   if (!isBlacklisted("labels")) {
     data.labels = [];
-    if (custom["hair color"]) data.labels.push(`${custom["hair color"]} Hair`);
-    if (custom["eye color"]) data.labels.push(`${custom["eye color"]} Eyes`);
-    if (custom.ethnicity) data.labels.push(custom.ethnicity);
-    if (custom.gender) data.labels.push("Female");
-    if (custom["piercings"]) data.labels.push("Piercings");
-    if (custom["tattoos"]) data.labels.push("Tattoos");
+    if (custom["hair color"]) {
+      data.labels.push(`${custom["hair color"]} Hair`);
+    }
+    if (custom["eye color"]) {
+      data.labels.push(`${custom["eye color"]} Eyes`);
+    }
+    if (custom.ethnicity) {
+      data.labels.push(custom.ethnicity);
+    }
+    if (custom.gender) {
+      data.labels.push("Female");
+    }
+    if (custom["piercings"]) {
+      data.labels.push("Piercings");
+    }
+    if (custom["tattoos"]) {
+      data.labels.push("Tattoos");
+    }
   }
 
   if (args.dry === true) {

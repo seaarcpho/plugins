@@ -1,50 +1,47 @@
-import * as zod from "zod";
-
+import { ActorContext } from "../../types/actor";
+import { MovieContext } from "../../types/movie";
 import { DeepPartial } from "../../types/plugin";
 import { SceneContext } from "../../types/scene";
 import { StudioContext } from "../../types/studio";
-import { ActorContext } from "./../../types/actor";
-import { MovieContext } from "./../../types/movie";
 
-const baseScrapeDefinition = zod.object({
-  path: zod.string().refine((val) => val && val.trim().length, "The path cannot be empty"),
-  searchTerms: zod.array(zod.string()).optional(),
-  blacklistTerms: zod.array(zod.string()).optional(),
-  max: zod.number().optional(),
-});
+// WARNING: these interfaces should always match the schema used by validateArgs
 
-const ActorConf = baseScrapeDefinition.extend({
-  prop: zod.enum(["thumbnail", "altThumbnail", "avatar", "hero", "extra"]),
-});
+interface BaseScrapeDefinition {
+  path: string;
+  searchTerms?: string[];
+  blacklistTerms?: string[];
+  max?: number;
+  mustMatchInFilename?: boolean;
+}
 
-const SceneConf = baseScrapeDefinition.extend({
-  prop: zod.enum(["thumbnail", "extra"]),
-});
+export type ActorScrapeDefinition = BaseScrapeDefinition & {
+  prop: "thumbnail" | "altThumbnail" | "avatar" | "hero" | "extra";
+};
 
-const MovieConf = baseScrapeDefinition.extend({
-  prop: zod.enum(["backCover", "frontCover", "spineCover", "extra"]),
-});
+export type SceneScrapeDefinition = BaseScrapeDefinition & {
+  prop: "thumbnail" | "extra";
+};
 
-const StudioConf = baseScrapeDefinition.extend({
-  prop: zod.enum(["thumbnail", "extra"]),
-});
+export type MovieScrapeDefinition = BaseScrapeDefinition & {
+  prop: "backCover" | "frontCover" | "spineCover" | "extra";
+};
 
-export const ArgsSchema = zod.object({
-  dry: zod.boolean().optional(),
-  actors: zod.array(ActorConf).optional(),
-  scenes: zod.array(SceneConf).optional(),
-  movies: zod.array(MovieConf).optional(),
-  studios: zod.array(StudioConf).optional(),
-});
+export type StudioScrapeDefinition = BaseScrapeDefinition & {
+  prop: "thumbnail" | "extra";
+};
 
 export type ScrapeDefinition =
-  | zod.infer<typeof ActorConf>
-  | zod.infer<typeof SceneConf>
-  | zod.infer<typeof MovieConf>
-  | zod.infer<typeof StudioConf>;
-
-export type ArgsSchemaType = zod.infer<typeof ArgsSchema>;
+  | ActorScrapeDefinition
+  | SceneScrapeDefinition
+  | MovieScrapeDefinition
+  | StudioScrapeDefinition;
 
 export type MyContext = (ActorContext | SceneContext | MovieContext | StudioContext) & {
-  args: DeepPartial<ArgsSchemaType>;
+  args: DeepPartial<{
+    dry: boolean;
+    actors: ActorScrapeDefinition[];
+    scenes: SceneScrapeDefinition[];
+    movies: MovieScrapeDefinition[];
+    studios: StudioScrapeDefinition[];
+  }>;
 };

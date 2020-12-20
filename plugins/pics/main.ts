@@ -1,9 +1,8 @@
-import { ActorContext, ActorOutput } from "../../types/actor";
-import { MovieContext, MovieOutput } from "../../types/movie";
-import { SceneContext } from "../../types/scene";
-import { StudioContext } from "../../types/studio";
-import { MyContext, ScrapeDefinition } from "../pics/types";
-import { executeScape, entries, validateArgs } from "./utils";
+import { ActorOutput } from "../../types/actor";
+import { MovieOutput } from "../../types/movie";
+import { ScrapeDefinition } from "./types";
+import { MyContext } from "./types";
+import { entries, executeScape, validateArgs } from "./utils";
 
 interface ScrapeEventDefinition {
   events: string[];
@@ -34,9 +33,7 @@ const eventScrapers: ScrapeEventDefinition[] = [
   },
 ];
 
-module.exports = async (
-  ctx: (ActorContext | SceneContext | MovieContext | StudioContext) & MyContext
-): Promise<ActorOutput | MovieOutput | undefined> => {
+module.exports = async (ctx: MyContext): Promise<ActorOutput | MovieOutput | undefined> => {
   const eventScraperDefinition = eventScrapers.find((scraper) =>
     scraper.events.includes(ctx.event)
   );
@@ -47,7 +44,7 @@ module.exports = async (
     return {};
   }
 
-  const res = validateArgs(ctx.args);
+  const res = validateArgs(ctx);
   if (res !== true) {
     ctx.$log(res.message);
     ctx.$throw(`[PICS] ERR: "args" schema is incorrect`);
@@ -63,11 +60,7 @@ module.exports = async (
   }
 
   const scrapeDefs = ctx.args[eventScraperDefinition.definitionObj] as
-    | Partial<
-        {
-          [key in ScrapeDefinition["prop"]]: ScrapeDefinition;
-        }
-      >
+    | ScrapeDefinition[]
     | undefined;
   if (!scrapeDefs || !Array.isArray(scrapeDefs) || !scrapeDefs.length) {
     ctx.$throw(
@@ -91,8 +84,7 @@ module.exports = async (
   > = {};
   for (const [prop, image] of entries(scrapeResult)) {
     if (prop !== "extra" && typeof image === "string") {
-      finalResult[prop] = await ctx.$createLocalImage(image, `${query} ${prop}`, true);
-      console.log(finalResult)
+      finalResult[prop] = await ctx.$createLocalImage(image, `${query} (${prop})`, true);
     } else if (Array.isArray(image)) {
       for (const extraImage of image) {
         await ctx.$createLocalImage(extraImage, `${query} (extra)`, false);
