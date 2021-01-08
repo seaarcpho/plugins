@@ -33,6 +33,8 @@ async function search({ $axios }: { $axios: Context["$axios"] }, query: string):
     await $axios.get(url, {
       params: {
         q: query,
+        s: "rank.currentRank",
+        o: "asc",
       },
     })
   ).data;
