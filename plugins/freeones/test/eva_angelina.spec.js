@@ -36,7 +36,8 @@ describe("freeones", () => {
       gender: "Female",
       sex: "Female",
       piercings: "Right Nostril; Navel; Left Eyebrow; Both Nipples",
-      tattoos: "Back Of Neck; Half-Sleeve With Large Skull On Right Upper Arm; Heart With Devil Horns On Left Breast",
+      tattoos:
+        "Back Of Neck; Half-Sleeve With Large Skull On Right Upper Arm; Heart With Devil Horns On Left Breast",
     });
     expect(result.nationality).to.equal("US");
     expect(result.bornOn).to.be.a("number");
@@ -50,5 +51,4 @@ describe("freeones", () => {
     expect(result.labels).to.contain("Piercings");
     expect(result.labels).to.contain("Tattoos");
   });
-
-  });
+});
