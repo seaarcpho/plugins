@@ -45,31 +45,31 @@ export const dateToTimestamp = (ctx: MyContext, dateStr: string): number | null 
   const yyyymmdd = dateStr.match(/\d\d\d\d(?:\s|\.)\d\d(?:\s|\.)\d\d/);
   const yymmdd = dateStr.match(/\d\d(?:\s|\.)\d\d(?:\s|\.)\d\d/);
 
-  ctx.$log(`[PDS] MSG: Converting date ${JSON.stringify(dateStr)} to timestamp`);
+  ctx.$logger.verbose(`Converting date ${JSON.stringify(dateStr)} to timestamp`);
 
   if (yyyymmdd && yyyymmdd.length) {
     const date = yyyymmdd[0].replace(" ", ".");
 
-    ctx.$log("[PDS] MSG:\tSUCCESS: Found => yyyymmdd");
+    ctx.$logger.verbose("\tSUCCESS: Found => yyyymmdd");
 
     return ctx.$moment(date, "YYYY-MM-DD").valueOf();
   }
   if (ddmmyyyy && ddmmyyyy.length) {
     const date = ddmmyyyy[0].replace(" ", ".");
 
-    ctx.$log("[PDS] MSG:\tSUCCESS: Found => ddmmyyyy");
+    ctx.$logger.verbose("\tSUCCESS: Found => ddmmyyyy");
 
     return ctx.$moment(date, "DD-MM-YYYY").valueOf();
   }
   if (yymmdd && yymmdd.length) {
     const date = yymmdd[0].replace(" ", ".");
 
-    ctx.$log("[PDS] MSG:\tSUCCESS: Found => yymmdd");
+    ctx.$logger.verbose("\tSUCCESS: Found => yymmdd");
 
     return ctx.$moment(date, "YY-MM-DD").valueOf();
   }
 
-  ctx.$log("[PDS] MSG:\tFAILED: Could not find a date");
+  ctx.$logger.verbose("\tFAILED: Could not find a date");
   return null;
 };
 
@@ -105,13 +105,13 @@ export function escapeRegExp(string: string | undefined): string {
 /**
  * @param inquirer - the inquire prompting questions
  * @param testingStatus - if should just print test questions and use the param answer
- * @param $log - logger function
+ * @param $logger - logger function
  * @returns the question prompt function
  */
 export const createQuestionPrompter = (
   inquirer: Context["$inquirer"],
   testingStatus: boolean | undefined,
-  $log: Context["$log"]
+  $logger: Context["$logger"]
 ) => {
   /**
    * @param promptArgs - All of the arguments that are required for prompting a question
@@ -119,8 +119,8 @@ export const createQuestionPrompter = (
    */
   const questionAsync = async <T>(promptArgs: object): Promise<T | { [name: string]: string }> => {
     if (testingStatus) {
-      $log(
-        `[PDS] TESTMODE: ${JSON.stringify(promptArgs["name"])} => ${JSON.stringify(
+      $logger.verbose(
+        `TESTMODE: ${JSON.stringify(promptArgs["name"])} => ${JSON.stringify(
           promptArgs["testAnswer"]
         )}`
       );
@@ -167,13 +167,13 @@ export const matchSceneResultToSearch = (
   knownActors: string[],
   studio: string | undefined
 ): SceneResult.SceneData | null => {
-  ctx.$log(`[PDS] MATCH: ${sceneList.length} results found`);
+  ctx.$logger.verbose(`MATCH: ${sceneList.length} results found`);
 
   for (const scene of sceneList) {
-    ctx.$log(
-      `[PDS] MATCH:\tTrying to match TPD title: ${JSON.stringify(
-        scene.title
-      )} --with--> ${JSON.stringify(ctx.sceneName)}`
+    ctx.$logger.verbose(
+      `MATCH:\tTrying to match TPD title: ${JSON.stringify(scene.title)} --with--> ${JSON.stringify(
+        ctx.sceneName
+      )}`
     );
 
     // It is better to search just the title.  We already have the actor and studio.
@@ -209,10 +209,10 @@ export const matchSceneResultToSearch = (
 
       if (searchedTitle !== undefined) {
         if (matchTitleRegex.test(searchedTitle)) {
-          ctx.$log(
-            `[PDS] MATCH:\t\tSUCCESS: ${JSON.stringify(searchedTitle)} did match to ${JSON.stringify(
-              matchTitle
-            )}`
+          ctx.$logger.verbose(
+            `MATCH:\t\tSUCCESS: ${JSON.stringify(
+              searchedTitle
+            )} did match to ${JSON.stringify(matchTitle)}`
           );
           return scene;
         }
@@ -220,7 +220,7 @@ export const matchSceneResultToSearch = (
     }
   }
 
-  ctx.$log(`[PDS] MATCH:\tERR: did not find any match`);
+  ctx.$logger.error(`MATCH:\tERR: did not find any match`);
 
   return null;
 };
@@ -304,9 +304,9 @@ export const checkSceneExistsInDb = (ctx: MyContext, sceneTitle: string | undefi
   if (foundDupScene) {
     // Found a possible duplicate
 
-    ctx.$log("[PDS] Title Duplication check: Found a possible duplicate title in the database");
+    ctx.$logger.warn("Title Duplication check: Found a possible duplicate title in the database");
     // Exit? Break? Return?
   } else {
-    ctx.$log("[PDS] Title Duplication check: Did not find any possible duplicate title");
+    ctx.$logger.verbose("Title Duplication check: Did not find any possible duplicate title");
   }
 };

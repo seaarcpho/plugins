@@ -8,6 +8,9 @@ const {
   basicFixtures,
   actorCreateImageFixtures,
 } = require("./fixtures/main.fixtures");
+const { createPluginRunner } = require("../../../context");
+
+const runPlugin = createPluginRunner("pics", plugin);
 
 describe("pics", () => {
   describe("basic", () => {
@@ -17,8 +20,8 @@ describe("pics", () => {
         let errored = false;
 
         try {
-          await plugin({
-            ...fixture.context,
+          await runPlugin({
+            ...fixture.runContext,
           });
         } catch (err) {
           if (fixture.errorMessage) {
@@ -45,8 +48,8 @@ describe("pics", () => {
           let result;
 
           try {
-            result = await plugin({
-              ...fixture.context,
+            result = await runPlugin({
+              ...fixture.runContext,
               event,
             });
           } catch (err) {
@@ -76,8 +79,8 @@ describe("pics", () => {
           let result;
 
           try {
-            result = await plugin({
-              ...fixture.context,
+            result = await runPlugin({
+              ...fixture.runContext,
               $createLocalImage: () => {
                 createImageCallCount++;
               },
@@ -115,8 +118,8 @@ describe("pics", () => {
           let result;
 
           try {
-            result = await plugin({
-              ...fixture.context,
+            result = await runPlugin({
+              ...fixture.runContext,
               event,
             });
           } catch (err) {
@@ -150,8 +153,8 @@ describe("pics", () => {
           let result;
 
           try {
-            result = await plugin({
-              ...fixture.context,
+            result = await runPlugin({
+              ...fixture.runContext,
               event,
             });
           } catch (err) {
@@ -185,8 +188,8 @@ describe("pics", () => {
           let result;
 
           try {
-            result = await plugin({
-              ...fixture.context,
+            result = await runPlugin({
+              ...fixture.runContext,
               event,
             });
           } catch (err) {

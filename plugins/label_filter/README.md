@@ -1,4 +1,4 @@
-## label_filter 0.0.1
+## label_filter 0.0.2
 
 by boi123212321
 

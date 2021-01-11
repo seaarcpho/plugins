@@ -39,22 +39,22 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput | MovieOutput | und
   );
   if (!eventScraperDefinition) {
     ctx.$throw(
-      `[PICS] ERR: Uh oh. You shouldn't use the plugin for this type of event "${ctx.event}", cannot run plugin`
+      `Uh oh. You shouldn't use the plugin for this type of event "${ctx.event}", cannot run plugin`
     );
     return {};
   }
 
   const res = validateArgs(ctx);
   if (res !== true) {
-    ctx.$log(res.message);
-    ctx.$throw(`[PICS] ERR: "args" schema is incorrect`);
+    ctx.$logger.error(`"args" schema is incorrect`);
+    ctx.$throw(res);
     return {};
   }
 
   const query = ctx[eventScraperDefinition.queryProp] as string | undefined;
   if (!query) {
     ctx.$throw(
-      `[PICS] ERR: Did not receive name to search for. Expected a string from ${eventScraperDefinition.queryProp}`
+      `Did not receive name to search for. Expected a string from ${eventScraperDefinition.queryProp}`
     );
     return {};
   }
@@ -64,7 +64,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput | MovieOutput | und
     | undefined;
   if (!scrapeDefs || !Array.isArray(scrapeDefs) || !scrapeDefs.length) {
     ctx.$throw(
-      `[PICS] ERR: Arguments did not contain object with paths to search for. Expected "args.${eventScraperDefinition.definitionObj}"`
+      `Arguments did not contain object with paths to search for. Expected "args.${eventScraperDefinition.definitionObj}"`
     );
     return {}; // return for type compatibility
   }
@@ -72,8 +72,8 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput | MovieOutput | und
   const scrapeResult = await executeScape(ctx, query, scrapeDefs);
 
   if (ctx.args?.dry) {
-    ctx.$log("[PICS] MSG: Is 'dry' mode, would've returned:");
-    ctx.$log(scrapeResult);
+    ctx.$logger.verbose("Is 'dry' mode, would've returned:");
+    ctx.$logger.verbose(scrapeResult);
     return {};
   }
 

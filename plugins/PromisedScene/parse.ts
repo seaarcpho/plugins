@@ -11,7 +11,7 @@ export const parseSceneActor = (ctx: MyContext): string | null => {
   const allDbActors: string[] = [];
   let parsedDbActor: string | null = null;
 
-  ctx.$log(`[PDS] PARSE: Parsing Actors DB ==> ${ctx.args.source_settings.actors}`);
+  ctx.$logger.verbose(`Parsing Actors DB ==> ${ctx.args.source_settings.actors}`);
   ctx.$fs
     .readFileSync(ctx.args.source_settings.actors, "utf8")
     .split("\n")
@@ -83,13 +83,13 @@ export const parseSceneActor = (ctx: MyContext): string | null => {
       parsedDbActor = person;
     }
     if (foundAnAlias) {
-      ctx.$log(`[PDS] PARSE: SUCCESS Found Actor-Alias: ${JSON.stringify(person)}`);
+      ctx.$logger.verbose(`SUCCESS Found Actor-Alias: ${JSON.stringify(person)}`);
     } else {
-      ctx.$log(`[PDS] PARSE: SUCCESS Found Actor: ${JSON.stringify(person)}`);
+      ctx.$logger.verbose(`SUCCESS Found Actor: ${JSON.stringify(person)}`);
     }
   });
 
-  ctx.$log(`[PDS] PARSE:\tUsing "best match" Actor For Search: ${JSON.stringify(parsedDbActor)}`);
+  ctx.$logger.verbose(`\tUsing "best match" Actor For Search: ${JSON.stringify(parsedDbActor)}`);
   return parsedDbActor;
 };
 
@@ -97,9 +97,7 @@ export const parseSceneStudio = (ctx: MyContext): string | null => {
   if (!ctx.args?.parseStudio || !ctx.args?.source_settings?.studios) {
     return null;
   }
-  ctx.$log(
-    `[PDS] PARSE: Parsing Studios DB ==> ${JSON.stringify(ctx.args.source_settings.studios)}`
-  );
+  ctx.$logger.verbose(`Parsing Studios DB ==> ${JSON.stringify(ctx.args.source_settings.studios)}`);
 
   const cleanScenePath = stripStr(ctx.scenePath);
 
@@ -184,13 +182,13 @@ export const parseSceneStudio = (ctx: MyContext): string | null => {
       foundStudioAnAlias = instanceFoundStudioAnAlias;
     }
     if (foundStudioAnAlias) {
-      ctx.$log(`[PDS] PARSE:\tSUCCESS: Found Studio-Alias: ${JSON.stringify(parsedDbStudio)}`);
+      ctx.$logger.verbose(`\tSUCCESS: Found Studio-Alias: ${JSON.stringify(parsedDbStudio)}`);
     } else {
-      ctx.$log(`[PDS] PARSE:\tSUCCESS: Found Studio: ${JSON.stringify(parsedDbStudio)}`);
+      ctx.$logger.verbose(`\tSUCCESS: Found Studio: ${JSON.stringify(parsedDbStudio)}`);
     }
   });
 
-  ctx.$log(`[PDS] PARSE:\tUsing "best match" Studio For Search: ${JSON.stringify(parsedDbStudio)}`);
+  ctx.$logger.verbose(`\tUsing "best match" Studio For Search: ${JSON.stringify(parsedDbStudio)}`);
   return parsedDbStudio;
 };
 
