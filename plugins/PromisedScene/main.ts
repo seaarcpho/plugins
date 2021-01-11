@@ -19,7 +19,8 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     scenePath,
     sceneName,
     $throw,
-    $log,
+    $logger,
+    $formatMessage,
     testMode,
     args,
     $inquirer,
@@ -33,42 +34,42 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
   // Making sure that the event that triggered is the correct event
   if (event !== "sceneCreated" && event !== "sceneCustom") {
-    $throw("ERR: Plugin used for unsupported event");
+    $throw("Plugin used for unsupported event");
   }
 
   // Checking all of the arguments are set in the plugin
 
   if (!Object.hasOwnProperty.call(args, "useTitleInSearch")) {
-    $log("WARN: Missing useTitleInSearch in plugin args!");
+    $logger.warn("Missing useTitleInSearch in plugin args!");
   }
 
   if (!Object.hasOwnProperty.call(args, "alwaysUseSingleResult")) {
-    $log("WARN: Missing alwaysUseSingleResult in plugin args!");
+    $logger.warn("Missing alwaysUseSingleResult in plugin args!");
   }
 
   if (!Object.hasOwnProperty.call(args, "source_settings")) {
-    $throw("ERR: Missing source_settings in plugin args");
+    $throw("Missing source_settings in plugin args");
   }
 
   if (!Object.hasOwnProperty.call(args, "parseActor")) {
-    $throw("ERR: Missing parseActor in plugin args");
+    $throw("Missing parseActor in plugin args");
   }
 
   if (!Object.hasOwnProperty.call(args, "parseStudio")) {
-    $throw("ERR: Missing parseStudio in plugin args");
+    $throw("Missing parseStudio in plugin args");
   }
 
   if (!Object.hasOwnProperty.call(args, "manualTouch")) {
-    $throw("ERR: Missing manualTouch in plugin args");
+    $throw("Missing manualTouch in plugin args");
   }
 
   if (!Object.hasOwnProperty.call(args, "sceneDuplicationCheck")) {
-    $throw("ERR: Missing sceneDuplicationCheck in plugin args");
+    $throw("Missing sceneDuplicationCheck in plugin args");
   }
 
   const tpdbApi = new Api(ctx);
 
-  $log(`[PDS] MSG: STARTING to analyze scene: ${JSON.stringify(scenePath)}`);
+  $logger.verbose(`STARTING to analyze scene: ${JSON.stringify(scenePath)}`);
 
   const parsedDbActor = parseSceneActor(ctx);
   const parsedDbStudio = parseSceneStudio(ctx);
@@ -138,7 +139,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    * @param results - the result object
    */
   function logResultObject(results: SceneOutput): void {
-    $log("[PDS] MSG: ====  Final Entry =====");
+    $logger.verbose("====  Final Entry =====");
 
     const logObj = {
       ...results,
@@ -148,7 +149,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       (logObj.releaseDate as any) = timestampToString(logObj.releaseDate ?? 0);
     }
 
-    $log(JSON.stringify(logObj, null, 2));
+    $logger.verbose(JSON.stringify(logObj, null, 2));
   }
 
   /**
@@ -165,15 +166,14 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         try {
           sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
         } catch (err) {
-          $log("Could not download scene thumnail")
+          $logger.error(`Could not download scene thumnail ${$formatMessage(err)}`);
           delete sceneData.thumbnail;
         }
-        
       }
       return sceneData;
     }
 
-    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $logger);
     const { correctImportInfo: resultsConfirmation } = await questionAsync<{
       correctImportInfo: string;
     }>({
@@ -188,7 +188,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         try {
           sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
         } catch (err) {
-          $log("Could not download scene thumnail")
+          $logger.error("Could not download scene thumnail");
           delete sceneData.thumbnail;
         }
       }
@@ -204,7 +204,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    * @returns either an array of all questions that need to be import manually
    */
   async function manualImport(): Promise<SceneOutput> {
-    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $logger);
 
     const result: SceneOutput = {};
 
@@ -312,7 +312,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     let userMovie: string | undefined;
     let userActors: string[] = [];
 
-    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $logger);
 
     const { movieSearch: movieAnswer } = await questionAsync<{ movieSearch: string }>({
       type: "input",
@@ -433,7 +433,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    */
   async function makeChoices(): Promise<string> {
     if (!args?.manualTouch) {
-      $log(`[PDS] MSG: "manualTouch" disabled, will continue plugin with current queries`);
+      $logger.verbose(`"manualTouch" disabled, will continue plugin with current queries`);
       return manualTouchChoices.NOTHING;
     }
 
@@ -444,9 +444,9 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }
 
     try {
-      const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+      const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $logger);
 
-      $log(`[PDS] MSG: "manualTouch" is enabled, prompting user for action`);
+      $logger.verbose(`"manualTouch" is enabled, prompting user for action`);
       const { choices: Q1Answer } = await questionAsync<{ choices: string }>({
         type: "rawlist",
         name: "choices",
@@ -464,7 +464,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
       return Q1Answer;
     } catch (error) {
-      $log("Something went wrong asking for search questions", error);
+      $logger.error(`Something went wrong asking for search questions ${$formatMessage(error)}`);
     }
 
     return manualTouchChoices.NOTHING;
@@ -520,7 +520,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     // Check that we actually have something to search with.
     // (Purposefully ignore the date, since that cannot reliable identify a scene)
     if (!queries.flat().filter(Boolean).join("")) {
-      $log("[PDS] WARN: Did not have any parameters to do primary search");
+      $logger.warn("Did not have any parameters to do primary search");
       return null;
     }
     if (timestamp && !Number.isNaN(timestamp)) {
@@ -529,31 +529,31 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     const initialQuery = queries.flat().filter(Boolean).join(" ");
 
     if (!initialQuery) {
-      $log("[PDS] WARN: Did not have any parameters to do primary search");
+      $logger.warn("Did not have any parameters to do primary search");
       return null;
     }
 
     let sceneList: SceneResult.SceneData[] = [];
 
     try {
-      $log(`[PDS] MSG: Running TPDB Primary Search on: ${JSON.stringify(initialQuery)}`);
+      $logger.verbose(`Running TPDB Primary Search on: ${JSON.stringify(initialQuery)}`);
       const apiRes = await tpdbApi.parseScene(initialQuery);
       if (!apiRes?.data || testMode?.testSiteUnavailable) {
-        $throw("ERR: TPDB API: received no data");
+        $throw("TPDB API: received no data");
         return null; // for type compatibility
       }
       sceneList = Array.isArray(apiRes.data.data) ? apiRes.data.data : [apiRes.data.data];
     } catch (err) {
-      $log("[PDS] ERR: TPDB API query failed");
+      $logger.error(`TPDB API query failed ${$formatMessage(err)}`);
       if (testMode?.status && !testMode?.testSiteUnavailable) {
-        $log("!! This will impact the test if it was not expecting a failure !!");
+        $logger.warn("!! This will impact the test if it was not expecting a failure !!");
       }
 
       return null;
     }
 
     if (!sceneList.length) {
-      $log("[PDS] ERR: Did not find any results from TPDB");
+      $logger.error("Did not find any results from TPDB");
       return null;
     }
 
@@ -562,22 +562,22 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     if (matchedScene) {
       return mergeSearchResult(matchedScene);
     } else if (args.alwaysUseSingleResult && sceneList.length === 1) {
-      $log(
-        `[PDS] MSG: Did not match results to scene, but only 1 result was found and "alwaysUseSingleResult" is enabled. Returning it`
+      $logger.verbose(
+        `Did not match results to scene, but only 1 result was found and "alwaysUseSingleResult" is enabled. Returning it`
       );
       return mergeSearchResult(sceneList[0]);
     }
 
-    $log("[PDS] ERR: Did not match any of the titles from TPDB");
-    $log("[PDS] MSG: Scene is possibly one of multiple search results");
+    $logger.error("Did not match any of the titles from TPDB");
+    $logger.verbose("Scene is possibly one of multiple search results");
 
     if (!args.manualTouch) {
-      $log("[PDS] MSG: ManualTouch is disabled, cannot automatically choose from multiple results");
+      $logger.verbose("ManualTouch is disabled, cannot automatically choose from multiple results");
       return null;
     }
 
     // Run through the list of titles and ask if they would like to choose one.
-    $log("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+    $logger.verbose("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
 
     const answersList: string[] = [];
     const possibleTitles: string[] = [];
@@ -587,7 +587,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       possibleTitles.push(scene.title);
     }
 
-    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $log);
+    const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $logger);
     answersList.push((new $inquirer.Separator() as any) as string);
     answersList.push("== None of the above == ");
 
@@ -605,7 +605,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     const userSelectedScene: SceneResult.SceneData | undefined = sceneList[findResultIndex];
 
     if (!userSelectedScene) {
-      $log("[PDS] MSG: User did not select a scene, exiting scene selection");
+      $logger.verbose("User did not select a scene, exiting scene selection");
       return null;
     }
 

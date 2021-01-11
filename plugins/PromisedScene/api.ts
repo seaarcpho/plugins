@@ -15,7 +15,9 @@ export class Api {
   }
 
   async parseScene(parse: string): Promise<AxiosResponse<SceneResult.SceneListResult>> {
-    this.ctx.$log(`[PDS] GET: https://api.metadataapi.net/api/scenes?parse=${encodeURIComponent(parse)}`);
+    this.ctx.$logger.verbose(
+      `GET: https://api.metadataapi.net/api/scenes?parse=${encodeURIComponent(parse)}`
+    );
     return this.axios.get<SceneResult.SceneListResult>("/scenes", {
       params: {
         parse,

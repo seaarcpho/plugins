@@ -1,22 +1,23 @@
+import { createPluginRunner } from "../../../context";
 import plugin from "../main";
 import { manualTouchChoices } from "../util";
 
-const baseContext = require("../../../context");
 const { expect } = require("chai");
 const IMAGE_ID = "MOCK_IMAGE_ID";
 
-const context = {
-  ...baseContext,
+const mockContext = {
   $createImage: () => IMAGE_ID,
 };
+
+const runPlugin = createPluginRunner("PromisedScene", plugin);
 
 describe("PromisedScene", () => {
   describe("Handle all of the errors properly.", () => {
     it("Should fail with error:  Plugin used for unsupported event", async () => {
       let errord = false;
       try {
-        await plugin({
-          ...context,
+        await runPlugin({
+          ...mockContext,
           event: "fake event",
           args: {
             manualTouch: true,
@@ -38,7 +39,7 @@ describe("PromisedScene", () => {
           },
         });
       } catch (error) {
-        expect(error.message).to.include("ERR: Plugin used for unsupported event");
+        expect(error.message).to.include("Plugin used for unsupported event");
         errord = true;
       }
       expect(errord).to.be.true;
@@ -46,8 +47,8 @@ describe("PromisedScene", () => {
     it("Should fail with error:  Missing source_settings in plugin args", async () => {
       let errord = false;
       try {
-        await plugin({
-          ...context,
+        await runPlugin({
+          ...mockContext,
           event: "sceneCreated",
           args: {
             manualTouch: true,
@@ -64,7 +65,7 @@ describe("PromisedScene", () => {
           },
         });
       } catch (error) {
-        expect(error.message).to.include("ERR: Missing source_settings in plugin args");
+        expect(error.message).to.include("Missing source_settings in plugin args");
         errord = true;
       }
       expect(errord).to.be.true;
@@ -72,8 +73,8 @@ describe("PromisedScene", () => {
     it("Should fail with error:  Missing parseActor in plugin args", async () => {
       let errord = false;
       try {
-        await plugin({
-          ...context,
+        await runPlugin({
+          ...mockContext,
           event: "sceneCreated",
           args: {
             manualTouch: true,
@@ -94,7 +95,7 @@ describe("PromisedScene", () => {
           },
         });
       } catch (error) {
-        expect(error.message).to.include("ERR: Missing parseActor in plugin args");
+        expect(error.message).to.include("Missing parseActor in plugin args");
         errord = true;
       }
       expect(errord).to.be.true;
@@ -102,8 +103,8 @@ describe("PromisedScene", () => {
     it("Should fail with error:  Missing parseStudio in plugin args", async () => {
       let errord = false;
       try {
-        await plugin({
-          ...context,
+        await runPlugin({
+          ...mockContext,
           event: "sceneCreated",
           args: {
             manualTouch: true,
@@ -124,7 +125,7 @@ describe("PromisedScene", () => {
           },
         });
       } catch (error) {
-        expect(error.message).to.include("ERR: Missing parseStudio in plugin args");
+        expect(error.message).to.include("Missing parseStudio in plugin args");
         errord = true;
       }
       expect(errord).to.be.true;
@@ -132,8 +133,8 @@ describe("PromisedScene", () => {
     it("Should fail with error:  Missing manualTouch in plugin args", async () => {
       let errord = false;
       try {
-        await plugin({
-          ...context,
+        await runPlugin({
+          ...mockContext,
           event: "sceneCreated",
           args: {
             sceneDuplicationCheck: true,
@@ -154,7 +155,7 @@ describe("PromisedScene", () => {
           },
         });
       } catch (error) {
-        expect(error.message).to.include("ERR: Missing manualTouch in plugin args");
+        expect(error.message).to.include("Missing manualTouch in plugin args");
         errord = true;
       }
       expect(errord).to.be.true;
@@ -162,8 +163,8 @@ describe("PromisedScene", () => {
     it("Should fail with error:  Missing sceneDuplicationCheck in plugin args", async () => {
       let errord = false;
       try {
-        await plugin({
-          ...context,
+        await runPlugin({
+          ...mockContext,
           event: "sceneCreated",
           args: {
             manualTouch: true,
@@ -184,7 +185,7 @@ describe("PromisedScene", () => {
           },
         });
       } catch (error) {
-        expect(error.message).to.include("ERR: Missing sceneDuplicationCheck in plugin args");
+        expect(error.message).to.include("Missing sceneDuplicationCheck in plugin args");
         errord = true;
       }
       expect(errord).to.be.true;
@@ -193,8 +194,8 @@ describe("PromisedScene", () => {
 
   describe("When Populated Databases exist...", () => {
     it("Should have DB files with the Actor, Studio, Scene and date already", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -226,8 +227,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Should not return an actor with a single name like 'PRESSLEY', even if it exists but allow for manual SEARCH success", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -267,8 +268,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Should grab an alias for an actor Madison Swan = Mia Malkova", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -300,8 +301,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Should grab an alias with no spaces for an actor Madison Swan = Mia Malkova", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -333,8 +334,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Search and Grab a scene with multiple parsed Actors, run a search and match based on title of scene - testing YY-MM-DD", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -380,8 +381,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Search and Grab a Scene that has multiple parsed Studios - testing dd.mm.yyyy", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -426,8 +427,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("BANGBROS CLIPS");
     });
     it("Search and Grab a Scene that has multiple parsed Studios with no spaces - testing dd.mm.yyyy", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -472,8 +473,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("BANGBROS CLIPS");
     });
     it("Select a scene from a list of returned searches", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -516,8 +517,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Select 'none of the above' of the last 2 options in a rawlist, it should make the user select a choice.  Should return nothing because we assume we select 'do nothing' when asked again", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -553,8 +554,8 @@ describe("PromisedScene", () => {
       expect(result).to.deep.equal({});
     });
     it("list of returned searches, let the script find the title within the path name", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -597,8 +598,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("TPD not available and should not return anything because Manualinfo is = n", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -633,8 +634,8 @@ describe("PromisedScene", () => {
       expect(result).to.deep.equal({});
     });
     it("TPD does not support that specific studio. Should return nothing because we assume we select 'do nothing' when asked again", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -669,8 +670,8 @@ describe("PromisedScene", () => {
       expect(result).to.deep.equal({});
     });
     it("Should not parse the studio but success in searching it with fullname", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -710,8 +711,8 @@ describe("PromisedScene", () => {
     });
 
     it("with db, alwaysUseSingleResult, extra search -- Should find with correct answers", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           alwaysUseSingleResult: true,
@@ -759,8 +760,8 @@ describe("PromisedScene", () => {
 
   describe("When UnPopulated Databases exist...", () => {
     it("Should return nothing because no search is completed with no parsed Actor or Studio when manualTouch is false", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: false,
@@ -784,8 +785,8 @@ describe("PromisedScene", () => {
       expect(result).to.deep.equal({});
     });
     it("Should allow manual input, no movie, no search -- Unpopulated databases", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -829,8 +830,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Not the correct import information, saying 'no' should assume 'do nothing' on the second question", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -868,8 +869,8 @@ describe("PromisedScene", () => {
       expect(result).to.deep.equal({});
     });
     it("Should allow manual input, with movie, no search -- Unpopulated databases", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -915,8 +916,8 @@ describe("PromisedScene", () => {
     });
 
     it("no db, alwaysUseSingleResult, extra search -- Should find with correct answers", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           alwaysUseSingleResult: true,
@@ -964,8 +965,8 @@ describe("PromisedScene", () => {
 
   describe("When Mixed Databases exist...", () => {
     it("Should have DB files with Studio and Scene already -- No Actor -- manualTouch True -- Should find with correct answers", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -1008,8 +1009,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("should import without an image. and create an error", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         $createImage: () => Promise.reject(new Error("test error")),
         event: "sceneCreated",
         args: {
@@ -1054,8 +1055,8 @@ describe("PromisedScene", () => {
     });
 
     it("Should have DB files with Scene already -- No Studio or Actor -- manualTouch True -- Should find with correct answers", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
@@ -1099,8 +1100,8 @@ describe("PromisedScene", () => {
       expect(result.studio).to.equal("NEW SENSATIONS");
     });
     it("Should have DB files with Scene already but return nothing, no questions -- No Studio or Actor parsed", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: false,
@@ -1127,8 +1128,8 @@ describe("PromisedScene", () => {
     });
 
     it("Should have DB files with Scene already -- No Studio or Actor -- manualTouch True, extra search -- Should find with correct answers", async () => {
-      const result = await plugin({
-        ...context,
+      const result = await runPlugin({
+        ...mockContext,
         event: "sceneCreated",
         args: {
           manualTouch: true,
