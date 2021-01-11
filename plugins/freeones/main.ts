@@ -74,17 +74,28 @@ class Measurements {
 }
 
 module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
-  const { $createImage, args, $axios, $moment, $cheerio, $throw, $log, actorName } = ctx;
+  const {
+    $createImage,
+    args,
+    $axios,
+    $moment,
+    $cheerio,
+    $throw,
+    $logger,
+    $formatMessage,
+    actorName,
+  } = ctx;
   if (!actorName) $throw("Uh oh. You shouldn't use the plugin for this type of event");
 
-  $log(`Scraping freeones date for ${actorName}, dry mode: ${args.dry || false}...`);
+  $logger.info(`Scraping freeones date for ${actorName}, dry mode: ${args.dry || false}...`);
 
   const blacklist = (args.blacklist || []).map(lowercase);
-  if (!args.blacklist) $log("No blacklist defined, returning everything...");
-  if (blacklist.length) $log(`Blacklist defined, will ignore: ${blacklist.join(", ")}`);
+  if (!args.blacklist) $logger.verbose("No blacklist defined, returning everything...");
+  if (blacklist.length) $logger.verbose(`Blacklist defined, will ignore: ${blacklist.join(", ")}`);
 
   const whitelist = (args.whitelist || []).map(lowercase);
-  if (whitelist.length) $log(`Whitelist defined, will only return: ${whitelist.join(", ")}...`);
+  if (whitelist.length)
+    $logger.verbose(`Whitelist defined, will only return: ${whitelist.join(", ")}...`);
 
   function isBlacklisted(prop): boolean {
     if (whitelist.length) {
@@ -96,17 +107,17 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   // Check imperial unit preference
   const useImperial = args.useImperial;
   if (!useImperial) {
-    $log("Imperial preference not set. Using metric values...");
+    $logger.verbose("Imperial preference not set. Using metric values...");
   } else {
-    $log("Imperial preference indicated. Using imperial values...");
+    $logger.verbose("Imperial preference indicated. Using imperial values...");
   }
 
   // Check Use Avatar as Thumbnail preference
   const useAvatarAsThumbnail = args.useAvatarAsThumbnail;
   if (!useAvatarAsThumbnail) {
-    $log("Will not use the Avatar as the Actor Thumbnail...");
+    $logger.verbose("Will not use the Avatar as the Actor Thumbnail...");
   } else {
-    $log("Will use the Avatar as the Actor Thumbnail...");
+    $logger.verbose("Will use the Avatar as the Actor Thumbnail...");
   }
 
   let firstResult: cheerio.Cheerio;
@@ -132,12 +143,12 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   function getNationality(): Partial<{ nationality: string }> {
     if (isBlacklisted("nationality")) return {};
-    $log("Getting nationality...");
+    $logger.verbose("Getting nationality...");
 
     const selector = $('[data-test="section-personal-information"] a[href*="countryCode%5D"]');
 
     if (!selector.length) {
-      $log("Nationality not found");
+      $logger.verbose("Nationality not found");
       return {};
     }
 
@@ -152,7 +163,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   function getHeight(): Partial<{ height: number }> {
     if (isBlacklisted("height")) return {};
-    $log("Getting height...");
+    $logger.verbose("Getting height...");
 
     const selector = $('[data-test="link_height"] .text-underline-always');
     if (!selector) return {};
@@ -170,7 +181,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   function getWeight(): Partial<{ weight: number }> {
     if (isBlacklisted("weight")) return {};
-    $log("Getting weight...");
+    $logger.verbose("Getting weight...");
 
     const selector = $('[data-test="link_weight"] .text-underline-always');
     if (!selector) return {};
@@ -188,7 +199,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   function getZodiac(): Partial<{ zodiac: string }> {
     if (isBlacklisted("zodiac")) return {};
-    $log("Getting zodiac sign...");
+    $logger.verbose("Getting zodiac sign...");
 
     const selector = $('[data-test="link_zodiac"] .text-underline-always');
     if (!selector) return {};
@@ -199,7 +210,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   function getBirthplace(): Partial<{ birthplace: string }> {
     if (isBlacklisted("birthplace")) return {};
-    $log("Getting birthplace...");
+    $logger.verbose("Getting birthplace...");
 
     const selector = $('[data-test="section-personal-information"] a[href*="placeOfBirth"]');
     const cityName = selector.length
@@ -207,7 +218,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
       : null;
 
     if (!cityName) {
-      $log("No birthplace found");
+      $logger.verbose("No birthplace found");
       return {};
     } else {
       const stateSelector = $('[data-test="section-personal-information"] a[href*="province"]');
@@ -215,7 +226,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
         ? ($(stateSelector).attr("href") || "").split("=").slice(-1)[0]
         : null;
       if (!stateName) {
-        $log("No birth province found, just city!");
+        $logger.verbose("No birth province found, just city!");
         return { birthplace: cityName };
       } else {
         const bplace = cityName + ", " + stateName.split("-")[0].trim();
@@ -229,7 +240,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     selector: string
   ): Partial<T> {
     if (isBlacklisted(prop)) return {};
-    $log(`Getting ${prop}...`);
+    $logger.verbose(`Getting ${prop}...`);
 
     const el = $(selector);
     if (!el) return {};
@@ -240,7 +251,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   async function getAvatar(): Promise<Partial<{ avatar: string; thumbnail: string }>> {
     if (args.dry) return {};
     if (isBlacklisted("avatar")) return {};
-    $log("Getting avatar...");
+    $logger.verbose("Getting avatar...");
 
     const imgEl = $(`.dashboard-header img.img-fluid`);
     if (!imgEl) return {};
@@ -263,7 +274,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   function getAge(): Partial<{ bornOn: number }> {
     if (isBlacklisted("bornOn")) return {};
-    $log("Getting age...");
+    $logger.verbose("Getting age...");
 
     const aTag = $('[data-test="section-personal-information"] a');
     if (!aTag) return {};
@@ -278,14 +289,14 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
         bornOn: timestamp,
       };
     } else {
-      $log("Could not find actor birth date.");
+      $logger.verbose("Could not find actor birth date.");
       return {};
     }
   }
 
   function getAlias(): Partial<{ aliases: string[] }> {
     if (isBlacklisted("aliases")) return {};
-    $log("Getting aliases...");
+    $logger.verbose("Getting aliases...");
 
     const aliasSel = $('[data-test="section-alias"] p[data-test*="p_aliases"]');
     const aliasText = aliasSel.text();
@@ -313,19 +324,19 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   function getMeasurements(): Partial<{ measurements: string }> {
     if (isBlacklisted("measurements")) return {};
-    $log("Getting measurements...");
+    $logger.verbose("Getting measurements...");
     return measurements ? { measurements: measurements.toString() } : {};
   }
 
   function getWaistSize(): Partial<{ ["waist size"]: number }> {
     if (isBlacklisted("measurements")) return {};
-    $log("Getting waist size...");
+    $logger.verbose("Getting waist size...");
     return measurements ? { "waist size": measurements.waist } : {};
   }
 
   function getHipSize(): Partial<{ ["hip size"]: number }> {
     if (isBlacklisted("measurements")) return {};
-    $log("Getting hip size...");
+    $logger.verbose("Getting hip size...");
     return measurements ? { "hip size": measurements.hip } : {};
   }
 
@@ -335,7 +346,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     ["bust size"]: number;
   }> {
     if (isBlacklisted("measurements")) return {};
-    $log("Getting bra/cup/bust size...");
+    $logger.verbose("Getting bra/cup/bust size...");
     return measurements
       ? {
           "cup size": measurements.cup,
@@ -447,7 +458,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   }
 
   if (args.dry === true) {
-    $log("Would have returned:", data);
+    $logger.info(`Would have returned: ${$formatMessage(data)}`);
     return {};
   }
   return data;

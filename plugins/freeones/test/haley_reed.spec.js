@@ -1,10 +1,11 @@
-const context = require("../../../context");
 const plugin = require("../main");
 const { expect } = require("chai");
+const { createPluginRunner } = require("../../../context");
+
+const runPlugin = createPluginRunner("freeones", plugin);
 
 function search(args = {}) {
-  return plugin({
-    ...context,
+  return runPlugin({
     actorName: "Haley Reed",
     args,
   });

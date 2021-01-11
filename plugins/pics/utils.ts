@@ -63,12 +63,12 @@ export async function scanFolder(
 ): Promise<Partial<SingleScrapeResult>> {
   const queryPath = ctx.$path.resolve(scrapeDefinition.path);
 
-  ctx.$log(
-    `[PICS]: MSG: Trying to find "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
+  ctx.$logger.info(
+    `Trying to find "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
   );
 
   if (scrapeDefinition.prop === "extra" && scrapeDefinition.max === 0) {
-    ctx.$log(`[PICS]: MSG: "max" is 0, will not search`);
+    ctx.$logger.verbose(`"max" is 0, will not search`);
     return {};
   }
 
@@ -120,12 +120,12 @@ export async function scanFolder(
   });
 
   if (!foundImagePaths.length) {
-    ctx.$log(`[PICS]: MSG: No "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`);
+    ctx.$logger.verbose(`No "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`);
     return {};
   }
 
-  ctx.$log(
-    `[PICS] MSG: Found ${foundImagePaths.length} "${
+  ctx.$logger.verbose(
+    `Found ${foundImagePaths.length} "${
       scrapeDefinition.prop
     }" picture(s) for "${query}": ${JSON.stringify(foundImagePaths)}`
   );
@@ -160,8 +160,8 @@ export async function executeScape(
         }
       })
       .catch((err) => {
-        ctx.$log(err);
-        ctx.$log(`[PICS] ERR: scrape "${definition.prop}" in "${definition.path}" failed`);
+        ctx.$logger.error(ctx.$formatMessage(err));
+        ctx.$logger.error(`scrape "${definition.prop}" in "${definition.path}" failed`);
         return {};
       })
   );

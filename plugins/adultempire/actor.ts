@@ -7,13 +7,13 @@ interface MyContext extends ActorContext {
 }
 
 export default async function (ctx: MyContext): Promise<ActorOutput> {
-  const { args, $axios, $cheerio, $log, actorName, $createImage } = ctx;
+  const { args, $axios, $cheerio, $logger, $formatMessage, actorName, $createImage } = ctx;
 
   const name = actorName
     .replace(/#/g, "")
     .replace(/\s{2,}/g, " ")
     .trim();
-  $log(`Scraping actor info for '${name}', dry mode: ${args?.dry || false}...`);
+  $logger.info(`Scraping actor info for '${name}', dry mode: ${args?.dry || false}...`);
 
   const url = `https://www.adultempire.com/allsearch/search?q=${name}`;
   const html = (await $axios.get(url)).data;
@@ -67,7 +67,7 @@ export default async function (ctx: MyContext): Promise<ActorOutput> {
     const result = { avatar, $ae_avatar: avatarUrl, hero, $ae_hero: heroUrl, aliases, description };
 
     if (args?.dry) {
-      $log(result);
+      $logger.info(`Would have returned ${$formatMessage(result)}`);
       return {};
     } else {
       return result;

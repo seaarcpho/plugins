@@ -1,8 +1,6 @@
-import baseContext from "../../../../context";
 import path from "path";
 
-const context = {
-  ...baseContext,
+const mockContext = {
   $createLocalImage: (path, name) => `${path} ${name}`,
 };
 
@@ -16,16 +14,16 @@ const baseArgs = {
 export const basicFixtures = [
   {
     name: "throw when no event",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
     },
     errored: true,
     errorMessage: "cannot run plugin",
   },
   {
     name: "throws with dummy event",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       event: "fake",
     },
     errored: true,
@@ -33,8 +31,8 @@ export const basicFixtures = [
   },
   {
     name: "throws when missing name",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "",
       args: {
         ...baseArgs,
@@ -53,19 +51,19 @@ export const basicFixtures = [
   },
   {
     name: "throws when missing event args paths",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       event: "actorCreated",
       actorName: "",
       args: { ...baseArgs, actors: null },
     },
     errored: true,
-    errorMessage: "schema is incorrect",
+    errorMessage: "validation issue",
   },
   {
     name: "throws when args not conform to schema",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       event: "actorCreated",
       actorName: "",
       args: {
@@ -74,12 +72,12 @@ export const basicFixtures = [
       },
     },
     errored: true,
-    errorMessage: "schema is incorrect",
+    errorMessage: "validation issue",
   },
   {
     name: "throws when args not conform to schema 2",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       event: "actorCreated",
       actorName: "",
       args: {
@@ -88,12 +86,12 @@ export const basicFixtures = [
       },
     },
     errored: true,
-    errorMessage: "schema is incorrect",
+    errorMessage: "validation issue",
   },
   {
     name: "does not throw when args conform to schema",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       event: "actorCreated",
       actorName: "test actor",
       args: {
@@ -111,8 +109,8 @@ export const actorFixtures = [
   // thumbnail
   {
     name: "Should find a thumbnail",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "001",
       args: {
         ...baseArgs,
@@ -126,7 +124,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
         "001 (thumbnail)"
       ),
@@ -134,8 +132,8 @@ export const actorFixtures = [
   },
   {
     name: "Should find another thumbnail",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "002",
       args: {
         ...baseArgs,
@@ -149,7 +147,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/image002.gif"),
         "002 (thumbnail)"
       ),
@@ -157,8 +155,8 @@ export const actorFixtures = [
   },
   {
     name: "Should find when searchTerms",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "004",
       args: {
         ...baseArgs,
@@ -172,7 +170,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/deep/image004-dummy.jpg"),
         "004 (thumbnail)"
       ),
@@ -180,8 +178,8 @@ export const actorFixtures = [
   },
   {
     name: "Should not find when no file with searchTerms",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "004",
       args: {
         ...baseArgs,
@@ -198,8 +196,8 @@ export const actorFixtures = [
   },
   {
     name: "Should find no image",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "003",
       args: {
         ...baseArgs,
@@ -217,8 +215,8 @@ export const actorFixtures = [
   // hero
   {
     name: "Should find hero",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "001",
       args: {
         ...baseArgs,
@@ -232,7 +230,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      hero: context.$createLocalImage(
+      hero: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
         "001 (hero)"
       ),
@@ -240,8 +238,8 @@ export const actorFixtures = [
   },
   {
     name: "Should not find hero",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "003",
       args: {
         ...baseArgs,
@@ -260,8 +258,8 @@ export const actorFixtures = [
   // Deep > thumbnail
   {
     name: "deep: Should find a thumbnail",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "005",
       args: {
         ...baseArgs,
@@ -275,7 +273,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
         "005 (thumbnail)"
       ),
@@ -283,8 +281,8 @@ export const actorFixtures = [
   },
   {
     name: "deep: Should find a thumbnail 2",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "004",
       args: {
         ...baseArgs,
@@ -299,7 +297,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/deep/image004-dummy.jpg"),
         "004 (thumbnail)"
       ),
@@ -307,8 +305,8 @@ export const actorFixtures = [
   },
   {
     name: "deep: Should not find a thumbnail when term not in basename",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "004",
       args: {
         ...baseArgs,
@@ -326,8 +324,8 @@ export const actorFixtures = [
   },
   {
     name: "deep: Should find another thumbnail",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "006",
       args: {
         ...baseArgs,
@@ -341,7 +339,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/deep/image006.gif"),
         "006 (thumbnail)"
       ),
@@ -349,8 +347,8 @@ export const actorFixtures = [
   },
   {
     name: "deep: Should find no image",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "007",
       args: {
         ...baseArgs,
@@ -368,8 +366,8 @@ export const actorFixtures = [
   // Deep > mustMatchInFilename
   {
     name: "deep: Should find image when term in path",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "005",
       args: {
         ...baseArgs,
@@ -384,7 +382,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
         "005 (thumbnail)"
       ),
@@ -392,8 +390,8 @@ export const actorFixtures = [
   },
   {
     name: "deep: Should NOT find image when term not in basename and mustMatchInFilename",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "005",
       args: {
         ...baseArgs,
@@ -412,8 +410,8 @@ export const actorFixtures = [
   // Deep > hero
   {
     name: "deep: Should find hero",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "005",
       args: {
         ...baseArgs,
@@ -427,7 +425,7 @@ export const actorFixtures = [
       },
     },
     result: {
-      hero: context.$createLocalImage(
+      hero: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/deep/image005.jpg"),
         "005 (hero)"
       ),
@@ -435,8 +433,8 @@ export const actorFixtures = [
   },
   {
     name: "deep: Should not find hero",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "007",
       args: {
         ...baseArgs,
@@ -456,8 +454,8 @@ export const actorFixtures = [
 export const actorCreateImageFixtures = [
   {
     name: "Should find all extra when no max, does not return in result",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "001",
       args: {
         ...baseArgs,
@@ -475,8 +473,8 @@ export const actorCreateImageFixtures = [
   },
   {
     name: "Should find all extra when max negative, does not return in result",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "001",
       args: {
         ...baseArgs,
@@ -495,8 +493,8 @@ export const actorCreateImageFixtures = [
   },
   {
     name: "Should find only 1 extra when given max, does not return in result",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "001",
       args: {
         ...baseArgs,
@@ -515,8 +513,8 @@ export const actorCreateImageFixtures = [
   },
   {
     name: "Finds restricted extra, does not return in result",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "001",
       args: {
         ...baseArgs,
@@ -536,8 +534,8 @@ export const actorCreateImageFixtures = [
   },
   {
     name: "Should find extra, allows empty searchTerms",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "001",
       args: {
         ...baseArgs,
@@ -554,8 +552,8 @@ export const actorCreateImageFixtures = [
   },
   {
     name: "Should not find extra",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       actorName: "003",
       args: {
         ...baseArgs,
@@ -576,8 +574,8 @@ export const actorCreateImageFixtures = [
 export const sceneFixtures = [
   {
     name: "Should find a thumbnail",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       sceneName: "001",
       args: {
         ...baseArgs,
@@ -591,7 +589,7 @@ export const sceneFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
         "001 (thumbnail)"
       ),
@@ -599,8 +597,8 @@ export const sceneFixtures = [
   },
   {
     name: "Should find no image",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       sceneName: "003",
       args: {
         ...baseArgs,
@@ -621,8 +619,8 @@ export const movieFixtures = [
   // backCover
   {
     name: "Should find a thumbnail",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       movieName: "001",
       args: {
         ...baseArgs,
@@ -636,7 +634,7 @@ export const movieFixtures = [
       },
     },
     result: {
-      backCover: context.$createLocalImage(
+      backCover: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
         "001 (backCover)"
       ),
@@ -644,8 +642,8 @@ export const movieFixtures = [
   },
   {
     name: "Should find no image",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       movieName: "003",
       args: {
         ...baseArgs,
@@ -663,8 +661,8 @@ export const movieFixtures = [
   // frontCover
   {
     name: "Should find a frontCover 1",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       movieName: "001",
       args: {
         ...baseArgs,
@@ -678,7 +676,7 @@ export const movieFixtures = [
       },
     },
     result: {
-      frontCover: context.$createLocalImage(
+      frontCover: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
         "001 (frontCover)"
       ),
@@ -686,8 +684,8 @@ export const movieFixtures = [
   },
   {
     name: "Should find no frontCover 2",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       movieName: "003",
       args: {
         ...baseArgs,
@@ -705,8 +703,8 @@ export const movieFixtures = [
   // spineCover
   {
     name: "Should find a spineCover 1",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       movieName: "001",
       args: {
         ...baseArgs,
@@ -720,7 +718,7 @@ export const movieFixtures = [
       },
     },
     result: {
-      spineCover: context.$createLocalImage(
+      spineCover: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
         "001 (spineCover)"
       ),
@@ -728,8 +726,8 @@ export const movieFixtures = [
   },
   {
     name: "Should find spineCover",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       movieName: "003",
       args: {
         ...baseArgs,
@@ -749,8 +747,8 @@ export const movieFixtures = [
 export const studioFixtures = [
   {
     name: "Should find a thumbnail",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       studioName: "001",
       args: {
         ...baseArgs,
@@ -764,7 +762,7 @@ export const studioFixtures = [
       },
     },
     result: {
-      thumbnail: context.$createLocalImage(
+      thumbnail: mockContext.$createLocalImage(
         path.resolve("./plugins/pics/test/fixtures/image001.jpg"),
         "001 (thumbnail)"
       ),
@@ -772,8 +770,8 @@ export const studioFixtures = [
   },
   {
     name: "Should find no image",
-    context: {
-      ...context,
+    runContext: {
+      ...mockContext,
       studioName: "003",
       args: {
         ...baseArgs,
