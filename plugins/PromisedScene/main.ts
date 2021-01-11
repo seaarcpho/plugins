@@ -69,7 +69,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
   const tpdbApi = new Api(ctx);
 
-  $logger.verbose(`STARTING to analyze scene: ${JSON.stringify(scenePath)}`);
+  $logger.info(`STARTING to analyze scene: ${JSON.stringify(scenePath)}`);
 
   const parsedDbActor = parseSceneActor(ctx);
   const parsedDbStudio = parseSceneStudio(ctx);
@@ -139,7 +139,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
    * @param results - the result object
    */
   function logResultObject(results: SceneOutput): void {
-    $logger.verbose("====  Final Entry =====");
+    $logger.info("====  Final Entry =====");
 
     const logObj = {
       ...results,
@@ -149,7 +149,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       (logObj.releaseDate as any) = timestampToString(logObj.releaseDate ?? 0);
     }
 
-    $logger.verbose(JSON.stringify(logObj, null, 2));
+    $logger.info(JSON.stringify(logObj, null, 2));
   }
 
   /**
@@ -166,7 +166,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         try {
           sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
         } catch (err) {
-          $logger.error(`Could not download scene thumnail ${$formatMessage(err)}`);
+          $logger.error(`Could not download scene thumbnail ${$formatMessage(err)}`);
           delete sceneData.thumbnail;
         }
       }
@@ -188,7 +188,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
         try {
           sceneData.thumbnail = await $createImage(sceneData.thumbnail, sceneData.name || "", true);
         } catch (err) {
-          $logger.error("Could not download scene thumnail");
+          $logger.error(`Could not download scene thumbnail ${$formatMessage(err)}`);
           delete sceneData.thumbnail;
         }
       }
@@ -446,7 +446,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     try {
       const questionAsync = createQuestionPrompter($inquirer, testMode?.status, $logger);
 
-      $logger.verbose(`"manualTouch" is enabled, prompting user for action`);
+      $logger.info(`"manualTouch" is enabled, prompting user for action`);
       const { choices: Q1Answer } = await questionAsync<{ choices: string }>({
         type: "rawlist",
         name: "choices",
@@ -572,12 +572,12 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     $logger.verbose("Scene is possibly one of multiple search results");
 
     if (!args.manualTouch) {
-      $logger.verbose("ManualTouch is disabled, cannot automatically choose from multiple results");
+      $logger.info("ManualTouch is disabled, cannot automatically choose from multiple results");
       return null;
     }
 
     // Run through the list of titles and ask if they would like to choose one.
-    $logger.verbose("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
+    $logger.info("#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#");
 
     const answersList: string[] = [];
     const possibleTitles: string[] = [];
@@ -605,7 +605,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     const userSelectedScene: SceneResult.SceneData | undefined = sceneList[findResultIndex];
 
     if (!userSelectedScene) {
-      $logger.verbose("User did not select a scene, exiting scene selection");
+      $logger.info("User did not select a scene, exiting scene selection");
       return null;
     }
 
