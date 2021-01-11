@@ -14,6 +14,7 @@ import semver from "semver";
 import { promisify } from "util";
 import yaml from "yaml";
 import * as zod from "zod";
+import winston from "winston";
 
 import { Context, Matcher, MatchSource } from "./types/plugin";
 
@@ -114,6 +115,33 @@ export async function walk(options: IWalkOptions): Promise<void | string> {
   }
 }
 
+function formatMessage(message: unknown): string {
+  if (message instanceof Error) {
+    return message.message;
+  }
+  return typeof message === "string" ? message : JSON.stringify(message, null, 2);
+}
+
+const logger = createVaultLogger(process.env.PV_LOG_LEVEL || "info");
+
+function createVaultLogger(consoleLevel: string): winston.Logger {
+  return winston.createLogger({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.timestamp(),
+      winston.format.printf(({ level, message, timestamp }) => {
+        const msg = formatMessage(message);
+        return `${<string>timestamp} [vault] ${level}: ${msg}`;
+      })
+    ),
+    transports: [
+      new winston.transports.Console({
+        level: consoleLevel,
+      }),
+    ],
+  });
+}
+
 const context: Context = {
   // Libraries
   $axios: axios,
@@ -140,10 +168,15 @@ const context: Context = {
   },
   $cwd: process.cwd(),
   $library: ".",
-  $log: (...msgs) => {
-    console.log(...msgs);
+  $log: (...msgs: unknown[]): void => {
+    logger.warn(`$log is deprecated, use $logger instead`);
+    logger.info(msgs.map(formatMessage).join(" "));
   },
+  $formatMessage: formatMessage,
+  $logger: logger,
+  $getMatcher: () => basicMatcher,
   $matcher: basicMatcher,
+  $pluginName: "plugin", // should be set in tests
   $pluginPath: ".", // should be set in tests
   $require: (path) => require(path),
   $throw: (msg) => {
