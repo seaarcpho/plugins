@@ -74,7 +74,17 @@ class Measurements {
 }
 
 module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
-  const { $createImage, args, $axios, $moment, $cheerio, $throw, $logger, actorName } = ctx;
+  const {
+    $createImage,
+    args,
+    $axios,
+    $moment,
+    $cheerio,
+    $throw,
+    $logger,
+    $formatMessage,
+    actorName,
+  } = ctx;
   if (!actorName) $throw("Uh oh. You shouldn't use the plugin for this type of event");
 
   $logger.info(`Scraping freeones date for ${actorName}, dry mode: ${args.dry || false}...`);
@@ -84,7 +94,8 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   if (blacklist.length) $logger.verbose(`Blacklist defined, will ignore: ${blacklist.join(", ")}`);
 
   const whitelist = (args.whitelist || []).map(lowercase);
-  if (whitelist.length) $logger.verbose(`Whitelist defined, will only return: ${whitelist.join(", ")}...`);
+  if (whitelist.length)
+    $logger.verbose(`Whitelist defined, will only return: ${whitelist.join(", ")}...`);
 
   function isBlacklisted(prop): boolean {
     if (whitelist.length) {
@@ -447,7 +458,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   }
 
   if (args.dry === true) {
-    $logger.verbose("Would have returned:", data);
+    $logger.info(`Would have returned: ${$formatMessage(data)}`);
     return {};
   }
   return data;
