@@ -7,7 +7,7 @@ interface MyContext extends ActorContext {
 }
 
 export default async function (ctx: MyContext): Promise<ActorOutput> {
-  const { args, $axios, $cheerio, $logger, actorName, $createImage } = ctx;
+  const { args, $axios, $cheerio, $logger, $formatMessage, actorName, $createImage } = ctx;
 
   const name = actorName
     .replace(/#/g, "")
@@ -67,7 +67,7 @@ export default async function (ctx: MyContext): Promise<ActorOutput> {
     const result = { avatar, $ae_avatar: avatarUrl, hero, $ae_hero: heroUrl, aliases, description };
 
     if (args?.dry) {
-      $logger.verbose(result);
+      $logger.info(`Would have returned ${$formatMessage(result)}`);
       return {};
     } else {
       return result;

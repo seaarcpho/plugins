@@ -64,11 +64,11 @@ export async function scanFolder(
   const queryPath = ctx.$path.resolve(scrapeDefinition.path);
 
   ctx.$logger.info(
-    `[PICS]: MSG: Trying to find "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
+    `Trying to find "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
   );
 
   if (scrapeDefinition.prop === "extra" && scrapeDefinition.max === 0) {
-    ctx.$logger.verbose(`[PICS]: MSG: "max" is 0, will not search`);
+    ctx.$logger.verbose(`"max" is 0, will not search`);
     return {};
   }
 
@@ -120,9 +120,7 @@ export async function scanFolder(
   });
 
   if (!foundImagePaths.length) {
-    ctx.$logger.verbose(
-      `[PICS]: MSG: No "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`
-    );
+    ctx.$logger.verbose(`No "${scrapeDefinition.prop}" pictures of "${query}" in "${queryPath}"`);
     return {};
   }
 
