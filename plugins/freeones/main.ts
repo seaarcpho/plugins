@@ -10,6 +10,7 @@ interface MyContext extends ActorContext {
     useAvatarAsThumbnail?: boolean;
     piercingsType?: "string" | "array";
     tattoosType?: "string" | "array";
+    searchResultsSort?: "string";
   };
 }
 
@@ -27,21 +28,24 @@ function kgToLbs(kg: number): number {
   return Math.round((kg + Number.EPSILON) * 100) / 100;
 }
 
-async function search({ $axios }: { $axios: Context["$axios"] }, query: string): Promise<string> {
+async function search(
+  { $axios }: { $axios: Context["$axios"] },
+  query: string,
+  sort: string
+): Promise<string> {
   const url = `https://www.freeones.com/partial/subject`;
   return (
     await $axios.get(url, {
       params: {
         q: query,
-        s: "rank.currentRank",
-        o: "asc",
+        s: sort,
       },
     })
   ).data;
 }
 
 async function getFirstSearchResult(ctx: MyContext, query: string): Promise<cheerio.Cheerio> {
-  const searchHtml = await search(ctx, query);
+  const searchHtml = await search(ctx, query, ctx.args.searchResultsSort || "relevance");
   const $ = ctx.$cheerio.load(searchHtml);
   const el = $(".grid-item.teaser-subject>a");
   return el;
@@ -93,6 +97,13 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
       return !whitelist.includes(lowercase(prop));
     }
     return blacklist.includes(lowercase(prop));
+  }
+
+  const searchResultsSort = args.searchResultsSort;
+  if (!searchResultsSort) {
+    $log("searchResultsSort preference not set. Using default 'relevance' value...");
+  } else {
+    $log(`Search results will be ordered by key: ${searchResultsSort}.`);
   }
 
   // Check imperial unit preference

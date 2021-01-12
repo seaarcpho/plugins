@@ -27,6 +27,13 @@
       "description": "Array of data fields to omit (for values see whitelist)"
     },
     {
+      "name": "searchResultsSort",
+      "type": "String",
+      "required": false,
+      "default": "relevance",
+      "description": "Specify the search result sort order key to use. Advanced setting: use only if you knwo what you are doing. Possible values are 'relevance', 'rank.currentRank', 'followerCount', 'profileCompleted' or 'views'"
+    },
+    {
       "name": "useImperial",
       "type": "Boolean",
       "required": false,
