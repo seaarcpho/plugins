@@ -1,10 +1,11 @@
-const context = require("../../../context");
 const plugin = require("../main");
 const { expect } = require("chai");
+const { createPluginRunner } = require("../../../context");
+
+const runPlugin = createPluginRunner("freeones", plugin);
 
 function search(args = {}) {
-  return plugin({
-    ...context,
+  return runPlugin({
     actorName: "Eva Angelina",
     args,
   });
@@ -12,7 +13,6 @@ function search(args = {}) {
 
 describe("freeones", () => {
   it("Search 'Eva Angelina'", async () => {
-    console.log("Fetching freeones.com...");
     const result = await search({
       dry: false,
       blacklist: [],

@@ -7,10 +7,10 @@ interface MyContext extends ActorContext {
     blacklist?: string[];
     dry?: boolean;
     useImperial?: boolean;
+    searchResultsSort?: "string";
     useAvatarAsThumbnail?: boolean;
     piercingsType?: "string" | "array";
     tattoosType?: "string" | "array";
-    searchResultsSort?: "string";
   };
 }
 
@@ -112,9 +112,9 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   const searchResultsSort = args.searchResultsSort;
   if (!searchResultsSort) {
-    $log("searchResultsSort preference not set. Using default 'relevance' value...");
+    $logger.verbose("searchResultsSort preference not set. Using default 'relevance' value...");
   } else {
-    $log(`Search results will be ordered by key: ${searchResultsSort}.`);
+    $logger.verbose(`Search results will be ordered by key: ${searchResultsSort}.`);
   }
 
   // Check imperial unit preference
