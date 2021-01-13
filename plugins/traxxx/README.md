@@ -1,4 +1,4 @@
-## traxxx 0.1.1
+## traxxx 0.1.2
 
 by leadwolf
 

@@ -181,15 +181,15 @@ export class ChannelExtractor {
       if (this.ctx.args.studios.uniqueNames) {
         return { parent: `${parentName}${this.ctx.args.studios.networkSuffix}` };
       }
-      this.ctx.$log(`[TRAXXX] WARN: Cannot return parent name, would conflict with current name`);
+      this.ctx.$logger.warn(`Cannot return parent name, would conflict with current name`);
       return {};
     }
 
     // Otherwise, we have to check if the parent has a potential name conflict
     const parentSlug = this.preferredEntity?.entity?.parent?.slug;
     if (!parentSlug) {
-      this.ctx.$log(
-        `[TRAXXX] WARN: Parent did not have slug, cannot check for name conflict, will not return parent'`
+      this.ctx.$logger.warn(
+        `Parent did not have slug, cannot check for name conflict, will not return parent'`
       );
       return {};
     }
@@ -202,9 +202,7 @@ export class ChannelExtractor {
       if (this.ctx.args.studios.uniqueNames) {
         return { parent: `${parentName}${this.ctx.args.studios.networkSuffix}` };
       }
-      this.ctx.$log(
-        `[TRAXXX] WARN: Cannot return parent name, would conflict other parent's other type'`
-      );
+      this.ctx.$logger.warn(`Cannot return parent name, would conflict other parent's other type'`);
       return {};
     }
 
@@ -221,70 +219,58 @@ export class ChannelExtractor {
 }
 
 export default async (initialContext: MyStudioContext): Promise<StudioOutput> => {
-  const { $log, $throw, studioName } = initialContext;
-
-  async function main() {
-    try {
-      const validatedArgs = validateArgs(initialContext);
-      if (validatedArgs) {
-        initialContext.args = validatedArgs;
-      }
-    } catch (err) {
-      $throw(err);
-      return {};
-    }
-
-    // Can assert all properties exist, since we just validated them above
-    const ctx = initialContext as MyValidatedStudioContext;
-    const args = ctx.args;
-
-    const api = new Api(ctx);
-
-    const entityPreference = getEntityPreferenceFromName(ctx, studioName);
-    const slugifiedName = slugify(normalizeStudioName(ctx, studioName));
-
-    ctx.$log(`[TRAXXX] MSG: Trying to match "${studioName}" as "${slugifiedName}"`);
-    if (entityPreference !== "none") {
-      ctx.$log(`[TRAXXX] MSG: Identified as ${entityPreference} from current name`);
-    }
-
-    const { channel, network } = await api.getAllEntities(slugifiedName);
-
-    if (!channel && !network) {
-      $log(`[TRAXXX] WARN: Could not find channel or network "${studioName}" in TRAXXX`);
-      return {};
-    }
-
-    const channelExtractor = new ChannelExtractor(ctx, {
-      channel,
-      network,
-      entityPreference,
-    });
-
-    const result: StudioOutput = {
-      ...channelExtractor.getName(),
-      ...channelExtractor.getDescription(),
-      ...(await channelExtractor.getThumbnail()),
-      ...channelExtractor.getAliases(),
-      ...(await channelExtractor.getParent()),
-      custom: channelExtractor.getCustom(),
-    };
-
-    if (args.dry) {
-      $log("[TRAXXX] MSG: Is 'dry' mode, would've returned:");
-      $log(result);
-      return {};
-    }
-
-    return result;
-  }
+  const { $logger, $formatMessage, $throw, studioName } = initialContext;
 
   try {
-    return main();
+    const validatedArgs = validateArgs(initialContext);
+    if (validatedArgs) {
+      initialContext.args = validatedArgs;
+    }
   } catch (err) {
-    $log(err);
-    $log(`[TRAXXX] ERR: Plugin failed`);
     $throw(err);
     return {};
   }
+
+  // Can assert all properties exist, since we just validated them above
+  const ctx = initialContext as MyValidatedStudioContext;
+  const args = ctx.args;
+
+  const api = new Api(ctx);
+
+  const entityPreference = getEntityPreferenceFromName(ctx, studioName);
+  const slugifiedName = slugify(normalizeStudioName(ctx, studioName));
+
+  ctx.$logger.verbose(`Trying to match "${studioName}" as "${slugifiedName}"`);
+  if (entityPreference !== "none") {
+    ctx.$logger.verbose(`Identified as ${entityPreference} from current name`);
+  }
+
+  const { channel, network } = await api.getAllEntities(slugifiedName);
+
+  if (!channel && !network) {
+    $logger.warn(`Could not find channel or network "${studioName}" in TRAXXX`);
+    return {};
+  }
+
+  const channelExtractor = new ChannelExtractor(ctx, {
+    channel,
+    network,
+    entityPreference,
+  });
+
+  const result: StudioOutput = {
+    ...channelExtractor.getName(),
+    ...channelExtractor.getDescription(),
+    ...(await channelExtractor.getThumbnail()),
+    ...channelExtractor.getAliases(),
+    ...(await channelExtractor.getParent()),
+    custom: channelExtractor.getCustom(),
+  };
+
+  if (args.dry) {
+    $logger.info(`Is 'dry' mode, would've returned: ${$formatMessage(result)}`);
+    return {};
+  }
+
+  return result;
 };

@@ -13,6 +13,7 @@ import readline from "readline";
 import semver from "semver";
 import yaml from "yaml";
 import zod from "zod";
+import winston from "winston";
 
 export interface MatchSource {
   _id: string;
@@ -74,8 +75,12 @@ export interface Context<Data = unknown> {
   $createLocalImage: (path: string, name: string, thumbnail?: boolean) => Promise<string>;
   $cwd: string;
   $library: string;
+  $getMatcher(type: string, options: unknown): Matcher;
   $log: (...args: any) => void;
+  $logger: winston.Logger;
+  $formatMessage(message: unknown): string;
   $matcher: Matcher;
+  $pluginName: string;
   $pluginPath: string;
   $require: <T = any>(module: string) => T;
   $throw: (error: any) => void;

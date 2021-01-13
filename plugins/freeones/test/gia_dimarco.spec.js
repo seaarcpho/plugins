@@ -1,10 +1,11 @@
-const context = require("../../../context");
 const plugin = require("../main");
 const { expect } = require("chai");
+const { createPluginRunner } = require("../../../context");
+
+const runPlugin = createPluginRunner("freeones", plugin);
 
 function search(args = {}) {
-  return plugin({
-    ...context,
+  return runPlugin({
     actorName: "Gia DiMarco",
     args,
   });
@@ -12,7 +13,6 @@ function search(args = {}) {
 
 describe("freeones", () => {
   it("Search 'Gia DiMarco'", async () => {
-    console.log("Fetching freeones.com...");
     const result = await search({
       dry: false,
       blacklist: [],
@@ -53,7 +53,6 @@ describe("freeones", () => {
   });
 
   it("Search 'Gia DiMarco' without measurements", async () => {
-    console.log("Fetching freeones.com...");
     const result = await search({
       dry: false,
       blacklist: ["measurements"],

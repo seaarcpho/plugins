@@ -25,13 +25,13 @@ async function searchForMovie(
 }
 
 export default async function (ctx: MyContext): Promise<MovieOutput> {
-  const { args, $moment, $axios, $cheerio, $log, movieName, $createImage } = ctx;
+  const { args, $moment, $axios, $cheerio, $logger, $formatMessage, movieName, $createImage } = ctx;
 
   const name = movieName
     .replace(/[#&]/g, "")
     .replace(/\s{2,}/g, " ")
     .trim();
-  $log(`Scraping movie covers for '${name}', dry mode: ${args?.dry || false}...`);
+  $logger.info(`Scraping movie covers for '${name}', dry mode: ${args?.dry || false}...`);
 
   const url = movieName.startsWith("http") ? movieName : await searchForMovie(ctx, name);
 
@@ -64,15 +64,17 @@ export default async function (ctx: MyContext): Promise<MovieOutput> {
     const backCoverSrc = frontCoverSrc.replace("h.jpg", "bh.jpg");
 
     if (args?.dry === true) {
-      $log({
-        name: movieName,
-        movieUrl,
-        frontCoverSrc,
-        backCoverSrc,
-        studioName,
-        desc,
-        release,
-      });
+      $logger.info(
+        `Would have returned ${$formatMessage({
+          name: movieName,
+          movieUrl,
+          frontCoverSrc,
+          backCoverSrc,
+          studioName,
+          desc,
+          release,
+        })}`
+      );
     } else {
       const frontCoverImg = await $createImage(frontCoverSrc, `${movieName} (front cover)`);
       const backCoverImg = await $createImage(backCoverSrc, `${movieName} (back cover)`);
