@@ -195,6 +195,7 @@ export interface MyContext extends SceneContext {
     useTitleInSearch: boolean;
     parseActor: boolean;
     parseStudio: boolean;
+    parseDate: boolean;
     manualTouch: boolean;
     sceneDuplicationCheck: boolean;
     alwaysUseSingleResult: boolean;

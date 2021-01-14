@@ -59,6 +59,10 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     $throw("Missing parseStudio in plugin args");
   }
 
+  if (!Object.hasOwnProperty.call(args, "parseDate")) {
+    $throw("Missing parseStudio in plugin args");
+  }
+
   if (!Object.hasOwnProperty.call(args, "manualTouch")) {
     $throw("Missing manualTouch in plugin args");
   }
@@ -569,7 +573,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     }
 
     $logger.error("Did not match any of the titles from TPDB");
-    $logger.verbose("Scene is possibly one of multiple search results");
+    $logger.info("Scene is possibly one of multiple search results");
 
     if (!args.manualTouch) {
       $logger.info("ManualTouch is disabled, cannot automatically choose from multiple results");

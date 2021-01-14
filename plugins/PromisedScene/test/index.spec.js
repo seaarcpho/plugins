@@ -24,6 +24,7 @@ describe("PromisedScene", () => {
             sceneDuplicationCheck: true,
             parseActor: true,
             parseStudio: true,
+            parseDate: true,
             source_settings: {
               actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
               scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -55,6 +56,7 @@ describe("PromisedScene", () => {
             sceneDuplicationCheck: true,
             parseActor: true,
             parseStudio: true,
+            parseDate: true,
           },
           sceneName: "[Bangbrosclips] Mia Malkova 04.01.2016 - Flexible while getting pounded.mp4",
           scenePath:
@@ -80,6 +82,7 @@ describe("PromisedScene", () => {
             manualTouch: true,
             sceneDuplicationCheck: true,
             parseStudio: true,
+            parseDate: true,
             source_settings: {
               actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
               scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -140,6 +143,7 @@ describe("PromisedScene", () => {
             sceneDuplicationCheck: true,
             parseActor: true,
             parseStudio: true,
+            parseDate: true,
             source_settings: {
               actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
               scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -170,6 +174,7 @@ describe("PromisedScene", () => {
             manualTouch: true,
             parseActor: true,
             parseStudio: true,
+            parseDate: true,
             source_settings: {
               actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
               scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -202,6 +207,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -235,6 +241,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -276,6 +283,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -309,6 +317,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -342,6 +351,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -389,6 +399,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -435,6 +446,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -481,6 +493,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -525,6 +538,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -562,6 +576,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -606,6 +621,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -642,6 +658,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -678,6 +695,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -720,6 +738,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
@@ -768,6 +787,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
@@ -793,6 +813,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: false,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
@@ -838,6 +859,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: false,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
@@ -877,6 +899,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
@@ -925,6 +948,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
@@ -973,6 +997,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -1018,6 +1043,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -1063,6 +1089,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
@@ -1108,6 +1135,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -1136,6 +1164,7 @@ describe("PromisedScene", () => {
           sceneDuplicationCheck: true,
           parseActor: true,
           parseStudio: true,
+          parseDate: true,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsUnPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesUnPopulated.db",
