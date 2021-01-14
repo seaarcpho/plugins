@@ -119,7 +119,7 @@ export const createQuestionPrompter = (
    */
   const questionAsync = async <T>(promptArgs: object): Promise<T | { [name: string]: string }> => {
     if (testingStatus) {
-      $logger.verbose(
+      $logger.info(
         `TESTMODE: ${JSON.stringify(promptArgs["name"])} => ${JSON.stringify(
           promptArgs["testAnswer"]
         )}`

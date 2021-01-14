@@ -181,9 +181,7 @@ export class ChannelExtractor {
       if (this.ctx.args.studios.uniqueNames) {
         return { parent: `${parentName}${this.ctx.args.studios.networkSuffix}` };
       }
-      this.ctx.$logger.warn(
-        `Cannot return parent name, would conflict with current name`
-      );
+      this.ctx.$logger.warn(`Cannot return parent name, would conflict with current name`);
       return {};
     }
 
@@ -204,9 +202,7 @@ export class ChannelExtractor {
       if (this.ctx.args.studios.uniqueNames) {
         return { parent: `${parentName}${this.ctx.args.studios.networkSuffix}` };
       }
-      this.ctx.$logger.warn(
-        `Cannot return parent name, would conflict other parent's other type'`
-      );
+      this.ctx.$logger.warn(`Cannot return parent name, would conflict other parent's other type'`);
       return {};
     }
 
@@ -223,7 +219,7 @@ export class ChannelExtractor {
 }
 
 export default async (initialContext: MyStudioContext): Promise<StudioOutput> => {
-  const { $logger, $throw, studioName } = initialContext;
+  const { $logger, $formatMessage, $throw, studioName } = initialContext;
 
   try {
     const validatedArgs = validateArgs(initialContext);
@@ -272,8 +268,7 @@ export default async (initialContext: MyStudioContext): Promise<StudioOutput> =>
   };
 
   if (args.dry) {
-    $logger.verbose("Is 'dry' mode, would've returned:");
-    $logger.verbose(result);
+    $logger.info(`Is 'dry' mode, would've returned: ${$formatMessage(result)}`);
     return {};
   }
 

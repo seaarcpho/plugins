@@ -72,8 +72,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput | MovieOutput | und
   const scrapeResult = await executeScape(ctx, query, scrapeDefs);
 
   if (ctx.args?.dry) {
-    ctx.$logger.verbose("Is 'dry' mode, would've returned:");
-    ctx.$logger.verbose(scrapeResult);
+    ctx.$logger.info(`Is 'dry' mode, would've returned: ${ctx.$formatMessage(scrapeResult)}`);
     return {};
   }
 

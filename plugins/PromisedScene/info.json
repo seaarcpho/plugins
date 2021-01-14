@@ -1,6 +1,6 @@
 {
   "name": "PromisedScene",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "authors": ["Ch00nassid a.k.a: DGs.Ch00", "leadwolf"],
   "description": "Ask questions and make sure scene parsing is correct",
   "pluginEvents": ["sceneCreated", "sceneCustom"],
@@ -32,6 +32,13 @@
       "required": true,
       "default": true,
       "description": "Try to find the Studio name in your database within the scenePath string"
+    },
+    {
+      "name": "parseDate",
+      "type": "Boolean",
+      "required": true,
+      "default": true,
+      "description": "Try to find the date within the scenePath string"
     },
     {
       "name": "manualTouch",

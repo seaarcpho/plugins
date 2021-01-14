@@ -193,6 +193,10 @@ export const parseSceneStudio = (ctx: MyContext): string | null => {
 };
 
 export const parseSceneTimestamp = (ctx: MyContext): number | null => {
+  if (!ctx.args.parseDate) {
+    return null;
+  }
+
   const cleanScenePath = stripStr(ctx.scenePath, true);
 
   return dateToTimestamp(ctx, cleanScenePath);
