@@ -17,7 +17,14 @@ Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, D
         "args": {}
       }
     },
-    "events": {}
+    "events": {
+      "sceneCreated": [
+        "vixen-network"
+      ],
+      "sceneCustom": [
+        "vixen-network"
+      ]
+    }
   }
 }
 ---
@@ -31,7 +38,11 @@ plugins:
     vixen-network:
       path: ./plugins/vixen-network/main.ts
       args: {}
-  events: {}
+  events:
+    sceneCreated:
+      - vixen-network
+    sceneCustom:
+      - vixen-network
 
 ---
 ```
