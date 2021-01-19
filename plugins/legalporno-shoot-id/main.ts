@@ -21,19 +21,22 @@ module.exports = async (ctx: MyContext): Promise<any> => {
     return {};
   }
 
+  $logger.verbose(`Extracting shoot ID from scene name: ${sceneName}`);
+
   const shootId = extractShootId(sceneName);
   if (shootId) {
-    $logger.info("Extracted scene ID: " + shootId);
+    const cleanShootId = shootId.trim();
+    $logger.info("Extracted scene ID: " + cleanShootId);
 
     const result: Record<string, unknown> = {
       custom: {
-        "Shoot ID": shootId,
-        "Scene ID": shootId,
+        "Shoot ID": cleanShootId,
+        "Scene ID": cleanShootId,
       },
     };
 
     if (args.setName) {
-      result.name = shootId;
+      result.name = cleanShootId;
       $logger.verbose("Setting name to shoot ID");
     }
 
