@@ -5,5 +5,5 @@
     "boi123212321"
   ],
   "description": "Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, DEEPER) scenes",
-  "pluginEvents": []
+  "pluginEvents": ["sceneCreated", "sceneCustom"]
 }
