@@ -1,0 +1,25 @@
+{
+  "name": "legalporno-shoot-id",
+  "version": "0.0.1",
+  "authors": [
+    "boi123212321"
+  ],
+  "description": "Extract Legalporno shoot IDs (e.g. GIO482) from video names",
+  "pluginEvents": ["sceneCreated", "sceneCustom"],
+  "arguments": [
+    {
+      "name": "dry",
+      "type": "Boolean",
+      "required": false,
+      "default": false,
+      "description": "Whether to commit data changes"
+    },
+    {
+      "name": "setName",
+      "type": "Boolean",
+      "required": false,
+      "default": false,
+      "description": "Whether to set scene name to found shoot ID"
+    }
+  ]
+}
