@@ -7,7 +7,6 @@ Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, D
 ### Example installation with default arguments
 
 `config.json`
-
 ```json
 ---
 {
@@ -32,7 +31,6 @@ Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, D
 ```
 
 `config.yaml`
-
 ```yaml
 ---
 plugins:
@@ -45,6 +43,6 @@ plugins:
       - vixen_network
     sceneCustom:
       - vixen_network
----
 
+---
 ```
