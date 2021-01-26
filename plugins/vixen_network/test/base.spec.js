@@ -2,7 +2,7 @@ const plugin = require("../main");
 const { expect } = require("chai");
 const { createPluginRunner } = require("../../../context");
 
-const runPlugin = createPluginRunner("vixen-network", plugin);
+const runPlugin = createPluginRunner("vixen_network", plugin);
 
 const fixture = [
   [
