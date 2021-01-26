@@ -14,7 +14,6 @@ Extract Legalporno shoot IDs (e.g. GIO482) from video names
 ### Example installation with default arguments
 
 `config.json`
-
 ```json
 ---
 {
@@ -42,7 +41,6 @@ Extract Legalporno shoot IDs (e.g. GIO482) from video names
 ```
 
 `config.yaml`
-
 ```yaml
 ---
 plugins:
@@ -57,6 +55,6 @@ plugins:
       - legalporno_shoot_id
     sceneCustom:
       - legalporno_shoot_id
----
 
+---
 ```
