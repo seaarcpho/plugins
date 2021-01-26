@@ -2,7 +2,7 @@ const plugin = require("../main");
 const { expect } = require("chai");
 const { createPluginRunner } = require("../../../context");
 
-const runPlugin = createPluginRunner("legalporno-shoot-id", plugin);
+const runPlugin = createPluginRunner("legalporno_shoot_id", plugin);
 
 const fixture = require("./basic.fixture");
 
