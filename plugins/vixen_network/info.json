@@ -1,6 +1,6 @@
 {
   "name": "vixen_network",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "authors": ["boi123212321"],
   "description": "Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, DEEPER) scenes",
   "pluginEvents": ["sceneCreated", "sceneCustom"],
@@ -25,6 +25,13 @@
       "required": false,
       "default": false,
       "description": "Download & attach scene thumbnail"
+    },
+    {
+      "name": "useChapters",
+      "type": "Boolean",
+      "required": false,
+      "default": false,
+      "description": "Create scene markers from chapters"
     }
   ]
 }

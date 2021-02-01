@@ -98,9 +98,11 @@ module.exports = async (ctx: MyContext): Promise<any> => {
 
   const result: {
     custom: Record<string, unknown>;
+    $markers: { id: string; name: string; time: number }[];
     [key: string]: unknown;
   } = {
     custom: {},
+    $markers: [],
   };
   $logger.verbose(`Checking VIXEN sites for "${scene.path}"`);
 
@@ -156,6 +158,18 @@ module.exports = async (ctx: MyContext): Promise<any> => {
 
     if (args.useThumbnail) {
       result.thumbnail = await ctx.$createImage(thumbUrl, `${result.name}`, true);
+    }
+
+    if (args.useChapters) {
+      const chapters = scene.chapters.video as { title: string; seconds: number }[];
+      for (const { title, seconds } of chapters) {
+        const id = await ctx.$createMarker(title, seconds);
+        result.$markers.push({
+          id,
+          name: title,
+          time: seconds,
+        });
+      }
     }
   }
 

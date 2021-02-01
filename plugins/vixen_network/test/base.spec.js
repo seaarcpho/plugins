@@ -92,6 +92,7 @@ describe("VIXEN network", () => {
       expect(result.labels).to.deep.equal(expected.labels);
       expect(result.$thumbnail).to.be.a("string").that.contains("TRIPPLE");
       expect(result.thumbnail).to.be.undefined;
+      expect(result.$markers).to.have.length(0);
     });
   }
 });
