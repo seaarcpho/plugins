@@ -1,8 +1,16 @@
-## vixen_network 0.0.1
+## vixen_network 0.1.0
 
 by boi123212321
 
 Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, DEEPER) scenes
+
+### Arguments
+
+| Name         | Type    | Required | Description                       |
+| ------------ | ------- | -------- | --------------------------------- |
+| dry          | Boolean | false    | Whether to commit data changes    |
+| deep         | Boolean | false    | Get extra info from scene details |
+| useThumbnail | Boolean | false    | Download & attach scene thumbnail |
 
 ### Example installation with default arguments
 
@@ -14,7 +22,11 @@ Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, D
     "register": {
       "vixen_network": {
         "path": "./plugins/vixen_network/main.ts",
-        "args": {}
+        "args": {
+          "dry": false,
+          "deep": true,
+          "useThumbnail": false
+        }
       }
     },
     "events": {
@@ -37,7 +49,10 @@ plugins:
   register:
     vixen_network:
       path: ./plugins/vixen_network/main.ts
-      args: {}
+      args:
+        dry: false
+        deep: true
+        useThumbnail: false
   events:
     sceneCreated:
       - vixen_network
