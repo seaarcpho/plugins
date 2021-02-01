@@ -98,7 +98,7 @@ module.exports = async (ctx: MyContext): Promise<any> => {
 
   const result: {
     custom: Record<string, unknown>;
-    $markers: { id: string; name: string; time: number }[];
+    $markers: { name: string; time: number }[];
     [key: string]: unknown;
   } = {
     custom: {},
@@ -157,15 +157,14 @@ module.exports = async (ctx: MyContext): Promise<any> => {
     result.$thumbnail = thumbUrl;
 
     if (args.useThumbnail) {
+      $logger.verbose("Setting thumbnail");
       result.thumbnail = await ctx.$createImage(thumbUrl, `${result.name}`, true);
     }
 
     if (args.useChapters) {
       const chapters = scene.chapters.video as { title: string; seconds: number }[];
       for (const { title, seconds } of chapters) {
-        const id = await ctx.$createMarker(title, seconds);
         result.$markers.push({
-          id,
           name: title,
           time: seconds,
         });
@@ -176,6 +175,12 @@ module.exports = async (ctx: MyContext): Promise<any> => {
   if (args.dry) {
     $logger.info(`Would have returned ${$formatMessage(result)}`);
     return {};
+  }
+
+  $logger.verbose("Creating markers");
+  for (const { name, time } of result.$markers) {
+    $logger.debug(`Creating marker: ${name} at ${time}s`);
+    await ctx.$createMarker(name, time);
   }
 
   return result;
