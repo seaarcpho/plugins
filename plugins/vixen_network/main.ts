@@ -1,5 +1,26 @@
 import { Context } from "../../types/plugin";
 
+function getJSONFromScriptTag(str: string): any {
+  const jsonMatch = str.match(/{.*};/);
+
+  let brackets = 0;
+  let lastIndex = 0;
+
+  for (let i = 0; i < jsonMatch![0].length; i++) {
+    const char = jsonMatch![0].charAt(i);
+
+    if (char == "{") brackets++;
+    else if (char == "}") brackets--;
+
+    if (brackets == 0) {
+      lastIndex = i + 1;
+      break;
+    }
+  }
+
+  return JSON.parse(jsonMatch![0].substring(0, lastIndex));
+}
+
 type MyContext = Context & { sceneName?: string } & { scene: { path: string } };
 
 const sites = [
@@ -75,7 +96,12 @@ module.exports = async (ctx: MyContext): Promise<any> => {
     return {};
   }
 
-  const result: Record<string, unknown> = {};
+  const result: {
+    custom: Record<string, unknown>;
+    [key: string]: unknown;
+  } = {
+    custom: {},
+  };
   $logger.verbose(`Checking VIXEN sites for "${scene.path}"`);
 
   const basename = $path.basename(scene.path);
@@ -90,25 +116,46 @@ module.exports = async (ctx: MyContext): Promise<any> => {
 
   const searchResults = await search(ctx, site.url, filename);
 
-  const firstResult = searchResults[0];
+  const found = searchResults.find(({ title }) => basicMatch(ctx, filename, title));
 
-  if (!firstResult) {
+  if (!found) {
     $logger.warn(`No result found for "${site.url}"`);
     return {};
   }
 
-  if (!basicMatch(ctx, filename, firstResult.title)) {
-    $logger.warn(`Found result "${firstResult.title}", but does not actually match`);
-    return {};
-  }
-
-  result.name = firstResult.title;
-  result.actors = firstResult.modelsSlugged.map((model) => model.name).sort();
-  result.description = firstResult.description;
-
-  // TODO: Use firstResult.targetUrl to scrape more data
+  result.name = found.title;
+  result.actors = found.modelsSlugged.map(({ name }) => name).sort();
+  result.description = found.description;
+  result.studio = site.name;
 
   const args = getArgs(ctx);
+
+  if (args.deep === false) {
+    $logger.verbose("Not getting deep info");
+  } else {
+    const sceneUrl = site.url + found.targetUrl;
+    $logger.verbose(`Getting more scene info (deep: true): ${sceneUrl}`);
+
+    const html = (await ctx.$axios.get<string>(sceneUrl)).data;
+    const scripts = html.match(
+      /(<|%3C)script[\s\S]*?(>|%3E)[\s\S]*?(<|%3C)(\/|%2F)script[\s\S]*?(>|%3E)/gi
+    );
+    const parsed = getJSONFromScriptTag(scripts!.find((s) => s.includes("INITIAL_STATE"))!);
+
+    const shootId = parsed.page.data[found.targetUrl].data.video;
+    const scene = parsed.videos.find((video) => video.newId === shootId);
+
+    result.custom.director = scene.directorNames;
+    result.labels = scene.categories.map(({ name }) => name);
+
+    const thumbUrl = decodeURI(scene.videoPosterSizes["1080w"]).replace(/&amp;/g, "&");
+    result.$thumbnail = thumbUrl;
+
+    if (args.useThumbnail) {
+      result.thumbnail = await ctx.$createImage(thumbUrl, `${result.name}`, true);
+    }
+  }
+
   if (args.dry) {
     $logger.info(`Would have returned ${$formatMessage(result)}`);
     return {};
