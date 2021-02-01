@@ -90,7 +90,7 @@ describe("VIXEN network", () => {
       expect(result.actors).to.deep.equal(expected.actors);
       expect(result.custom).to.deep.equal(expected.custom);
       expect(result.labels).to.deep.equal(expected.labels);
-      expect(result.$thumbnail).to.be.a("string").that.contains("1080x608").and.contains("&hash=");
+      expect(result.$thumbnail).to.be.a("string").that.contains("TRIPPLE");
       expect(result.thumbnail).to.be.undefined;
     });
   }

@@ -148,7 +148,10 @@ module.exports = async (ctx: MyContext): Promise<any> => {
     result.custom.director = scene.directorNames;
     result.labels = scene.categories.map(({ name }) => name);
 
-    const thumbUrl = decodeURI(scene.videoPosterSizes["1080w"]).replace(/&amp;/g, "&");
+    const thumbUrl = decodeURI(scene.trippleThumbUrlSizes.mainThumb["1040w"]).replace(
+      /&amp;/g,
+      "&"
+    );
     result.$thumbnail = thumbUrl;
 
     if (args.useThumbnail) {
