@@ -1,9 +1,6 @@
 import { Context, DeepPartial } from "../../types/plugin";
-import { existsSync } from "fs";
 import { MySceneContext } from "./types";
-import { readFileSync } from "fs";
-import { configSchema, IFileParserConfig } from "./types";
-import YAML from "yaml";
+import { IFileParserConfig } from "./types";
 
 const configFilename = "parserconfig";
 
@@ -13,24 +10,25 @@ const configJSONFilename = `${configFilename}.json`;
 export async function findAndLoadSceneConfig(
   ctx: MySceneContext
 ): Promise<IFileParserConfig | undefined> {
-  const configFile = findConfig(ctx, ctx.$path.dirname(ctx.scenePath || "/"));
+  const { $fs, $logger, $path, scenePath, $yaml} = ctx;
+  const configFile = findConfig(ctx, $path.dirname(scenePath || "/"));
 
   if (configFile) {
-    ctx.$logger.info(`Loading parser config from: ${configFile}`);
+    $logger.info(`Loading parser config from: ${configFile}`);
 
     let loadedConfig: IFileParserConfig;
-    if (ctx.$path.extname(configFile).toLowerCase() === ".yaml") {
-      loadedConfig = YAML.parse(readFileSync(configFile, "utf-8")) as IFileParserConfig;
+    if ($path.extname(configFile).toLowerCase() === ".yaml") {
+      loadedConfig = $yaml.parse($fs.readFileSync(configFile, "utf-8")) as IFileParserConfig;
     } else {
-      loadedConfig = JSON.parse(readFileSync(configFile, "utf-8")) as IFileParserConfig;
+      loadedConfig = JSON.parse($fs.readFileSync(configFile, "utf-8")) as IFileParserConfig;
     }
 
-    const validationError = isValidConfig(loadedConfig);
+    const validationError = isValidConfig(ctx, loadedConfig);
     if (validationError !== true) {
-      ctx.$logger.warn(
+      $logger.warn(
         `Invalid config schema in "${validationError.location}". Double check your config and retry.`
       );
-      ctx.$logger.error(validationError.error.message);
+      $logger.error(validationError.error.message);
       return;
     }
 
@@ -43,36 +41,56 @@ export async function findAndLoadSceneConfig(
 
 // Lookikng for a config file, starting from dirPath and going up the parents chain until the base library path is reached.
 const findConfig = (ctx: Context, dirName: string): string | undefined => {
+  const { $fs, $library, $logger, $path } = ctx;
+
   try {
-    const configFileYAML = ctx.$path.format({ dir: dirName, base: configYAMLFilename });
-    if (existsSync(configFileYAML)) {
-      ctx.$logger.verbose(`Config file found: ${configFileYAML}`);
+    const configFileYAML = $path.format({ dir: dirName, base: configYAMLFilename });
+    if ($fs.existsSync(configFileYAML)) {
+      $logger.verbose(`Config file found: ${configFileYAML}`);
       return configFileYAML;
     }
 
-    const configFileJSON = ctx.$path.format({ dir: dirName, base: configJSONFilename });
-    if (existsSync(configFileJSON)) {
-      ctx.$logger.verbose(`Config file found: ${configFileJSON}`);
+    const configFileJSON = $path.format({ dir: dirName, base: configJSONFilename });
+    if ($fs.existsSync(configFileJSON)) {
+      $logger.verbose(`Config file found: ${configFileJSON}`);
       return configFileJSON;
     }
 
-    if (dirName === ctx.$library || dirName === "/") {
-      ctx.$logger.verbose(`Could not find a config file in the library.`);
+    if (dirName === $library || dirName === "/") {
+      $logger.verbose(`Could not find a config file in the library.`);
       return;
     } else {
       // Config file not yet found => continues looking in parent dir
-      const parentDir = ctx.$path.resolve(dirName, "..");
+      const parentDir = $path.resolve(dirName, "..");
       return findConfig(ctx, parentDir);
     }
   } catch (error) {
-    ctx.$logger.error(`Error finding config file: ${error}. Stopped looking.`);
+    $logger.error(`Error finding config file: ${error}. Stopped looking.`);
     return;
   }
 };
 
-export function isValidConfig(val: unknown): true | { location: string; error: Error } {
+export function isValidConfig(ctx: Context, val: unknown): true | { location: string; error: Error } {
+  const { $zod } = ctx;
   let generalError: Error | null = null;
   let location: string = "root";
+
+  const fileParserSchemaElem = $zod.object({
+    scopeDirname: $zod.boolean().optional(),
+    regex: $zod.string(),
+    regexFlags: $zod.string().optional(),
+    matchesToUse: $zod.array($zod.number()).optional(),
+    groupsToUse: $zod.array($zod.number()).optional(),
+    splitter: $zod.string().optional(),
+  });
+  
+  const configSchema = $zod.object({
+    studioMatcher: fileParserSchemaElem.optional(),
+    nameMatcher: fileParserSchemaElem.optional(),
+    actorsMatcher: fileParserSchemaElem.optional(),
+    movieMatcher: fileParserSchemaElem.optional(),
+    labelsMatcher: fileParserSchemaElem.optional(),
+  });  
 
   try {
     configSchema.parse(val);

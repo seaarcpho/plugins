@@ -1,9 +1,10 @@
 import { Context } from "../../types/plugin";
-import moment from "moment";
 import { IFileParserConfigElem, MySceneContext } from "./types";
 
 // Parses the input to find a date. The date separator can be ".", " ", "-", "_" or "/".
 export const dateToTimestamp = (ctx: Context, textToParse: string): number | undefined => {
+  const { $logger, $moment } = ctx;
+
   if (!textToParse || textToParse === "") return;
 
   // '_' replacement are needed for proper boundaries detection by the regex
@@ -21,59 +22,59 @@ export const dateToTimestamp = (ctx: Context, textToParse: string): number | und
   const mmyyyy = /(\b1[012]|0[1-9])[- \/\.](\b(?:19|20)\d\d)/.exec(dateStr);
   const yyyy = /(\b(?:19|20)\d\d)/.exec(dateStr);
 
-  ctx.$logger.verbose(`Converting date ${JSON.stringify(dateStr)} to timestamp`);
+  $logger.verbose(`Converting date ${JSON.stringify(dateStr)} to timestamp`);
 
   if (yyyymmdd && yyyymmdd.length) {
     const date = yyyymmdd[0].replace(/[- \/\.]/g, "-");
 
-    ctx.$logger.verbose("\tSUCCESS: Found => yyyymmdd");
+    $logger.verbose("\tSUCCESS: Found => yyyymmdd");
 
-    return moment(date, "YYYY-MM-DD").valueOf();
+    return $moment(date, "YYYY-MM-DD").valueOf();
   }
   if (ddmmyyyy && ddmmyyyy.length) {
     const date = ddmmyyyy[0].replace(/[- \/\.]/g, "-");
 
-    ctx.$logger.verbose("\tSUCCESS: Found => ddmmyyyy");
+    $logger.verbose("\tSUCCESS: Found => ddmmyyyy");
 
-    return moment(date, "DD-MM-YYYY").valueOf();
+    return $moment(date, "DD-MM-YYYY").valueOf();
   }
   if (yymmdd && yymmdd.length) {
     const date = yymmdd[0].replace(/[- \/\.]/g, "-");
 
-    ctx.$logger.verbose("\tSUCCESS: Found => yymmdd");
+    $logger.verbose("\tSUCCESS: Found => yymmdd");
 
-    return moment(date, "YY-MM-DD").valueOf();
+    return $moment(date, "YY-MM-DD").valueOf();
   }
   if (ddmmyy && ddmmyy.length) {
     const date = ddmmyy[0].replace(/[- \/\.]/g, "-");
 
-    ctx.$logger.verbose("\tSUCCESS: Found => ddmmyy");
+    $logger.verbose("\tSUCCESS: Found => ddmmyy");
 
-    return moment(date, "DD-MM-YY").valueOf();
+    return $moment(date, "DD-MM-YY").valueOf();
   }
   if (yyyymm && yyyymm.length) {
     const date = yyyymm[0].replace(/[- \/\.]/g, "-");
 
-    ctx.$logger.verbose("\tSUCCESS: Found => yyyymm");
+    $logger.verbose("\tSUCCESS: Found => yyyymm");
 
-    return moment(date, "YYYY-MM").valueOf();
+    return $moment(date, "YYYY-MM").valueOf();
   }
   if (mmyyyy && mmyyyy.length) {
     const date = mmyyyy[0].replace(/[- \/\.]/g, "-");
 
-    ctx.$logger.verbose("\tSUCCESS: Found => mmyyyy");
+    $logger.verbose("\tSUCCESS: Found => mmyyyy");
 
-    return moment(date, "MM-YYYY").valueOf();
+    return $moment(date, "MM-YYYY").valueOf();
   }
   if (yyyy && yyyy.length) {
     const date = yyyy[0];
 
-    ctx.$logger.verbose("\tSUCCESS: Found => yyyy");
+    $logger.verbose("\tSUCCESS: Found => yyyy");
 
-    return moment(date, "YYYY").valueOf();
+    return $moment(date, "YYYY").valueOf();
   }
 
-  ctx.$logger.verbose("\tFAILED: Could not find a date");
+  $logger.verbose("\tFAILED: Could not find a date");
   return;
 };
 
@@ -81,17 +82,19 @@ export function matchElement(
   ctx: MySceneContext,
   matcher: IFileParserConfigElem
 ): string[] | undefined {
+  const { $logger, $path, sceneName, scenePath} = ctx;
+
   if (!matcher) return;
 
   let selectedGroups: string;
   let matchedResult: string[] = [];
 
-  let toMatch = matcher.scopeDirname ? ctx.$path.dirname(ctx.scenePath) : ctx.sceneName;
+  let toMatch = matcher.scopeDirname ? $path.dirname(scenePath) : sceneName;
   const regex = new RegExp(matcher.regex, matcher.regexFlags || "gm");
   const matchesIterable = toMatch.matchAll(regex);
 
   if (!matchesIterable) {
-    ctx.$logger.info(`No matches in ${toMatch} with regex /${regex}/`);
+    $logger.info(`No matches in ${toMatch} with regex /${regex}/`);
     return;
   }
 
@@ -99,14 +102,14 @@ export function matchElement(
 
   matches.forEach((match, i) => {
     if (matcher.matchesToUse && !matcher.matchesToUse?.includes(i)) {
-      ctx.$logger.verbose(`Skipping match not to be used: [${i}] ${JSON.stringify(match)}`);
+      $logger.verbose(`Skipping match not to be used: [${i}] ${JSON.stringify(match)}`);
       return;
     }
 
     if (matcher.groupsToUse) {
       selectedGroups = "";
 
-      ctx.$logger.verbose(
+      $logger.verbose(
         `Extracting requested group(s) ${matcher.groupsToUse} from match: ${JSON.stringify(match)}`
       );
       match.forEach((val, j) => {
@@ -117,12 +120,12 @@ export function matchElement(
 
       addResults(matchedResult, selectedGroups, matcher.splitter);
     } else {
-      ctx.$logger.verbose(`Usng the full match: '${match[0]}'`);
+      $logger.verbose(`Usng the full match: '${match[0]}'`);
       addResults(matchedResult, match[0], matcher.splitter);
     }
   });
 
-  ctx.$logger.verbose(`Final matched result: "${JSON.stringify(matchedResult)}"`);
+  $logger.verbose(`Final matched result: "${JSON.stringify(matchedResult)}"`);
   return matchedResult;
 }
 

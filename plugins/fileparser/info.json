@@ -1,11 +1,11 @@
 {
   "name": "fileparser",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "authors": [
     "arcadianCdr"
   ],
   "description": "Automatically extracts scene details from your library's file and directory structure.",
-  "pluginEvents": ["sceneCreated"],
+  "pluginEvents": ["sceneCreated", "sceneCustom"],
   "arguments": [
     {
       "name": "dry",
@@ -19,7 +19,7 @@
       "type": "Boolean",
       "required": false,
       "default": true,
-      "description": "whether to parse release dates."
+      "description": "Whether to parse release dates."
     }
   ]
 }
