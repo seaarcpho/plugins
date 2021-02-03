@@ -14,7 +14,7 @@ export async function findAndLoadSceneConfig(
   const configFile = findConfig(ctx, $path.dirname(scenePath || "/"));
 
   if (configFile) {
-    $logger.info(`Loading parser config from: ${configFile}`);
+    $logger.info(`Parsing scene '${scenePath}' using config '${configFile}'`);
 
     let loadedConfig: IFileParserConfig;
     try {
