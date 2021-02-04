@@ -25,6 +25,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     args,
     $inquirer,
     $createImage,
+    data
   } = ctx;
 
   /**
@@ -36,6 +37,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   if (event !== "sceneCreated" && event !== "sceneCustom") {
     $throw("Plugin used for unsupported event");
   }
+  data.
 
   // Checking all of the arguments are set in the plugin
 
