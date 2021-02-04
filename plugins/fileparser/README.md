@@ -6,7 +6,6 @@ Automatically extracts scene details from your library's file and directory stru
 
 ### Documentation
 
-#### How?
 
 The plugin works by recognizing patterns in your files:
 - a built-in pattern identifies dates and works "out-of-the-box". 

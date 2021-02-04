@@ -1,5 +1,3 @@
-#### How?
-
 The plugin works by recognizing patterns in your files:
 - a built-in pattern identifies dates and works "out-of-the-box". 
 - for custom patterns (like studio, actors or movie) that are specific to your naming convention, a little bit of configuration is needed to "tell the plugin" how to recognize the right patterns.
