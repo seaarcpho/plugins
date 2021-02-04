@@ -6,7 +6,7 @@ import { findAndLoadSceneConfig } from "./config";
 module.exports = async (ctx: MySceneContext): Promise<SceneOutput> => {
   const { args, sceneName, scenePath, $logger, $throw } = ctx;
 
-  if (!sceneName) $throw("Uh oh. You shouldn't use the plugin for this type of event");
+  if (!scenePath) $throw("Uh oh. You shouldn't use the plugin for this type of event");
 
   $logger.verbose(`Parsing scene: ${scenePath}`);
 
