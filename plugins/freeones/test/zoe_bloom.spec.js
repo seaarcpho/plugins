@@ -63,7 +63,7 @@ describe("freeones", () => {
       height: 157,
       weight: 50,
       birthplace: "Pittsburgh, PA",
-      // zodiac: "Aries",
+      zodiac: "Aries",
       gender: "Female",
       sex: "Female",
       piercings: "Left Nostril",
