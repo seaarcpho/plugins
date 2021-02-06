@@ -211,7 +211,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { weight: kgToLbs(weight) };
   }
 
-  function getZodiac(): Partial<{ zodiac: string }> {
+  /* function getZodiac(): Partial<{ zodiac: string }> {
     if (isBlacklisted("zodiac")) return {};
     $logger.verbose("Getting zodiac sign...");
 
@@ -220,7 +220,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     const zodiacText = $(selector).text();
     const zodiac = zodiacText.split(" (")[0];
     return { zodiac };
-  }
+  } */
 
   function getBirthplace(): Partial<{ birthplace: string }> {
     if (isBlacklisted("birthplace")) return {};
@@ -431,7 +431,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     ...getHipSize(),
     ...getBraSize(),
     ...getBirthplace(),
-    ...getZodiac(),
+    /* ...getZodiac(), */
     ...getGender(),
     ...getTattoos(),
     ...getPiercings(),
