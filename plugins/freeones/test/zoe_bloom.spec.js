@@ -26,7 +26,7 @@ describe("freeones", () => {
       height: 157,
       weight: 50,
       birthplace: "Pittsburgh, PA",
-      // zodiac: "Aries",
+      zodiac: "Aries",
       measurements: "32A-24-35",
       "waist size": 24,
       "hip size": 35,

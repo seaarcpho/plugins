@@ -465,7 +465,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     ...getHipSize(),
     ...getBraSize(),
     ...getBirthplace(),
-    /* ...getZodiac(), */
+    ...getZodiac(), 
     ...getGender(),
     ...getTattoos(),
     ...getPiercings(),

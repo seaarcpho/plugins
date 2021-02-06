@@ -445,7 +445,7 @@ describe("freeones", () => {
       height: 5.54,
       weight: 125.4,
       birthplace: "Oklahoma City, OK",
-      // zodiac: "Virgo",
+      zodiac: "Virgo",
       measurements: "32B-25-36",
       "waist size": 25,
       "hip size": 36,

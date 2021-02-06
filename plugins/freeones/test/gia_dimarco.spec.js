@@ -66,7 +66,7 @@ describe("freeones", () => {
       height: 163,
       weight: 50,
       birthplace: "San Francisco, CA",
-      // zodiac: "Scorpio",
+      zodiac: "Scorpio",
       gender: "Female",
       sex: "Female",
       piercings: "Left Nostril; Clitoris",
