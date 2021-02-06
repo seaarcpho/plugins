@@ -100,8 +100,9 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   if (blacklist.length) $logger.verbose(`Blacklist defined, will ignore: ${blacklist.join(", ")}`);
 
   const whitelist = (args.whitelist || []).map(lowercase);
-  if (whitelist.length)
+  if (whitelist.length) {
     $logger.verbose(`Whitelist defined, will only return: ${whitelist.join(", ")}...`);
+  }
 
   function isBlacklisted(prop): boolean {
     if (whitelist.length) {
@@ -412,10 +413,10 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
   function getTattoos(): Partial<{ tattoos: string | string[] }> {
     if (isBlacklisted("tattoos")) return {};
     let tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[cdata-test="p_has_tattoos"]');
-    if (!tattooResult["tattoos"]) {
+    if (!tattooResult.tattoos) {
       tattooResult = scrapeText<{ tattoos: string }>("tattoos", '[data-test="p_has_tattoos"]');
     }
-    const tattooText = tattooResult["tattoos"] ? tattooResult["tattoos"].trim() : "";
+    const tattooText = tattooResult.tattoos ? tattooResult.tattoos.trim() : "";
     if (!tattooText || /No Tattoos/i.test(tattooText)) {
       return {};
     }
@@ -433,7 +434,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
       "piercings",
       '[data-test="p_has_piercings"]'
     );
-    const piercingText = res["piercings"]?.trim();
+    const piercingText = res.piercings?.trim();
     if (!piercingText || /No Piercings/i.test(piercingText)) {
       return {};
     }
@@ -465,7 +466,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     ...getHipSize(),
     ...getBraSize(),
     ...getBirthplace(),
-    ...getZodiac(),
+    /* ...getZodiac(), */
     ...getGender(),
     ...getTattoos(),
     ...getPiercings(),
@@ -497,10 +498,10 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     if (custom.gender) {
       data.labels.push("Female");
     }
-    if (custom["piercings"]) {
+    if (custom.piercings) {
       data.labels.push("Piercings");
     }
-    if (custom["tattoos"]) {
+    if (custom.tattoos) {
       data.labels.push("Tattoos");
     }
   }
