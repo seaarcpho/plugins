@@ -212,13 +212,47 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   function getZodiac(): Partial<{ zodiac: string }> {
     if (isBlacklisted("zodiac")) return {};
-    $logger.verbose("Getting zodiac sign...");
+    $logger.verbose("Computing zodiac sign from birth date...");
 
-    const selector = $('[data-test="link_zodiac"] .text-underline-always');
-    if (!selector) return {};
-    const zodiacText = $(selector).text();
-    const zodiac = zodiacText.split(" (")[0];
-    return { zodiac };
+    const signs = {
+      capricorn: "Capricorn",
+      aquarius: "Aquarius",
+      pisces: "Pisces",
+      aries: "Aries",
+      taurus: "Taurus",
+      gemini: "Gemini",
+      cancer: "Cancer",
+      leo: "Leo",
+      virgo: "Virgo",
+      libra: "Libra",
+      scorpio: "Scorpio",
+      sagittarius: "Sagittarius",
+    };
+
+    const bornOn = $moment(getAge().bornOn);
+    if (!bornOn) {
+      $logger.verbose("No birth date found: zodiac will be empty");
+      return {};
+    }
+
+    const day = bornOn.date();
+    const month = bornOn.month() + 1;
+    let zodiacResult;
+    if ((month == 1 && day <= 20) || (month == 12 && day >= 22)) zodiacResult = signs.capricorn;
+    else if ((month == 1 && day >= 21) || (month == 2 && day <= 18)) zodiacResult = signs.aquarius;
+    else if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) zodiacResult = signs.pisces;
+    else if ((month == 3 && day >= 21) || (month == 4 && day <= 20)) zodiacResult = signs.aries;
+    else if ((month == 4 && day >= 21) || (month == 5 && day <= 20)) zodiacResult = signs.taurus;
+    else if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) zodiacResult = signs.gemini;
+    else if ((month == 6 && day >= 22) || (month == 7 && day <= 22)) zodiacResult = signs.cancer;
+    else if ((month == 7 && day >= 23) || (month == 8 && day <= 23)) zodiacResult = signs.leo;
+    else if ((month == 8 && day >= 24) || (month == 9 && day <= 23)) zodiacResult = signs.virgo;
+    else if ((month == 9 && day >= 24) || (month == 10 && day <= 23)) zodiacResult = signs.libra;
+    else if ((month == 10 && day >= 24) || (month == 11 && day <= 22)) zodiacResult = signs.scorpio;
+    else if ((month == 11 && day >= 23) || (month == 12 && day <= 21)) zodiacResult = signs.sagittarius;
+
+    $logger.verbose(`Computed zodiac sign for ${bornOn.format("YYYY-MM-DD")}: ${zodiacResult}`);
+    return { zodiac: zodiacResult };
   }
 
   function getBirthplace(): Partial<{ birthplace: string }> {
