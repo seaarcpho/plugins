@@ -308,8 +308,8 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     if (!url) return {};
 
     const imgId = await $createImage(url, `${actorName} (avatar)`);
-    const result: Partial<{ avatar: string; thumbnail: string }> = {};    
-    
+    const result: Partial<{ avatar: string; thumbnail: string }> = {};
+
     if (!isBlacklisted("avatar")) {
       result.avatar = imgId;
     }
@@ -465,7 +465,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     ...getHipSize(),
     ...getBraSize(),
     ...getBirthplace(),
-    ...getZodiac(), 
+    ...getZodiac(),
     ...getGender(),
     ...getTattoos(),
     ...getPiercings(),
