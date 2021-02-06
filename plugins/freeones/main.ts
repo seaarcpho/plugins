@@ -210,49 +210,45 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     return { weight: kgToLbs(weight) };
   }
 
+  function computeZodiac(timestamp: number): string | undefined {
+    const inputDate = $moment(timestamp);
+    if (!inputDate.isValid()) return;
+
+    const day = inputDate.date();
+    const month = inputDate.month();
+    const signSwitchDay = [20, 19, 20, 20, 20, 21, 22, 22, 21, 22, 21, 21];
+    const signAtMonthStart = [
+      "Capricorn",
+      "Aquarius",
+      "Pisces",
+      "Aries",
+      "Taurus",
+      "Gemini",
+      "Cancer",
+      "Leo",
+      "Virgo",
+      "Libra",
+      "Scorpio",
+      "Sagittarius",
+    ];
+
+    return signAtMonthStart[day <= signSwitchDay[month] ? month : (month + 1) % 12];
+  }
+
   function getZodiac(): Partial<{ zodiac: string }> {
     if (isBlacklisted("zodiac")) return {};
-    $logger.verbose("Computing zodiac sign from birth date...");
 
-    const signs = {
-      capricorn: "Capricorn",
-      aquarius: "Aquarius",
-      pisces: "Pisces",
-      aries: "Aries",
-      taurus: "Taurus",
-      gemini: "Gemini",
-      cancer: "Cancer",
-      leo: "Leo",
-      virgo: "Virgo",
-      libra: "Libra",
-      scorpio: "Scorpio",
-      sagittarius: "Sagittarius",
-    };
-
-    const bornOn = $moment(getAge().bornOn);
+    const bornOn = getAge().bornOn;
     if (!bornOn) {
-      $logger.verbose("No birth date found: zodiac will be empty");
+      $logger.verbose("No birth date found => zodiac will be empty.");
       return {};
     }
+    const computedZodiac = computeZodiac(bornOn.valueOf());
+    $logger.verbose(
+      `Computed zodiac sign for: ${new Date(bornOn).toLocaleDateString()}: ${computedZodiac}`
+    );
 
-    const day = bornOn.date();
-    const month = bornOn.month() + 1;
-    let zodiacResult;
-    if ((month == 1 && day <= 20) || (month == 12 && day >= 22)) zodiacResult = signs.capricorn;
-    else if ((month == 1 && day >= 21) || (month == 2 && day <= 18)) zodiacResult = signs.aquarius;
-    else if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) zodiacResult = signs.pisces;
-    else if ((month == 3 && day >= 21) || (month == 4 && day <= 20)) zodiacResult = signs.aries;
-    else if ((month == 4 && day >= 21) || (month == 5 && day <= 20)) zodiacResult = signs.taurus;
-    else if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) zodiacResult = signs.gemini;
-    else if ((month == 6 && day >= 22) || (month == 7 && day <= 22)) zodiacResult = signs.cancer;
-    else if ((month == 7 && day >= 23) || (month == 8 && day <= 23)) zodiacResult = signs.leo;
-    else if ((month == 8 && day >= 24) || (month == 9 && day <= 23)) zodiacResult = signs.virgo;
-    else if ((month == 9 && day >= 24) || (month == 10 && day <= 23)) zodiacResult = signs.libra;
-    else if ((month == 10 && day >= 24) || (month == 11 && day <= 22)) zodiacResult = signs.scorpio;
-    else if ((month == 11 && day >= 23) || (month == 12 && day <= 21)) zodiacResult = signs.sagittarius;
-
-    $logger.verbose(`Computed zodiac sign for ${bornOn.format("YYYY-MM-DD")}: ${zodiacResult}`);
-    return { zodiac: zodiacResult };
+    return { zodiac: computedZodiac };
   }
 
   function getBirthplace(): Partial<{ birthplace: string }> {
@@ -297,6 +293,10 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   async function getAvatar(): Promise<Partial<{ avatar: string; thumbnail: string }>> {
     if (args.dry) return {};
+    if (isBlacklisted("avatar") && !useAvatarAsThumbnail) {
+      // If not using either avatar or thumbnail, return nothing
+      return {};
+    }
     $logger.verbose("Getting avatar (and/or thumbnail)...");
 
     const imgEl = $(`.dashboard-header img.img-fluid`);
@@ -307,17 +307,16 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     if (!url) return {};
 
     const imgId = await $createImage(url, `${actorName} (avatar)`);
-
-    if (!useAvatarAsThumbnail) {
-      if (isBlacklisted("avatar")) return {};
-      return { avatar: imgId };
-    } else {
-      if (isBlacklisted("avatar")) return { thumbnail: imgId };
-      return {
-        avatar: imgId,
-        thumbnail: imgId,
-      };
+    const result: Partial<{ avatar: string; thumbnail: string }> = {};    
+    
+    if (!isBlacklisted("avatar")) {
+      result.avatar = imgId;
     }
+    if (useAvatarAsThumbnail) {
+      result.thumbnail = imgId;
+    }
+
+    return result;
   }
 
   function getAge(): Partial<{ bornOn: number }> {
