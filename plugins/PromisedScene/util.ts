@@ -117,7 +117,9 @@ export const createQuestionPrompter = (
    * @param promptArgs - All of the arguments that are required for prompting a question
    * @returns the result of the question, or the inputted answer for test mode
    */
-  const questionAsync = async <T>(promptArgs: object): Promise<T | { [name: string]: string }> => {
+  const questionAsync = async <T>(
+    promptArgs: Record<string, any>
+  ): Promise<T | { [name: string]: string }> => {
     if (testingStatus) {
       $logger.info(
         `TESTMODE: ${JSON.stringify(promptArgs.name)} => ${JSON.stringify(promptArgs.testAnswer)}`
