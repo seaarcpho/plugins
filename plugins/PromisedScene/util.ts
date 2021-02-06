@@ -120,12 +120,10 @@ export const createQuestionPrompter = (
   const questionAsync = async <T>(promptArgs: object): Promise<T | { [name: string]: string }> => {
     if (testingStatus) {
       $logger.info(
-        `TESTMODE: ${JSON.stringify(promptArgs["name"])} => ${JSON.stringify(
-          promptArgs["testAnswer"]
-        )}`
+        `TESTMODE: ${JSON.stringify(promptArgs.name)} => ${JSON.stringify(promptArgs.testAnswer)}`
       );
 
-      return { [promptArgs["name"]]: promptArgs["testAnswer"] };
+      return { [promptArgs.name]: promptArgs.testAnswer };
     }
 
     return inquirer.prompt(promptArgs);
@@ -185,7 +183,7 @@ export const matchSceneResultToSearch = (
     }
 
     // lets remove the actors from the scenename and the searched title -- We should already know this
-    //$log("removing actors name from comparison strings...")
+    // $log("removing actors name from comparison strings...")
     for (const actor of knownActors) {
       if (actor) {
         searchedTitle = searchedTitle.replace(actor.toLowerCase(), "");
@@ -210,9 +208,9 @@ export const matchSceneResultToSearch = (
       if (searchedTitle !== undefined) {
         if (matchTitleRegex.test(searchedTitle)) {
           ctx.$logger.verbose(
-            `MATCH:\t\tSUCCESS: ${JSON.stringify(
-              searchedTitle
-            )} did match to ${JSON.stringify(matchTitle)}`
+            `MATCH:\t\tSUCCESS: ${JSON.stringify(searchedTitle)} did match to ${JSON.stringify(
+              matchTitle
+            )}`
           );
           return scene;
         }
@@ -287,7 +285,7 @@ export const checkSceneExistsInDb = (ctx: MyContext, sceneTitle: string | undefi
       continue;
     }
 
-    let matchSceneRegexes = [
+    const matchSceneRegexes = [
       escapeRegExp(stripStr(JSON.parse(line).name.toString())),
       escapeRegExp(stripStr(JSON.parse(line).name.toString()).replace(/ /g, "")),
     ].map((str) => new RegExp(str, "gi"));
