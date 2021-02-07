@@ -217,7 +217,8 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
     const day = inputDate.date();
     const month = inputDate.month();
-    const signSwitchDay = [20, 19, 20, 20, 20, 21, 22, 22, 21, 22, 21, 21];
+    // signSwitchDay[i] gives the boundary day between two signs, for the month at index 'i' (according to Britannica Encyclopedia)
+    const signSwitchDay = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 22, 22];
     const signAtMonthStart = [
       "Capricorn",
       "Aquarius",
@@ -233,7 +234,12 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
       "Sagittarius",
     ];
 
-    return signAtMonthStart[day <= signSwitchDay[month] ? month : (month + 1) % 12];
+    // signSwitchDay[0] gives 20, meaning any day less than 20 at month index 0 (january) is the sign at the start of that month index (capricorn),
+    // and any day greater than 20 is the sign at the start of the next month: i+1 (aquarius)
+    const isBeforeSwithchDay = day <= signSwitchDay[month];
+
+    // Mod 12 allows us to cycle between 0-11, so if the day is past the boundary day of month index 11 (december), we'll get index 0 (january)
+    return signAtMonthStart[isBeforeSwithchDay ? month : (month + 1) % 12];
   }
 
   function getZodiac(): Partial<{ zodiac: string }> {
