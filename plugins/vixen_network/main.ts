@@ -95,10 +95,10 @@ function basicMatch(ctx: MyContext, a: string, b: string) {
   return normalize(a).includes(normalize(b));
 }
 
-function findSite(ctx: MyContext, name: string) {
+function findSite(ctx: MyContext, str: string) {
   return sites.find((site) => {
-    ctx.$logger.debug(`Compare "${name}" <-> "${site.name}"`);
-    return basicMatch(ctx, name, site.name);
+    ctx.$logger.debug(`Compare "${str}" <-> "${site.name}"`);
+    return basicMatch(ctx, str, site.name);
   });
 }
 
@@ -123,7 +123,7 @@ module.exports = async (ctx: MyContext): Promise<any> => {
   const basename = $path.basename(scene.path);
   const filename = basename.replace($path.extname(basename), "");
 
-  const site = findSite(ctx, filename);
+  const site = findSite(ctx, scene.path);
 
   if (!site) {
     $logger.warn(`No VIXEN site found in "${scene.path}"`);
