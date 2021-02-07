@@ -6,6 +6,13 @@
   "pluginEvents": ["sceneCreated", "sceneCustom"],
   "arguments": [
     {
+      "name": "stripString",
+      "type": "String",
+      "required": false,
+      "default": "[^a-zA-Z0-9'/\\,()[\\]{}-]",
+      "description": "Matcher string regex"
+    },
+    {
       "name": "dry",
       "type": "Boolean",
       "required": false,
