@@ -40,27 +40,27 @@ interface ISceneInfo {
 const sites = [
   {
     name: "BLACKED RAW",
-    url: "http://blackedraw.com",
+    url: "https://blackedraw.com",
   },
   {
     name: "BLACKED",
-    url: "http://blacked.com",
+    url: "https://blacked.com",
   },
   {
     name: "TUSHY RAW",
-    url: "http://tushyraw.com",
+    url: "https://tushyraw.com",
   },
   {
     name: "TUSHY",
-    url: "http://tushy.com",
+    url: "https://tushy.com",
   },
   {
     name: "VIXEN",
-    url: "http://vixen.com",
+    url: "https://vixen.com",
   },
   {
     name: "DEEPER",
-    url: "http://deeper.com",
+    url: "https://deeper.com",
   },
 ];
 
