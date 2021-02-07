@@ -23,6 +23,20 @@ function getJSONFromScriptTag(str: string): any {
 
 type MyContext = Context & { sceneName?: string } & { scene: { path: string } };
 
+interface ISceneInfo {
+  newId: string;
+  releaseDate: string;
+  directorNames: string;
+  categories: { name: string }[];
+  trippleThumbUrlSizes: { mainThumb: { "1040w": string } };
+  chapters: {
+    video: {
+      title: string;
+      seconds: number;
+    }[];
+  };
+}
+
 const sites = [
   {
     name: "BLACKED RAW",
@@ -142,11 +156,29 @@ module.exports = async (ctx: MyContext): Promise<any> => {
     const scripts = html.match(
       /(<|%3C)script[\s\S]*?(>|%3E)[\s\S]*?(<|%3C)(\/|%2F)script[\s\S]*?(>|%3E)/gi
     );
-    const parsed = getJSONFromScriptTag(scripts!.find((s) => s.includes("INITIAL_STATE"))!);
+    const parsed = getJSONFromScriptTag(scripts!.find((s) => s.includes("INITIAL_STATE"))!) as {
+      videos: ISceneInfo[];
+      page: {
+        data: Record<
+          string,
+          {
+            data: {
+              video: string;
+            };
+          }
+        >;
+      };
+    };
 
     const shootId = parsed.page.data[found.targetUrl].data.video;
-    const scene = parsed.videos.find((video) => video.newId === shootId);
+    const scene = parsed.videos.find(({ newId }) => newId === shootId);
 
+    if (!scene) {
+      ctx.$throw(`Scene is undefined! Found videos: ${$formatMessage(parsed.videos)}`);
+      return {};
+    }
+
+    result.releaseDate = new Date(scene.releaseDate).valueOf();
     result.custom.director = scene.directorNames;
     result.labels = scene.categories.map(({ name }) => name);
 
@@ -162,7 +194,7 @@ module.exports = async (ctx: MyContext): Promise<any> => {
     }
 
     if (args.useChapters) {
-      const chapters = scene.chapters.video as { title: string; seconds: number }[];
+      const chapters = scene.chapters.video;
       for (const { title, seconds } of chapters) {
         result.$markers.push({
           name: title,

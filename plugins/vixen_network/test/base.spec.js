@@ -6,6 +6,7 @@ const runPlugin = createPluginRunner("vixen_network", plugin);
 
 const indulgeUsResult = {
   name: "Indulge Us",
+  releaseDate: 1609957800000,
   description:
     "Two tushies are better than one! Double your pleasure with European tag team Agatha and Ginebra, as they squeeze their derrieres into tight jeans for a tease then climb into bed for a fiery anal threesome.",
   actors: ["Agatha Vega", "Ginebra Bellucci"],
@@ -39,6 +40,7 @@ const fixture = [
     "Avery Cristy Jill Kassidy Wild And Wet Vixen.avi",
     {
       name: "Wild And Wet",
+      releaseDate: 1604079000000,
       description:
         "Double your trouble with Avery and Jill - two naughty girls who will stop at nothing to get a man’s attention. Nobody needs to know, and when these ladies pounce, you won’t know what hit you.",
       actors: ["Avery Cristy", "Jill Kassidy", "Michael Stefano"],
@@ -86,6 +88,7 @@ describe("VIXEN network", () => {
         },
       });
       expect(result.name).to.equal(expected.name);
+      expect(result.releaseDate).to.equal(expected.releaseDate);
       expect(result.description).to.equal(expected.description);
       expect(result.actors).to.deep.equal(expected.actors);
       expect(result.custom).to.deep.equal(expected.custom);
