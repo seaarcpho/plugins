@@ -8,6 +8,7 @@ Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, D
 
 | Name         | Type    | Required | Description                        |
 | ------------ | ------- | -------- | ---------------------------------- |
+| stripString  | String  | false    | Matcher string regex               |
 | dry          | Boolean | false    | Whether to commit data changes     |
 | deep         | Boolean | false    | Get extra info from scene details  |
 | useThumbnail | Boolean | false    | Download & attach scene thumbnail  |
@@ -24,6 +25,7 @@ Scrape data from VIXEN Network (VIXEN, BLACKED, BLACKED RAW, TUSHY, TUSHY RAW, D
       "vixen_network": {
         "path": "./plugins/vixen_network/main.ts",
         "args": {
+          "stripString": "[^a-zA-Z0-9'/\\,()[\\]{}-]",
           "dry": false,
           "deep": true,
           "useThumbnail": false,
@@ -52,6 +54,7 @@ plugins:
     vixen_network:
       path: ./plugins/vixen_network/main.ts
       args:
+        stripString: "[^a-zA-Z0-9'/\\,()[\\]{}-]"
         dry: false
         deep: true
         useThumbnail: false
