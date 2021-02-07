@@ -9,10 +9,10 @@ function getJSONFromScriptTag(str: string): any {
   for (let i = 0; i < jsonMatch![0].length; i++) {
     const char = jsonMatch![0].charAt(i);
 
-    if (char == "{") brackets++;
-    else if (char == "}") brackets--;
+    if (char === "{") brackets++;
+    else if (char === "}") brackets--;
 
-    if (brackets == 0) {
+    if (brackets === 0) {
       lastIndex = i + 1;
       break;
     }
