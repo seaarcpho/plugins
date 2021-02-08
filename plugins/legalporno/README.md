@@ -1,4 +1,4 @@
-## legalporno_shoot_id 0.0.1
+## legalporno 0.1.0
 
 by boi123212321
 
@@ -8,6 +8,7 @@ Extract Legalporno shoot IDs (e.g. GIO482) from video names
 
 | Name    | Type    | Required | Description                                 |
 | ------- | ------- | -------- | ------------------------------------------- |
+| deep    | Boolean | false    | Fetch scene details                         |
 | dry     | Boolean | false    | Whether to commit data changes              |
 | setName | Boolean | false    | Whether to set scene name to found shoot ID |
 
@@ -19,9 +20,10 @@ Extract Legalporno shoot IDs (e.g. GIO482) from video names
 {
   "plugins": {
     "register": {
-      "legalporno_shoot_id": {
-        "path": "./plugins/legalporno_shoot_id/main.ts",
+      "legalporno": {
+        "path": "./plugins/legalporno/main.ts",
         "args": {
+          "deep": true,
           "dry": false,
           "setName": false
         }
@@ -29,10 +31,10 @@ Extract Legalporno shoot IDs (e.g. GIO482) from video names
     },
     "events": {
       "sceneCreated": [
-        "legalporno_shoot_id"
+        "legalporno"
       ],
       "sceneCustom": [
-        "legalporno_shoot_id"
+        "legalporno"
       ]
     }
   }
@@ -45,16 +47,17 @@ Extract Legalporno shoot IDs (e.g. GIO482) from video names
 ---
 plugins:
   register:
-    legalporno_shoot_id:
-      path: ./plugins/legalporno_shoot_id/main.ts
+    legalporno:
+      path: ./plugins/legalporno/main.ts
       args:
+        deep: true
         dry: false
         setName: false
   events:
     sceneCreated:
-      - legalporno_shoot_id
+      - legalporno
     sceneCustom:
-      - legalporno_shoot_id
+      - legalporno
 
 ---
 ```
