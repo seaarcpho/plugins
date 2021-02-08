@@ -1,26 +1,5 @@
 import { Context } from "../../types/plugin";
 
-function getJSONFromScriptTag(str: string): any {
-  const jsonMatch = str.match(/{.*};/);
-
-  let brackets = 0;
-  let lastIndex = 0;
-
-  for (let i = 0; i < jsonMatch![0].length; i++) {
-    const char = jsonMatch![0].charAt(i);
-
-    if (char === "{") brackets++;
-    else if (char === "}") brackets--;
-
-    if (brackets === 0) {
-      lastIndex = i + 1;
-      break;
-    }
-  }
-
-  return JSON.parse(jsonMatch![0].substring(0, lastIndex));
-}
-
 type MyContext = Context & { sceneName?: string } & { scene: { path: string } };
 
 interface ISceneInfo {
@@ -149,34 +128,18 @@ module.exports = async (ctx: MyContext): Promise<any> => {
   if (args.deep === false) {
     $logger.verbose("Not getting deep info");
   } else {
-    const sceneUrl = site.url + found.targetUrl;
+    const sceneUrl = `${site.url}/api${found.targetUrl}`;
     $logger.verbose(`Getting more scene info (deep: true): ${sceneUrl}`);
 
-    const html = (await ctx.$axios.get<string>(sceneUrl)).data;
-    const scripts = html.match(
-      /(<|%3C)script[\s\S]*?(>|%3E)[\s\S]*?(<|%3C)(\/|%2F)script[\s\S]*?(>|%3E)/gi
-    );
-    const parsed = getJSONFromScriptTag(scripts!.find((s) => s.includes("INITIAL_STATE"))!) as {
-      videos: ISceneInfo[];
-      page: {
-        data: Record<
-          string,
-          {
-            data: {
-              video: string;
-            };
-          }
-        >;
-      };
-    };
+    const { data } = (
+      await ctx.$axios.get<{
+        data: {
+          video: ISceneInfo;
+        };
+      }>(sceneUrl)
+    ).data;
 
-    const shootId = parsed.page.data[found.targetUrl].data.video;
-    const scene = parsed.videos.find(({ newId }) => newId === shootId);
-
-    if (!scene) {
-      ctx.$throw(`Scene is undefined! Found videos: ${$formatMessage(parsed.videos)}`);
-      return {};
-    }
+    const scene = data.video;
 
     result.releaseDate = new Date(scene.releaseDate).valueOf();
     result.custom.director = scene.directorNames;
