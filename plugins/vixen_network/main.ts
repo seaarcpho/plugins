@@ -172,9 +172,9 @@ module.exports = async (ctx: MyContext): Promise<any> => {
     return {};
   }
 
-  $logger.verbose("Creating markers");
+  $logger.verbose(`Creating ${result.$markers.length} markers`);
   for (const { name, time } of result.$markers) {
-    $logger.debug(`Creating marker: ${name} at ${time}s`);
+    $logger.silly(`Creating marker: ${name} at ${time}s`);
     await ctx.$createMarker(name, time);
   }
 
