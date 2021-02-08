@@ -6,11 +6,11 @@ Extract Legalporno shoot IDs (e.g. GIO482) from video names
 
 ### Arguments
 
-| Name    | Type    | Required | Description                                 |
-| ------- | ------- | -------- | ------------------------------------------- |
-| deep    | Boolean | false    | Fetch scene details                         |
-| dry     | Boolean | false    | Whether to commit data changes              |
-| setName | Boolean | false    | Whether to set scene name to found shoot ID |
+| Name       | Type    | Required | Description                                 |
+| ---------- | ------- | -------- | ------------------------------------------- |
+| deep       | Boolean | false    | Fetch scene details                         |
+| dry        | Boolean | false    | Whether to commit data changes              |
+| useSceneId | Boolean | false    | Whether to set scene name to found shoot ID |
 
 ### Example installation with default arguments
 
@@ -25,7 +25,7 @@ Extract Legalporno shoot IDs (e.g. GIO482) from video names
         "args": {
           "deep": true,
           "dry": false,
-          "setName": false
+          "useSceneId": false
         }
       }
     },
@@ -52,7 +52,7 @@ plugins:
       args:
         deep: true
         dry: false
-        setName: false
+        useSceneId: false
   events:
     sceneCreated:
       - legalporno
