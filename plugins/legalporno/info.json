@@ -20,7 +20,7 @@
       "description": "Whether to commit data changes"
     },
     {
-      "name": "setName",
+      "name": "useSceneId",
       "type": "Boolean",
       "required": false,
       "default": false,

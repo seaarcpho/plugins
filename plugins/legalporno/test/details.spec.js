@@ -12,7 +12,9 @@ describe("Legalporno", () => {
       sceneName:
         "DAP Destination Vanessa Vega 4on1 First Time DAP with Balls Deep Anal, DAP, Gapes and Facial GIO1421",
     });
-    expect(result.name).to.be.undefined;
+    expect(result.name).to.equal(
+      "DAP Destination Vanessa Vega 4on1 First Time DAP with Balls Deep Anal, DAP, Gapes and Facial GIO1421"
+    );
     expect(result.custom).to.deep.equal({
       "Shoot ID": "GIO1421",
       "Scene ID": "GIO1421",

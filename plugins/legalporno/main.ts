@@ -13,7 +13,7 @@ module.exports = async (ctx: MyContext): Promise<any> => {
 
   const args = ctx.args as Partial<{
     dry: boolean;
-    setName: boolean;
+    useSceneId: boolean;
     deep: boolean;
   }>;
 
@@ -36,7 +36,7 @@ module.exports = async (ctx: MyContext): Promise<any> => {
       },
     };
 
-    if (args.setName) {
+    if (args.useSceneId) {
       result.name = cleanShootId;
       $logger.verbose("Setting name to shoot ID");
     }
@@ -66,6 +66,10 @@ module.exports = async (ctx: MyContext): Promise<any> => {
         $logger.verbose(`Getting more scene info (deep: true): ${sceneUrl}`);
 
         const html = (await ctx.$axios.get<string>(sceneUrl)).data;
+
+        if (!args.useSceneId) {
+          result.name = term.name;
+        }
 
         // Scraping courtesy of traxxx (https://traxxx.me)
         const $ = ctx.$cheerio.load(html, { normalizeWhitespace: true });
