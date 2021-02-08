@@ -32,7 +32,7 @@ describe("LP shoot ID", () => {
     it("Should extract shoot ID, and set name", async () => {
       const result = await runPlugin({
         args: {
-          setName: true,
+          useSceneId: true,
           deep: false,
         },
         sceneName,
