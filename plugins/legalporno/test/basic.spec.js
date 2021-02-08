@@ -16,7 +16,11 @@ describe("LP shoot ID", () => {
     it("Should extract shoot ID, but not set name", async () => {
       const result = await runPlugin({
         sceneName,
+        args: {
+          deep: false,
+        },
       });
+      expect(result.name).to.be.undefined;
       expect(result).to.deep.equal({
         custom: {
           "Shoot ID": expected,
@@ -29,6 +33,7 @@ describe("LP shoot ID", () => {
       const result = await runPlugin({
         args: {
           setName: true,
+          deep: false,
         },
         sceneName,
       });
