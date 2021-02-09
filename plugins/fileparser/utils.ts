@@ -10,57 +10,57 @@ export const dateToTimestamp = (ctx: Context, textToParse: string): number | und
   // '_' replacement are needed for proper boundaries detection by the regex
   const dateStr = textToParse.replace(/_/g, "-");
 
-  const yyyymmdd = /(\b(?:19|20)\d\d)[- \/\.](\b1[012]|0[1-9])[- \/\.](\b3[01]|[12]\d|0[1-9])/.exec(
+  const yyyymmdd = /(\b(?:19|20)\d\d)[- /.](\b1[012]|0[1-9])[- /.](\b3[01]|[12]\d|0[1-9])/.exec(
     dateStr
   );
-  const ddmmyyyy = /(\b3[01]|[12]\d|0[1-9])[- \/\.](\b1[012]|0[1-9])[- \/\.](\b(?:19|20)\d\d)/.exec(
+  const ddmmyyyy = /(\b3[01]|[12]\d|0[1-9])[- /.](\b1[012]|0[1-9])[- /.](\b(?:19|20)\d\d)/.exec(
     dateStr
   );
-  const yymmdd = /(\b\d\d)[- \/\.](\b1[012]|0[1-9])[- \/\.](\b3[01]|[12]\d|0[1-9])/.exec(dateStr);
-  const ddmmyy = /(\b3[01]|[12]\d|0[1-9])[- \/\.](\b1[012]|0[1-9])[- \/\.](\b\d\d)/.exec(dateStr);
-  const yyyymm = /\b((?:19|20)\d\d)[- \/\.](\b1[012]|0[1-9])/.exec(dateStr);
-  const mmyyyy = /(\b1[012]|0[1-9])[- \/\.](\b(?:19|20)\d\d)/.exec(dateStr);
+  const yymmdd = /(\b\d\d)[- /.](\b1[012]|0[1-9])[- /.](\b3[01]|[12]\d|0[1-9])/.exec(dateStr);
+  const ddmmyy = /(\b3[01]|[12]\d|0[1-9])[- /.](\b1[012]|0[1-9])[- /.](\b\d\d)/.exec(dateStr);
+  const yyyymm = /\b((?:19|20)\d\d)[- /.](\b1[012]|0[1-9])/.exec(dateStr);
+  const mmyyyy = /(\b1[012]|0[1-9])[- /.](\b(?:19|20)\d\d)/.exec(dateStr);
   const yyyy = /(\b(?:19|20)\d\d)/.exec(dateStr);
 
   $logger.verbose(`Converting date ${JSON.stringify(dateStr)} to timestamp`);
 
   if (yyyymmdd && yyyymmdd.length) {
-    const date = yyyymmdd[0].replace(/[- \/\.]/g, "-");
+    const date = yyyymmdd[0].replace(/[- /.]/g, "-");
 
     $logger.verbose("\tSUCCESS: Found => yyyymmdd");
 
     return $moment(date, "YYYY-MM-DD").valueOf();
   }
   if (ddmmyyyy && ddmmyyyy.length) {
-    const date = ddmmyyyy[0].replace(/[- \/\.]/g, "-");
+    const date = ddmmyyyy[0].replace(/[- /.]/g, "-");
 
     $logger.verbose("\tSUCCESS: Found => ddmmyyyy");
 
     return $moment(date, "DD-MM-YYYY").valueOf();
   }
   if (yymmdd && yymmdd.length) {
-    const date = yymmdd[0].replace(/[- \/\.]/g, "-");
+    const date = yymmdd[0].replace(/[- /.]/g, "-");
 
     $logger.verbose("\tSUCCESS: Found => yymmdd");
 
     return $moment(date, "YY-MM-DD").valueOf();
   }
   if (ddmmyy && ddmmyy.length) {
-    const date = ddmmyy[0].replace(/[- \/\.]/g, "-");
+    const date = ddmmyy[0].replace(/[- /.]/g, "-");
 
     $logger.verbose("\tSUCCESS: Found => ddmmyy");
 
     return $moment(date, "DD-MM-YY").valueOf();
   }
   if (yyyymm && yyyymm.length) {
-    const date = yyyymm[0].replace(/[- \/\.]/g, "-");
+    const date = yyyymm[0].replace(/[- /.]/g, "-");
 
     $logger.verbose("\tSUCCESS: Found => yyyymm");
 
     return $moment(date, "YYYY-MM").valueOf();
   }
   if (mmyyyy && mmyyyy.length) {
-    const date = mmyyyy[0].replace(/[- \/\.]/g, "-");
+    const date = mmyyyy[0].replace(/[- /.]/g, "-");
 
     $logger.verbose("\tSUCCESS: Found => mmyyyy");
 
@@ -86,11 +86,10 @@ export function matchElement(
 
   if (!matcher) return;
 
-  let matchedResult: string[] = [];
-
-  let toMatch = matcher.scopeDirname ? $path.dirname(scenePath) : sceneName;
+  const toMatch = matcher.scopeDirname ? $path.dirname(scenePath) : sceneName;
   const regex = new RegExp(matcher.regex, "gm");
   const matchesIterable = toMatch.matchAll(regex);
+  const matchedResult: string[] = [];
 
   if (!matchesIterable) {
     $logger.info(

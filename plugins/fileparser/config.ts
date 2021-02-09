@@ -1,6 +1,5 @@
 import { Context } from "../../types/plugin";
-import { MySceneContext } from "./types";
-import { IFileParserConfig } from "./types";
+import { IFileParserConfig, MySceneContext } from "./types";
 
 const configFilename = "parserconfig";
 
@@ -39,12 +38,10 @@ export async function findAndLoadSceneConfig(
       $logger.error(validationError.error.message);
       return;
     }
-
     return loadedConfig;
+  } else {
+    return;
   }
-
-  // No config found
-  return;
 }
 
 // Lookikng for a config file, starting from dirPath and going up the parents chain until the base library path is reached.
@@ -84,7 +81,7 @@ export function isValidConfig(
 ): true | { location: string; error: Error } {
   const { $zod } = ctx;
   let generalError: Error | null = null;
-  let location: string = "root";
+  const location: string = "root";
 
   const fileParserSchemaElem = $zod.object({
     scopeDirname: $zod.boolean().optional(),

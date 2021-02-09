@@ -17,7 +17,7 @@ module.exports = async (ctx: MySceneContext): Promise<SceneOutput> => {
     );
 
   function parseReleaseDate(): Partial<{ releaseDate: number }> {
-    if (args.parseDate == false) return {};
+    if (args.parseDate === false) return {};
 
     $logger.verbose("Parsing release date...");
     const dateFromName = dateToTimestamp(ctx, sceneName);
