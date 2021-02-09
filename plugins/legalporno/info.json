@@ -2,7 +2,7 @@
   "name": "legalporno",
   "version": "0.1.0",
   "authors": ["boi123212321"],
-  "description": "Extract Legalporno shoot IDs (e.g. GIO482) from video names",
+  "description": "Scrape Legalporno scene data",
   "pluginEvents": ["sceneCreated", "sceneCustom"],
   "arguments": [
     {
