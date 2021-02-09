@@ -2,7 +2,7 @@
 
 by boi123212321
 
-Extract Legalporno shoot IDs (e.g. GIO482) from video names
+Scrape Legalporno scene data
 
 ### Arguments
 
