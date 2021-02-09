@@ -11,10 +11,11 @@ module.exports = async (ctx: MySceneContext): Promise<SceneOutput> => {
   $logger.verbose(`Parsing scene: ${scenePath}`);
 
   const cfg = await findAndLoadSceneConfig(ctx);
-  if (!cfg)
+  if (!cfg) {
     $logger.warn(
       `No configuration found in the scene directory or a parent => only 'release date' will be parsed.`
     );
+  }
 
   function parseReleaseDate(): Partial<{ releaseDate: number }> {
     if (args.parseDate === false) return {};

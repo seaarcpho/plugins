@@ -39,8 +39,6 @@ export async function findAndLoadSceneConfig(
       return;
     }
     return loadedConfig;
-  } else {
-    return;
   }
 }
 
@@ -71,7 +69,6 @@ const findConfig = (ctx: Context, dirName: string): string | undefined => {
     }
   } catch (error) {
     $logger.error(`Error finding config file: ${error}. Stopped looking.`);
-    return;
   }
 };
 

@@ -75,7 +75,6 @@ export const dateToTimestamp = (ctx: Context, textToParse: string): number | und
   }
 
   $logger.verbose("\tFAILED: Could not find a date");
-  return;
 };
 
 export function matchElement(
