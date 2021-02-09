@@ -39,7 +39,7 @@ module.exports = {
     "@typescript-eslint/no-unsafe-member-access": "warn",
     "@typescript-eslint/no-unsafe-assignment": "warn",
     "prefer-template": "warn",
-    curly: "warn",
+    curly: "error",
 
     "@typescript-eslint/require-await": "off",
     "no-unused-vars": "off",
