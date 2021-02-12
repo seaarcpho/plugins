@@ -16,7 +16,7 @@
     "boxen": "^5.0.0"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.23",
+    "@types/cheerio": "^0.22.24",
     "@types/fluent-ffmpeg": "^2.1.16",
     "@types/inquirer": "^7.3.1",
     "@types/node": "^14.14.20",
