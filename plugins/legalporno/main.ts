@@ -8,6 +8,44 @@ function extractShootId(originalTitle: string): string | null {
   return shootId;
 }
 
+async function directSearch(ctx: MyContext, sceneId: string): Promise<string | null> {
+  ctx.$logger.verbose(`Getting scene: ${sceneId}`);
+  const res = await ctx.$axios.get<string>(`https://www.legalporno.com/search`, {
+    params: {
+      query: sceneId,
+    },
+  });
+  const url = res.request.res.responseUrl as string;
+  if (url.includes("/watch")) {
+    return url;
+  }
+  return null;
+}
+
+async function autocompleteSearch(ctx: MyContext, sceneId: string): Promise<string | null> {
+  ctx.$logger.verbose(`Searching for scenes using query: ${sceneId}`);
+  const { terms } = (
+    await ctx.$axios.get<{
+      terms: { type: "model" | "scene"; url: string; name: string }[];
+    }>("https://www.legalporno.com/api/autocomplete/search", {
+      params: {
+        q: sceneId,
+      },
+    })
+  ).data;
+  const term = terms.find(({ name }) => name.toLowerCase().includes(sceneId.toLowerCase()));
+  return term?.url || null;
+}
+
+async function getSceneUrl(ctx: MyContext, sceneId: string): Promise<string | null> {
+  const directUrl = await directSearch(ctx, sceneId);
+  if (directUrl) {
+    return directUrl;
+  }
+  const searchUrl = await autocompleteSearch(ctx, sceneId);
+  return searchUrl;
+}
+
 module.exports = async (ctx: MyContext): Promise<any> => {
   const { $logger, sceneName, event } = ctx;
 
@@ -44,36 +82,23 @@ module.exports = async (ctx: MyContext): Promise<any> => {
     if (args.deep === false) {
       $logger.verbose("Not getting deep info");
     } else {
-      $logger.verbose(`Searching for scenes using query: ${cleanShootId}`);
-      const { terms } = (
-        await ctx.$axios.get<{
-          terms: { type: "model" | "scene"; url: string; name: string }[];
-        }>("https://www.legalporno.com/api/autocomplete/search", {
-          params: {
-            q: cleanShootId,
-          },
-        })
-      ).data;
+      const sceneUrl = await getSceneUrl(ctx, cleanShootId);
 
-      const term = terms.find(({ name }) =>
-        name.toLowerCase().includes(cleanShootId.toLowerCase())
-      );
-
-      if (!term) {
+      if (!sceneUrl) {
         $logger.warn(`Scene not found for shoot ID: ${cleanShootId}`);
       } else {
-        const sceneUrl = term.url;
         $logger.verbose(`Getting more scene info (deep: true): ${sceneUrl}`);
 
+        // Scraping courtesy of traxxx (https://traxxx.me)
         const html = (await ctx.$axios.get<string>(sceneUrl)).data;
 
+        const $ = ctx.$cheerio.load(html, { normalizeWhitespace: true });
+
         if (!args.useSceneId) {
-          result.name = term.name;
+          const originalTitle = $("h1.watchpage-title").text().trim();
+          result.name = originalTitle;
         }
 
-        // Scraping courtesy of traxxx (https://traxxx.me)
-        const $ = ctx.$cheerio.load(html, { normalizeWhitespace: true });
-        console.log($('span[title="Release date"] a').text());
         result.releaseDate = ctx.$moment
           .utc($('span[title="Release date"] a').text(), "YYYY-MM-DD")
           .valueOf();
@@ -85,11 +110,13 @@ module.exports = async (ctx: MyContext): Promise<any> => {
         result.description =
           $('meta[name="description"]')?.attr("content")?.trim() ||
           (descriptionElement && $(descriptionElement).find("dd").text().trim());
+
         result.actors = $(actorsElement)
           .find('a[href*="com/model"]')
           .map((_, actorElement) => $(actorElement).text())
           .toArray()
           .sort();
+
         result.labels = $(tagsElement)
           .find("a")
           .map((_, tagElement) => $(tagElement).text())
