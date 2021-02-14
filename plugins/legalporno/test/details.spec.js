@@ -4,8 +4,6 @@ const { createPluginRunner } = require("../../../context");
 
 const runPlugin = createPluginRunner("legalporno", plugin);
 
-const fixture = require("./basic.fixture");
-
 describe("Legalporno", () => {
   it("Should get scene info from scene name", async () => {
     const result = await runPlugin({
@@ -21,6 +19,7 @@ describe("Legalporno", () => {
     });
     expect(result.releaseDate).to.equal(1457136000000);
     expect(result.description).to.be.undefined;
+    expect(result.studio).to.equal("Giorgio Grandi");
     expect(result.actors).to.deep.equal(["Ornella Morgan"]);
     expect(result.labels).to.deep.equal([
       "3+ on 1",
@@ -49,6 +48,7 @@ describe("Legalporno", () => {
     });
     expect(result.releaseDate).to.equal(1584057600000);
     expect(result.description).to.be.undefined;
+    expect(result.studio).to.equal("Giorgio Grandi");
     expect(result.actors).to.deep.equal([
       "Michael Fly",
       "Neeo",

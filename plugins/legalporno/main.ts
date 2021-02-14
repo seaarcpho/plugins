@@ -10,7 +10,7 @@ function extractShootId(originalTitle: string): string | null {
 
 async function directSearch(ctx: MyContext, sceneId: string): Promise<string | null> {
   ctx.$logger.verbose(`Getting scene: ${sceneId}`);
-  const res = await ctx.$axios.get<string>(`https://www.legalporno.com/search`, {
+  const res = await ctx.$axios.get<string>(`https://www.analvids.com/search`, {
     params: {
       query: sceneId,
     },
@@ -27,7 +27,7 @@ async function autocompleteSearch(ctx: MyContext, sceneId: string): Promise<stri
   const { terms } = (
     await ctx.$axios.get<{
       terms: { type: "model" | "scene"; url: string; name: string }[];
-    }>("https://www.legalporno.com/api/autocomplete/search", {
+    }>("https://www.analvids.com/api/autocomplete/search", {
       params: {
         q: sceneId,
       },
@@ -122,6 +122,8 @@ module.exports = async (ctx: MyContext): Promise<any> => {
           .map((_, tagElement) => $(tagElement).text())
           .toArray()
           .sort();
+
+        result.studio = $(".watchpage-studioname").first().text().trim();
       }
     }
 
