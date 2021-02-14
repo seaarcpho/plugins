@@ -2,7 +2,7 @@
 
 by boi123212321
 
-Scrape Legalporno scene data
+Scrape Legalporno/Analvids scene data
 
 ### Arguments
 
