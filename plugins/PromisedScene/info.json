@@ -24,7 +24,7 @@
       "type": "Boolean",
       "required": false,
       "default": true,
-      "description": "This option is only relevant when PromisedScene is chained from another plugin (piped). If true, the data piped by the previous plug-in take precedence for the search. If false, the piped data are ignored."
+      "description": "This option is only relevant when PromisedScene is chained from another plugin (piped data are set). If true, the piped data take precedence for the search. If false, the piped data are ignored."
     },
     {
       "name": "parseActor",
