@@ -23,7 +23,7 @@
       "name": "usePipedInputInSearch",
       "type": "Boolean",
       "required": false,
-      "default": true,
+      "default": false,
       "description": "This option is only relevant when PromisedScene is chained from another plugin (piped data are set). If true, the piped data take precedence for the search. If false, the piped data are ignored."
     },
     {
