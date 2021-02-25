@@ -280,7 +280,7 @@ export const matchSceneResultToPipedData = (
     ctx.$logger.verbose(
       `MATCH PIPED:\tTrying to match TPD scene title/movie and actors: '${matchTitle}' starring ${JSON.stringify(
         scene.performers?.map((performer) => performer.name)
-      )}  --with--> ${searchedTitle} starring ${JSON.stringify(data.actors)}`
+      )}  --with--> '${searchedTitle}' starring ${JSON.stringify(data.actors)}`
     );
     const isTitleMatch =
       matchTitle.localeCompare(searchedTitle, undefined, { sensitivity: "base" }) === 0;
