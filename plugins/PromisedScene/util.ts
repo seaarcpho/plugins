@@ -269,23 +269,31 @@ export const matchSceneResultToPipedData = (
   const { data, $moment } = ctx;
   ctx.$logger.verbose(`MATCH PIPED: ${sceneList.length} results found`);
 
-  let sceneMatchingScores: number[] = [];
+  const sceneMatchingScores: number[] = [];
   for (const scene of sceneList) {
     const foundTitle = stripStr(scene.title || "").trim();
     const searchedTitle = stripStr(data.name ?? data.movie ?? "").trim();
 
     ctx.$logger.verbose(
-      `MATCH PIPED:\tTrying to match TPD scene title/movie and actors: ${JSON.stringify({
-        studio: scene.site?.name,
-        title: foundTitle,
-        actors: scene.performers?.map((performer) => performer.name),
-        releaseDate: scene.date,
-      }, null, "  ")} --with--> ${JSON.stringify({
-        studio: data.studio,
-        title: searchedTitle,
-        actors: data.actors,
-        releaseDate: data.releaseDate,
-      }, null, "  ")}`
+      `MATCH PIPED:\tTrying to match TPD scene title/movie and actors: ${JSON.stringify(
+        {
+          studio: scene.site?.name,
+          title: foundTitle,
+          actors: scene.performers?.map((performer) => performer.name),
+          releaseDate: scene.date,
+        },
+        null,
+        "  "
+      )} --with--> ${JSON.stringify(
+        {
+          studio: data.studio,
+          title: searchedTitle,
+          actors: data.actors,
+          releaseDate: data.releaseDate,
+        },
+        null,
+        "  "
+      )}`
     );
 
     const isTitleMatch =
@@ -312,12 +320,16 @@ export const matchSceneResultToPipedData = (
     ctx.$logger.verbose(
       `MATCH PIPED:\t\tSUCCESS: matched with a confidence score of ${
         sceneMatchingScores[indexOfMax]
-      } to TPDB scene: ${JSON.stringify({
-        studio: sceneList[indexOfMax].site?.name,
-        title: sceneList[indexOfMax].title,
-        actors: sceneList[indexOfMax].performers?.map((performer) => performer.name),
-        releaseDate: sceneList[indexOfMax].date,
-      }, null, "  ")}`
+      } to TPDB scene: ${JSON.stringify(
+        {
+          studio: sceneList[indexOfMax].site?.name,
+          title: sceneList[indexOfMax].title,
+          actors: sceneList[indexOfMax].performers?.map((performer) => performer.name),
+          releaseDate: sceneList[indexOfMax].date,
+        },
+        null,
+        "  "
+      )}`
     );
     return sceneList[indexOfMax];
   }
