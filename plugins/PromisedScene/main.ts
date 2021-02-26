@@ -103,7 +103,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     userMovie = data.movie ?? userMovie;
     $logger.info(
       `Piped data take precedence for the search: searchTitle: '${searchTitle}', searchActors: '${searchActors}', searchStudio: '${searchStudio}', searchTimestamp: '${
-        searchTimestamp ? timestampToString(searchTimestamp) : ""
+        searchTimestamp ? ctx.$moment(searchTimestamp).format("YYYY-MM-DD") : ""
       }', userMovie: '${userMovie}', `
     );
   }
@@ -548,7 +548,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       return null;
     }
     if (timestamp && !Number.isNaN(timestamp)) {
-      queries.push(timestampToString(timestamp));
+      queries.push(ctx.$moment(timestamp).format("YYYY-MM-DD"));
     }
     const initialQuery = queries.flat().filter(Boolean).join(" ");
 
