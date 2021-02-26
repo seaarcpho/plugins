@@ -264,7 +264,7 @@ function checkStudioMatch(site: SceneResult.Site, studio: string | undefined): b
  *
  * @param ctx - plugin context
  * @param sceneList - list of scenes to try to match
- * @returns the matches scene or null
+ * @returns the matched scene or null
  */
 export const matchSceneResultToPipedData = (
   ctx: MyContext,
