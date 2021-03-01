@@ -1,4 +1,9 @@
+import { Actor } from "./actor";
+import { Label } from "./label";
+import { Movie } from "./movie";
 import { Context, CustomFieldsOutput } from "./plugin";
+import { Studio } from "./studio";
+import { SceneView } from "./watch";
 
 export interface IDimensions {
   width: number;
@@ -12,7 +17,7 @@ export interface SceneMeta {
   fps: number | null;
 }
 
-interface Scene {
+export interface Scene {
   _id: string;
   hash: string | null;
   name: string;
@@ -56,4 +61,36 @@ export interface SceneContext extends Context<SceneOutput> {
   scene: Scene;
   sceneName: string;
   scenePath: string;
+  // Server functions to lazy load extra scene data
+  $getActors: () => Promise<Actor[]>;
+  $getLabels: () => Promise<Label[]>;
+  $getWatches: () => Promise<SceneView[]>;
+  $getStudio: () => Promise<Studio>;
+  $getMovies: () => Promise<Movie[]>;
+}
+
+// Merge the scene's initial data and previous plugins piped data
+export async function getMergedData(ctx: SceneContext): Promise<SceneOutput> {
+  const { data, scene } = ctx;
+
+  const initialData: SceneOutput = {
+    name: scene.name,
+    path: scene.path || undefined,
+    description: scene.description || undefined,
+    releaseDate: scene.releaseDate || undefined,
+    addedOn: scene.addedOn.valueOf(),
+    watches: (await ctx.$getWatches()).map((w) => w.date),
+    rating: scene.rating,
+    favorite: scene.favorite,
+    bookmark: scene.bookmark || undefined,
+    thumbnail: scene.thumbnail || undefined,
+    actors: (await ctx.$getActors()).map((a) => a.name),
+    labels: (await ctx.$getLabels()).map((l) => l.name),
+    studio: (await ctx.$getStudio())?.name,
+    movie: (await ctx.$getMovies())?.[0]?.name,
+  };
+
+  const mergedData = { ...initialData, ...data };
+
+  return mergedData;
 }
