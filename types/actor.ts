@@ -67,7 +67,5 @@ export async function getMergedData(ctx: ActorContext): Promise<ActorOutput> {
     hero: actor.hero || undefined,
   };
 
-  const mergedData = { ...initialData, ...data };
-
-  return mergedData;
+  return { ...initialData, ...data };
 }

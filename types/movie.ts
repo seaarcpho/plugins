@@ -42,7 +42,7 @@ export interface MovieContext extends Context<MovieOutput> {
   $getActors: () => Promise<Actor[]>;
   $getLabels: () => Promise<Label[]>;
   $getScenes: () => Promise<Scene[]>;
-  $getAverageRating: () => Promise<number>;
+  $getRating: () => Promise<number>;
 }
 
 // Merge the movie's initial data and previous plugins piped data
@@ -63,7 +63,5 @@ export async function getMergedData(ctx: MovieContext): Promise<MovieOutput> {
     studio: movie.studio || undefined,
   };
 
-  const mergedData = { ...initialData, ...data };
-
-  return mergedData;
+  return { ...initialData, ...data };
 }

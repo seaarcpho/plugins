@@ -90,7 +90,5 @@ export async function getMergedData(ctx: SceneContext): Promise<SceneOutput> {
     movie: (await ctx.$getMovies())?.[0]?.name,
   };
 
-  const mergedData = { ...initialData, ...data };
-
-  return mergedData;
+  return { ...initialData, ...data };
 }

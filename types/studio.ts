@@ -50,11 +50,9 @@ export async function getMergedData(ctx: StudioContext): Promise<StudioOutput> {
     bookmark: studio.bookmark || undefined,
     aliases: studio.aliases,
     labels: (await ctx.$getLabels()).map((l) => l.name),
-    parent: studio.parent || undefined,
+    parent: (await ctx.$getParents()).map((p) => p.name)?.[0],
     thumbnail: studio.thumbnail || undefined,
   };
 
-  const mergedData = { ...initialData, ...data };
-
-  return mergedData;
+  return { ...initialData, ...data };
 }
