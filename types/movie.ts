@@ -44,24 +44,3 @@ export interface MovieContext extends Context<MovieOutput> {
   $getScenes: () => Promise<Scene[]>;
   $getRating: () => Promise<number>;
 }
-
-// Merge the movie's initial data and previous plugins piped data
-export async function getMergedData(ctx: MovieContext): Promise<MovieOutput> {
-  const { data, movie } = ctx;
-
-  const initialData: MovieOutput = {
-    name: movie.name,
-    description: movie.description || undefined,
-    releaseDate: movie.releaseDate || undefined,
-    addedOn: movie.addedOn.valueOf(),
-    rating: movie.rating,
-    favorite: movie.favorite,
-    bookmark: movie.bookmark || undefined,
-    frontCover: movie.frontCover || undefined,
-    backCover: movie.backCover || undefined,
-    spineCover: movie.spineCover || undefined,
-    studio: movie.studio || undefined,
-  };
-
-  return { ...initialData, ...data };
-}

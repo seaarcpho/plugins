@@ -37,22 +37,3 @@ export interface StudioContext extends Context<StudioOutput> {
   $getParents: () => Promise<Studio[]>;
   $getSubStudios: () => Promise<Studio[]>;
 }
-
-// Merge the studio's initial data and previous plugins piped data
-export async function getMergedData(ctx: StudioContext): Promise<StudioOutput> {
-  const { data, studio } = ctx;
-
-  const initialData: StudioOutput = {
-    name: studio.name,
-    description: studio.description || undefined,
-    addedOn: studio.addedOn.valueOf(),
-    favorite: studio.favorite,
-    bookmark: studio.bookmark || undefined,
-    aliases: studio.aliases,
-    labels: (await ctx.$getLabels()).map((l) => l.name),
-    parent: (await ctx.$getParents()).map((p) => p.name)?.[0],
-    thumbnail: studio.thumbnail || undefined,
-  };
-
-  return { ...initialData, ...data };
-}

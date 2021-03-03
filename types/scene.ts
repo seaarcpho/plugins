@@ -68,27 +68,3 @@ export interface SceneContext extends Context<SceneOutput> {
   $getStudio: () => Promise<Studio>;
   $getMovies: () => Promise<Movie[]>;
 }
-
-// Merge the scene's initial data and previous plugins piped data
-export async function getMergedData(ctx: SceneContext): Promise<SceneOutput> {
-  const { data, scene } = ctx;
-
-  const initialData: SceneOutput = {
-    name: scene.name,
-    path: scene.path || undefined,
-    description: scene.description || undefined,
-    releaseDate: scene.releaseDate || undefined,
-    addedOn: scene.addedOn.valueOf(),
-    watches: (await ctx.$getWatches()).map((w) => w.date),
-    rating: scene.rating,
-    favorite: scene.favorite,
-    bookmark: scene.bookmark || undefined,
-    thumbnail: scene.thumbnail || undefined,
-    actors: (await ctx.$getActors()).map((a) => a.name),
-    labels: (await ctx.$getLabels()).map((l) => l.name),
-    studio: (await ctx.$getStudio())?.name,
-    movie: (await ctx.$getMovies())?.[0]?.name,
-  };
-
-  return { ...initialData, ...data };
-}
