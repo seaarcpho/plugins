@@ -17,6 +17,8 @@ import * as zod from "zod";
 import winston from "winston";
 
 import { Context, Matcher, MatchSource } from "./types/plugin";
+import { Scene, SceneContext } from "./types/scene";
+import { Movie, MovieContext } from "./types/movie";
 import { Studio, StudioContext } from "./types/studio";
 import { Label } from "./types/label";
 import { SceneView } from "./types/watch";
