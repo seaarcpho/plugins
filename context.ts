@@ -17,6 +17,9 @@ import * as zod from "zod";
 import winston from "winston";
 
 import { Context, Matcher, MatchSource } from "./types/plugin";
+import { Studio, StudioContext } from "./types/studio";
+import { Label } from "./types/label";
+import { SceneView } from "./types/watch";
 
 export const basicMatcher: Matcher = new (class BasicMatcher implements Matcher {
   filterMatchingItems<T extends MatchSource>(
@@ -173,7 +176,7 @@ function createPluginLogger(name: string): winston.Logger {
   });
 }
 
-const context: Context = {
+const context: Context | SceneContext | ActorContext | MovieContext | StudioContext = {
   // Libraries
   $axios: axios,
   $boxen: boxen,
@@ -199,6 +202,36 @@ const context: Context = {
   },
   $createLocalImage: async () => {
     return Date.now().toString(36);
+  },
+  $getActors: async () => {
+    return [] as Actor[];
+  },
+  $getLabels: async () => {
+    return [] as Label[];
+  },
+  $getWatches: async () => {
+    return [] as SceneView[];
+  },
+  $getMovies: async () => {
+    return [] as Movie[];
+  },
+  $getScenes: async () => {
+    return [] as Scene[];
+  },
+  $getRating: async () => {
+    return 0 as number;
+  },
+  $getAverageRating: async () => {
+    return 0 as number;
+  },
+  $getStudio: async () => {
+    return {} as Studio;
+  },
+  $getParents: async () => {
+    return [] as Studio[];
+  },
+  $getSubStudios: async () => {
+    return [] as Studio[];
   },
   $cwd: process.cwd(),
   $library: ".",
