@@ -16,6 +16,7 @@ import yaml from "yaml";
 import * as zod from "zod";
 import winston from "winston";
 
+import { Actor, ActorContext } from "./types/actor";
 import { Context, Matcher, MatchSource } from "./types/plugin";
 import { Scene, SceneContext } from "./types/scene";
 import { Movie, MovieContext } from "./types/movie";
