@@ -1,4 +1,4 @@
-import { Actor } from "./movie";
+import { Actor } from "./actor";
 import { Label } from "./label";
 import { Scene } from "./scene";
 import { Context, CustomFieldsOutput } from "./plugin";
