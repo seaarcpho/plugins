@@ -179,6 +179,12 @@ function createPluginLogger(name: string): winston.Logger {
   });
 }
 
+function warnServerFunc(functionName: string) {
+  console.error(
+    `Warning: the call to ${functionName} returned an empty result. Your test should implement ${functionName} as server functions are not available when running Mocha tests...`
+  );
+}
+
 const context: Context | SceneContext | ActorContext | MovieContext | StudioContext = {
   // Libraries
   $axios: axios,
@@ -207,33 +213,43 @@ const context: Context | SceneContext | ActorContext | MovieContext | StudioCont
     return Date.now().toString(36);
   },
   $getActors: async () => {
+    warnServerFunc("$getActors()");
     return [] as Actor[];
   },
   $getLabels: async () => {
+    warnServerFunc("$getLabels()");
     return [] as Label[];
   },
   $getWatches: async () => {
+    warnServerFunc("$getWatches()");
     return [] as SceneView[];
   },
   $getMovies: async () => {
+    warnServerFunc("$getMovies()");
     return [] as Movie[];
   },
   $getScenes: async () => {
+    warnServerFunc("$getScenes()");
     return [] as Scene[];
   },
   $getRating: async () => {
+    warnServerFunc("$getRating()");
     return 0 as number;
   },
   $getAverageRating: async () => {
+    warnServerFunc("$getAverageRating()");
     return 0 as number;
   },
   $getStudio: async () => {
+    warnServerFunc("$getStudio()");
     return {} as Studio;
   },
   $getParents: async () => {
+    warnServerFunc("$getParents()");
     return [] as Studio[];
   },
   $getSubStudios: async () => {
+    warnServerFunc("$getSubStudios()");
     return [] as Studio[];
   },
   $cwd: process.cwd(),
