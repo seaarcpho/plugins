@@ -33,47 +33,8 @@ const indulgeUsResult = {
 };
 
 const fixture = [
-  ["Agatha Vega, Ginebra Bellucci Indulge Us Tushy Raw [facial, threesome].mp4", indulgeUsResult],
-  ["Agatha Vega, Ginebra Bellucci Indulge Us TushyRaw [facial, threesome].mp4", indulgeUsResult],
-  ["Agatha Vega, Ginebra Bellucci Indulge Us Tushyraw [facial, threesome].mp4", indulgeUsResult],
-  [
-    "Avery Cristy Jill Kassidy Wild And Wet Vixen.avi",
-    {
-      name: "Wild And Wet",
-      releaseDate: 1604079000000,
-      description:
-        "Double your trouble with Avery and Jill - two naughty girls who will stop at nothing to get a man’s attention. Nobody needs to know, and when these ladies pounce, you won’t know what hit you.",
-      actors: ["Avery Cristy", "Jill Kassidy", "Michael Stefano"],
-      custom: {
-        director: "Laurent Sky",
-      },
-      labels: [
-        "69",
-        "ball sucking",
-        "blonde",
-        "blowjob",
-        "cum in mouth",
-        "cum swapping",
-        "deep throat",
-        "doggystyle",
-        "double blowjob",
-        "face sitting",
-        "facial",
-        "ffm",
-        "hairy pussy",
-        "handjob",
-        "lingerie",
-        "missionary",
-        "oil",
-        "pussy licking",
-        "riding",
-        "rimming",
-        "shaved",
-        "small tits",
-        "threesome",
-      ],
-    },
-  ],
+  ["Agatha Vega, Ginebra Bellucci Indulge Us.mp4", indulgeUsResult],
+  ["Indulge Us.mp4", indulgeUsResult],
 ];
 
 describe("VIXEN network", () => {
@@ -86,6 +47,11 @@ describe("VIXEN network", () => {
           _id: "xxx",
           name: "?????????????",
           path,
+        },
+        async $getStudio() {
+          return {
+            name: "TUSHY RAW",
+          };
         },
       });
       expect(result.name).to.equal(expected.name);

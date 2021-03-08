@@ -10,6 +10,7 @@ describe("VIXEN network", () => {
       event: "sceneCreated",
       sceneName: "?????????????",
       scene: {
+        _id: "xxx",
         name: "?????????????",
         path: "Agatha Vega, Ginebra Bellucci Indulge Us Tushy Raw [facial, threesome].mp4",
       },

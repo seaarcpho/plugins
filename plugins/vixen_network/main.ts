@@ -1,6 +1,4 @@
-import { Context } from "../../types/plugin";
-
-type MyContext = Context & { sceneName?: string } & { scene: { path: string } };
+import { SceneContext } from "../../types/scene";
 
 interface ISceneInfo {
   newId: string;
@@ -43,11 +41,11 @@ const sites = [
   },
 ];
 
-function getArgs(ctx: MyContext) {
+function getArgs(ctx: SceneContext) {
   return ctx.args as Record<string, unknown>;
 }
 
-async function search(ctx: MyContext, siteUrl: string, query: string) {
+async function search(ctx: SceneContext, siteUrl: string, query: string) {
   const url = `${siteUrl}/api/search/__autocomplete`;
   ctx.$logger.debug(`GET ${url}`);
   const res = await ctx.$axios.get(url, {
@@ -63,7 +61,7 @@ async function search(ctx: MyContext, siteUrl: string, query: string) {
   }[];
 }
 
-function basicMatch(ctx: MyContext, a: string, b: string) {
+function basicMatch(ctx: SceneContext, a: string, b: string) {
   const stripString = <string>getArgs(ctx).stripString || "[^a-zA-Z0-9'/\\,()[\\]{}-]";
   const stripRegex = new RegExp(stripString, "g");
 
@@ -74,18 +72,23 @@ function basicMatch(ctx: MyContext, a: string, b: string) {
   return normalize(a).includes(normalize(b));
 }
 
-function findSite(ctx: MyContext, str: string) {
+function findSite(ctx: SceneContext, str: string) {
   return sites.find((site) => {
     ctx.$logger.debug(`Compare "${str}" <-> "${site.name}"`);
     return basicMatch(ctx, str, site.name);
   });
 }
 
-module.exports = async (ctx: MyContext): Promise<any> => {
+module.exports = async (ctx: SceneContext): Promise<any> => {
   const { $logger, sceneName, scene, event, $formatMessage, $path } = ctx;
 
   if (!sceneName) {
     $logger.error(`Invalid event: ${event}`);
+    return {};
+  }
+
+  if (!scene.path) {
+    $logger.error(`No scene path: ${scene._id}`);
     return {};
   }
 
@@ -99,15 +102,15 @@ module.exports = async (ctx: MyContext): Promise<any> => {
   };
   $logger.verbose(`Checking VIXEN sites for "${scene.path}"`);
 
-  const basename = $path.basename(scene.path);
-  const filename = basename.replace($path.extname(basename), "");
-
-  const site = findSite(ctx, scene.path);
+  const site = findSite(ctx, scene.path) || findSite(ctx, (await ctx.$getStudio()).name);
 
   if (!site) {
     $logger.warn(`No VIXEN site found in "${scene.path}"`);
     return {};
   }
+
+  const basename = $path.basename(scene.path);
+  const filename = basename.replace($path.extname(basename), "");
 
   const searchResults = await search(ctx, site.url, filename);
 
@@ -143,7 +146,7 @@ module.exports = async (ctx: MyContext): Promise<any> => {
 
     result.releaseDate = new Date(scene.releaseDate).valueOf();
     result.custom.director = scene.directorNames;
-    result.labels = scene.categories.map(({ name }) => name);
+    result.labels = scene.categories.map(({ name }) => name).sort();
 
     const thumbUrl = decodeURI(scene.trippleThumbUrlSizes.mainThumb["1040w"]).replace(
       /&amp;/g,
