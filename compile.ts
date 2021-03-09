@@ -3,13 +3,14 @@ import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 import { readdirSync } from "fs";
-import { join, resolve } from "path";
+import { resolve } from "path";
 
 (async () => {
   const buildFolder = "build/plugins";
+  const outputDir = "dist";
+
   for (const pluginName of readdirSync(buildFolder)) {
     const input = resolve(buildFolder, pluginName, "main.js");
-    const outputDir = join("dist", pluginName);
     const outputFile = resolve(outputDir, `${pluginName}.js`);
 
     console.log(`Bundling ${input} -> ${outputFile}`);
