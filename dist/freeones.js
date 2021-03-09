@@ -174,6 +174,42 @@ var main = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             return { weight };
         return { weight: kgToLbs(weight) };
     }
+    function computeZodiac(timestamp) {
+        const inputDate = $moment(timestamp);
+        if (!inputDate.isValid())
+            return;
+        const day = inputDate.date();
+        const month = inputDate.month();
+        const signSwitchDay = [20, 19, 21, 20, 21, 22, 23, 23, 23, 24, 22, 22];
+        const signAtMonthStart = [
+            "Capricorn",
+            "Aquarius",
+            "Pisces",
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+        ];
+        const isBeforeSwithchDay = day <= signSwitchDay[month];
+        return signAtMonthStart[isBeforeSwithchDay ? month : (month + 1) % 12];
+    }
+    function getZodiac() {
+        if (isBlacklisted("zodiac"))
+            return {};
+        const bornOn = getAge().bornOn;
+        if (!bornOn) {
+            $logger.verbose("No birth date found => zodiac will be empty.");
+            return {};
+        }
+        const computedZodiac = computeZodiac(bornOn.valueOf());
+        $logger.verbose(`Computed zodiac sign for: ${new Date(bornOn).toLocaleDateString()}: ${computedZodiac}`);
+        return { zodiac: computedZodiac };
+    }
     function getBirthplace() {
         if (isBlacklisted("birthplace"))
             return {};
@@ -214,9 +250,10 @@ var main = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         return __awaiter(this, void 0, void 0, function* () {
             if (args.dry)
                 return {};
-            if (isBlacklisted("avatar"))
+            if (isBlacklisted("avatar") && !useAvatarAsThumbnail) {
                 return {};
-            $logger.verbose("Getting avatar...");
+            }
+            $logger.verbose("Getting avatar (and/or thumbnail)...");
             const imgEl = $(`.dashboard-header img.img-fluid`);
             if (!imgEl)
                 return {};
@@ -224,15 +261,14 @@ var main = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
             if (!url)
                 return {};
             const imgId = yield $createImage(url, `${actorName} (avatar)`);
-            if (!useAvatarAsThumbnail) {
-                return { avatar: imgId };
+            const result = {};
+            if (!isBlacklisted("avatar")) {
+                result.avatar = imgId;
             }
-            else {
-                return {
-                    avatar: imgId,
-                    thumbnail: imgId,
-                };
+            if (useAvatarAsThumbnail) {
+                result.thumbnail = imgId;
             }
+            return result;
         });
     }
     function getAge() {
@@ -342,7 +378,7 @@ var main = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
         }
         return { piercings: piercingText };
     }
-    const custom = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, scrapeText("hair color", '[data-test="link_hair_color"] .text-underline-always')), scrapeText("eye color", '[data-test="link_eye_color"] .text-underline-always')), scrapeText("ethnicity", '[data-test="link_ethnicity"] .text-underline-always')), getHeight()), getWeight()), getMeasurements()), getWaistSize()), getHipSize()), getBraSize()), getBirthplace()), getGender()), getTattoos()), getPiercings());
+    const custom = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, scrapeText("hair color", '[data-test="link_hair_color"] .text-underline-always')), scrapeText("eye color", '[data-test="link_eye_color"] .text-underline-always')), scrapeText("ethnicity", '[data-test="link_ethnicity"] .text-underline-always')), getHeight()), getWeight()), getMeasurements()), getWaistSize()), getHipSize()), getBraSize()), getBirthplace()), getZodiac()), getGender()), getTattoos()), getPiercings());
     if (custom.tattoos === "Unknown") {
         delete custom.tattoos;
     }

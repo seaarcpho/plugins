@@ -227,7 +227,7 @@ const normalizeSceneResultData = (sceneData) => {
     if ((_a = sceneData.tags) === null || _a === void 0 ? void 0 : _a.length) {
         result.labels = sceneData.tags.map((l) => l.tag);
     }
-    if (sceneData.background.large && !sceneData.background.large.includes("default.png")) {
+    if (sceneData.background.large && !sceneData.background.large.includes("default")) {
         result.thumbnail = sceneData.background.large;
     }
     if (sceneData.performers) {

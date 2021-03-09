@@ -26,7 +26,7 @@ function default_1(ctx) {
         const firstResult = $(`a.boxcover[label="Performer"]`).toArray()[0];
         const href = $(firstResult).attr("href");
         if (href) {
-            const actorUrl = "https://adultempire.com" + href;
+            const actorUrl = `https://adultempire.com${href}`;
             const html = (yield $axios.get(actorUrl)).data;
             const $ = $cheerio.load(html);
             let avatar;
@@ -46,7 +46,7 @@ function default_1(ctx) {
             if (descEl) {
                 description = descEl.text().trim();
             }
-            let aliases;
+            let aliases = [];
             const aliasEl = $("#content .row .col-sm-5 .m-b-1");
             if (aliasEl) {
                 const text = aliasEl.text();
@@ -93,7 +93,7 @@ function searchForMovie({ $cheerio, $axios }, name) {
         if (!href) {
             return false;
         }
-        return "https://adultempire.com" + href;
+        return `https://adultempire.com${href}`;
     });
 }
 function default_1$1(ctx) {
