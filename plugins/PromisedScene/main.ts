@@ -8,6 +8,7 @@ import {
   dateToTimestamp,
   isPositiveAnswer,
   manualTouchChoices,
+  matchSceneResultToPipedData,
   matchSceneResultToSearch,
   normalizeSceneResultData,
   timestampToString,
@@ -25,6 +26,7 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
     args,
     $inquirer,
     $createImage,
+    data,
   } = ctx;
 
   /**
@@ -38,6 +40,10 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
   }
 
   // Checking all of the arguments are set in the plugin
+
+  if (!Object.hasOwnProperty.call(args, "usePipedInputInSearch")) {
+    args.usePipedInputInSearch = false;
+  }
 
   if (!Object.hasOwnProperty.call(args, "useTitleInSearch")) {
     $logger.warn("Missing useTitleInSearch in plugin args!");
@@ -75,18 +81,38 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
 
   $logger.info(`STARTING to analyze scene: ${JSON.stringify(scenePath)}`);
 
-  const parsedDbActor = parseSceneActor(ctx);
-  const parsedDbStudio = parseSceneStudio(ctx);
-  const parsedTimestamp = parseSceneTimestamp(ctx);
-
-  // After everything has completed parsing, I run a function that will perform all of the lookups against TPDB
-
-  let searchTitle: string | undefined = sceneName;
-  let searchActors = parsedDbActor ? [parsedDbActor] : [];
-  let searchStudio = parsedDbStudio ?? undefined;
-  let searchTimestamp: number | undefined = parsedTimestamp ?? undefined;
+  let searchTitle: string | undefined;
+  let searchActors: string[] = [];
+  let searchStudio: string | undefined;
+  let searchTimestamp: number | undefined;
   let userMovie: string | undefined;
   let extra: string | undefined;
+
+  if (args.usePipedInputInSearch && Object.keys(data).length) {
+    searchTitle = data.name ?? data.movie;
+    searchActors = data.actors ?? [];
+    searchStudio = data.studio;
+    searchTimestamp = data.releaseDate ?? searchTimestamp;
+    userMovie = data.movie ?? userMovie;
+    $logger.info(
+      `Piped data takes precedence for the search: ${$formatMessage({
+        searchTitle: searchTitle,
+        searchActors: searchActors,
+        searchStudio: searchStudio,
+        searchTimestamp: ctx.$moment(searchTimestamp).format("YYYY-MM-DD"),
+        userMovie: userMovie,
+      })}`
+    );
+  }
+
+  // Assign or parse only it the value is still undefined (there were no piped data for it)
+  searchTitle ??= sceneName;
+  searchTimestamp ??= parseSceneTimestamp(ctx) ?? undefined;
+  searchStudio ??= parseSceneStudio(ctx) ?? undefined;
+  if (!searchActors.length) {
+    const parsedDbActor = parseSceneActor(ctx);
+    searchActors = parsedDbActor ? [parsedDbActor] : [];
+  }
 
   const gotResultOrExit = false;
   do {
@@ -561,7 +587,14 @@ module.exports = async (ctx: MyContext): Promise<SceneOutput> => {
       return null;
     }
 
-    const matchedScene = matchSceneResultToSearch(ctx, sceneList, searchActors, searchStudio);
+    let matchedScene: SceneResult.SceneData | null;
+    if (args.usePipedInputInSearch && Object.keys(data).length) {
+      // Match results against piped data
+      matchedScene = matchSceneResultToPipedData(ctx, sceneList);
+    } else {
+      // Normal filename based result matching
+      matchedScene = matchSceneResultToSearch(ctx, sceneList, searchActors, searchStudio);
+    }
 
     if (matchedScene) {
       return mergeSearchResult(matchedScene);
