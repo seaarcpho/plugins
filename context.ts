@@ -131,7 +131,7 @@ function formatMessage(message: unknown): string {
   return typeof message === "string" ? message : JSON.stringify(message, null, 2);
 }
 
-const LOGLEVEL = process.env.PV_LOG_LEVEL || "info";
+const LOGLEVEL = process.env.PV_LOG_LEVEL || "silly";
 
 const logger = createVaultLogger(LOGLEVEL);
 
@@ -191,6 +191,9 @@ const context: Context = {
   $yaml: yaml,
   $zod: zod,
   // Injected server functions
+  $createMarker: async () => {
+    return Date.now().toString(36);
+  },
   $createImage: async () => {
     return Date.now().toString(36);
   },
