@@ -79,7 +79,7 @@ typings/
 .next
 
 # Nuxt.js build / generate output
-.Nuxt
+.nuxt
 build
 
 # Gatsby files
