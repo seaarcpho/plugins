@@ -1479,7 +1479,7 @@ describe("PromisedScene", () => {
   });
 
   describe("When initial data exist...", () => {
-    it("Should have DB files with the Actor, Studio, Scene and date already", async () => {
+    it("Should match from initial data", async () => {
       const result = await runPlugin({
         ...mockContext,
         event: "sceneCreated",
@@ -1487,16 +1487,14 @@ describe("PromisedScene", () => {
         $getStudio: async () => {
           return { name: "New Sensations" };
         },
-        $getMovies: async () => { return []; },
-        $getActors: async () => {
-          return [{ name: "Mia Malkova" }];
-        },
+        $getMovies: async () => [],
+        $getActors: async () => [{ name: "Mia Malkova" }],
         args: {
           manualTouch: true,
           sceneDuplicationCheck: true,
-          parseActor: true,
-          parseStudio: true,
-          parseDate: true,
+          parseActor: false,
+          parseStudio: false,
+          parseDate: false,
           source_settings: {
             actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
             scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
@@ -1520,6 +1518,42 @@ describe("PromisedScene", () => {
       expect(result.thumbnail).to.equal(IMAGE_ID);
       expect(result.actors).to.be.a("Array");
       expect(result.studio).to.equal("New Sensations");
+    });
+    it("Should not match without the initial data", async () => {
+      const result = await runPlugin({
+        ...mockContext,
+        event: "sceneCreated",
+        scene: {},
+        $getStudio: async () => {},
+        $getMovies: async () => [],
+        $getActors: async () => [],
+        args: {
+          manualTouch: true,
+          sceneDuplicationCheck: true,
+          parseActor: false,
+          parseStudio: false,
+          parseDate: false,
+          source_settings: {
+            actors: "./plugins/PromisedScene/test/fixtures/actorsPopulated.db",
+            scenes: "./plugins/PromisedScene/test/fixtures/scenesPopulated.db",
+            studios: "./plugins/PromisedScene/test/fixtures/studiosPopulated.db",
+          },
+        },
+        sceneName: "So Young So Sexy P.O.V. #8",
+        scenePath:
+          "Z:\\Keep\\test\\[New Sensations] Mia Malkova 2013.10.10 - So Young So Sexy P.O.V. #8.mp4",
+        testMode: {
+          correctImportInfo: "y",
+          testSiteUnavailable: false,
+          status: true,
+        },
+      });
+      expect(result).to.be.an("object");
+      expect(result.description).to.be.undefined;
+      expect(result.releaseDate).to.be.undefined;
+      expect(result.thumbnail).to.undefined;
+      expect(result.actors).to.be.undefined;
+      expect(result.studio).to.be.undefined;
     });
   });
 });
