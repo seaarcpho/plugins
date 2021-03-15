@@ -86,6 +86,10 @@ function generatePluginExample(pluginInfo: PluginInfo) {
   };
 }
 
+function downloadUrl(pluginName: string): string {
+  return `https://raw.githubusercontent.com/porn-vault/plugins/master/dist/${pluginName}.js`;
+}
+
 const generatePluginDocs = () => {
   pluginDirNames.forEach((pluginDirName) => {
     console.log(`Generating docs for ${pluginDirName}...`);
@@ -109,6 +113,7 @@ const generatePluginDocs = () => {
       name: pluginInfo.name,
       version: pluginInfo.version,
       description: pluginInfo.description,
+      downloadLink: downloadUrl(pluginDirName),
       authors: pluginInfo.authors.join(", "),
       docs,
       hasArgs: pluginInfo.arguments && pluginInfo.arguments.length,
@@ -139,7 +144,7 @@ const generatePluginDocs = () => {
       ...Object.entries(info).map(([pluginDirName, pluginInfo]) => [
         `[${pluginInfo.name}](https://github.com/porn-vault/porn-vault-plugins/blob/master/plugins/${pluginDirName}/README.md)`,
         pluginInfo.description,
-        `[Link](https://raw.githubusercontent.com/porn-vault/plugins/master/dist/${pluginDirName}.js)`,
+        `[Link](${downloadUrl(pluginDirName)})`,
       ]),
     ]),
   });

@@ -2,6 +2,8 @@
 
 by boi123212321, john4valor, pizzajohnny, leadwolf
 
+[Download here](https://raw.githubusercontent.com/porn-vault/plugins/master/dist/freeones.js)
+
 Scrape actress data from freeones.com
 
 ### Documentation
@@ -25,6 +27,7 @@ Currently custom fields can only be named as follows (not case sensitive): Hair 
 ### Example installation with default arguments
 
 `config.json`
+
 ```json
 ---
 {
@@ -58,26 +61,10 @@ Currently custom fields can only be named as follows (not case sensitive): Hair 
 ```
 
 `config.yaml`
+
 ```yaml
 ---
-plugins:
-  register:
-    freeones:
-      path: ./plugins/freeones.js
-      args:
-        dry: false
-        whitelist: []
-        blacklist: []
-        searchResultsSort: relevance
-        useImperial: false
-        useAvatarAsThumbnail: false
-        piercingsType: string
-        tattoosType: string
-  events:
-    actorCreated:
-      - freeones
-    actorCustom:
-      - freeones
-
+{ { { exampleYAML } } }
 ---
+
 ```

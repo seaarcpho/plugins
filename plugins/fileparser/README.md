@@ -2,6 +2,8 @@
 
 by arcadianCdr
 
+[Download here](https://raw.githubusercontent.com/porn-vault/plugins/master/dist/fileparser.js)
+
 Automatically extracts scene details from your library's file and directory structure. Supported properties: release date, studio, name, actors, movie and labels.
 
 ### Documentation
@@ -125,6 +127,7 @@ In addition to the parserconfig file(s), fileparser must be registered and confi
 ### Example installation with default arguments
 
 `config.json`
+
 ```json
 ---
 {
@@ -152,20 +155,10 @@ In addition to the parserconfig file(s), fileparser must be registered and confi
 ```
 
 `config.yaml`
+
 ```yaml
 ---
-plugins:
-  register:
-    fileparser:
-      path: ./plugins/fileparser.js
-      args:
-        dry: false
-        parseDate: true
-  events:
-    sceneCreated:
-      - fileparser
-    sceneCustom:
-      - fileparser
-
+{ { { exampleYAML } } }
 ---
+
 ```
