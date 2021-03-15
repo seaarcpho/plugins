@@ -131,7 +131,7 @@ In addition to the parserconfig file(s), fileparser must be registered and confi
   "plugins": {
     "register": {
       "fileparser": {
-        "path": "./plugins/fileparser/main.ts",
+        "path": "./plugins/fileparser.js",
         "args": {
           "dry": false,
           "parseDate": true
@@ -157,7 +157,7 @@ In addition to the parserconfig file(s), fileparser must be registered and confi
 plugins:
   register:
     fileparser:
-      path: ./plugins/fileparser/main.ts
+      path: ./plugins/fileparser.js
       args:
         dry: false
         parseDate: true

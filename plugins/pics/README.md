@@ -118,7 +118,7 @@ Example with multiple configurations:
   "plugins": {
     "register": {
       "pics": {
-        "path": "./plugins/pics/main.ts",
+        "path": "./plugins/pics.js",
         "args": {
           "dry": false,
           "actors": [
@@ -205,7 +205,7 @@ Example with multiple configurations:
 plugins:
   register:
     pics:
-      path: ./plugins/pics/main.ts
+      path: ./plugins/pics.js
       args:
         dry: false
         actors:

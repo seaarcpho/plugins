@@ -21,7 +21,7 @@ Scrape Legalporno/Analvids scene data
   "plugins": {
     "register": {
       "legalporno": {
-        "path": "./plugins/legalporno/main.ts",
+        "path": "./plugins/legalporno.js",
         "args": {
           "deep": true,
           "dry": false,
@@ -48,7 +48,7 @@ Scrape Legalporno/Analvids scene data
 plugins:
   register:
     legalporno:
-      path: ./plugins/legalporno/main.ts
+      path: ./plugins/legalporno.js
       args:
         deep: true
         dry: false

@@ -42,7 +42,7 @@ If no match is found, and `manualTouch` is enabled, you will be able to interact
   "plugins": {
     "register": {
       "PromisedScene": {
-        "path": "./plugins/PromisedScene/main.ts",
+        "path": "./plugins/PromisedScene.js",
         "args": {
           "useTitleInSearch": false,
           "alwaysUseSingleResult": false,
@@ -78,7 +78,7 @@ If no match is found, and `manualTouch` is enabled, you will be able to interact
 plugins:
   register:
     PromisedScene:
-      path: ./plugins/PromisedScene/main.ts
+      path: ./plugins/PromisedScene.js
       args:
         useTitleInSearch: false
         alwaysUseSingleResult: false

@@ -63,7 +63,7 @@ Example: plugin `A` returns `custom.myField: 'a string'`. and plugin `B` *would*
   "plugins": {
     "register": {
       "traxxx": {
-        "path": "./plugins/traxxx/main.ts",
+        "path": "./plugins/traxxx.js",
         "args": {
           "dry": false,
           "studios": {
@@ -99,7 +99,7 @@ Example: plugin `A` returns `custom.myField: 'a string'`. and plugin `B` *would*
 plugins:
   register:
     traxxx:
-      path: ./plugins/traxxx/main.ts
+      path: ./plugins/traxxx.js
       args:
         dry: false
         studios:

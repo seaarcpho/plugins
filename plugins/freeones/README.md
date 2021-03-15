@@ -31,7 +31,7 @@ Currently custom fields can only be named as follows (not case sensitive): Hair 
   "plugins": {
     "register": {
       "freeones": {
-        "path": "./plugins/freeones/main.ts",
+        "path": "./plugins/freeones.js",
         "args": {
           "dry": false,
           "whitelist": [],
@@ -63,7 +63,7 @@ Currently custom fields can only be named as follows (not case sensitive): Hair 
 plugins:
   register:
     freeones:
-      path: ./plugins/freeones/main.ts
+      path: ./plugins/freeones.js
       args:
         dry: false
         whitelist: []

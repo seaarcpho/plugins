@@ -19,7 +19,7 @@ Add resolution labels to a scene
   "plugins": {
     "register": {
       "resolution": {
-        "path": "./plugins/resolution/main.ts",
+        "path": "./plugins/resolution.js",
         "args": {
           "resolutions": []
         }
@@ -44,7 +44,7 @@ Add resolution labels to a scene
 plugins:
   register:
     resolution:
-      path: ./plugins/resolution/main.ts
+      path: ./plugins/resolution.js
       args:
         resolutions: []
   events:

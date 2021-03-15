@@ -77,7 +77,7 @@ function generatePluginExample(pluginInfo: PluginInfo) {
     plugins: {
       register: {
         [pluginInfo.name]: {
-          path: `./plugins/${pluginInfo.name}/main.ts`,
+          path: `./plugins/${pluginInfo.name}.js`,
           args: defaultArgs,
         },
       },
@@ -132,13 +132,14 @@ const generatePluginDocs = () => {
   console.log("Generating index...");
 
   const indexTemplate = fs.readFileSync("template.md", "utf-8");
-  const tableHeaders = ["Plugin", "Description"];
+  const tableHeaders = ["Plugin", "Description", "Download"];
   const rendered = Handlebars.compile(indexTemplate)({
     table: table([
       tableHeaders,
       ...Object.entries(info).map(([pluginDirName, pluginInfo]) => [
         `[${pluginInfo.name}](https://github.com/porn-vault/porn-vault-plugins/blob/master/plugins/${pluginDirName}/README.md)`,
         pluginInfo.description,
+        `[Link](https://raw.githubusercontent.com/porn-vault/plugins/master/dist/${pluginDirName}.js)`,
       ]),
     ]),
   });
