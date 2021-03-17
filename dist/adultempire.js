@@ -2,7 +2,7 @@
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$2 = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -12,8 +12,8 @@ var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisAr
     });
 };
 
-function default_1(ctx) {
-    return __awaiter(this, void 0, void 0, function* () {
+function default_1$1(ctx) {
+    return __awaiter$2(this, void 0, void 0, function* () {
         const { args, $axios, $cheerio, $logger, $formatMessage, actorName, $createImage } = ctx;
         const name = actorName
             .replace(/#/g, "")
@@ -67,10 +67,10 @@ function default_1(ctx) {
         return {};
     });
 }
-var _default = default_1;
+var _default$1 = default_1$1;
 
 var actor = /*#__PURE__*/Object.defineProperty({
-	default: _default
+	default: _default$1
 }, '__esModule', {value: true});
 
 var __awaiter$1 = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -104,7 +104,7 @@ function urlAvailable({ $axios }, url) {
         return status < 400;
     });
 }
-function default_1$1(ctx) {
+function default_1(ctx) {
     return __awaiter$1(this, void 0, void 0, function* () {
         const { args, $moment, $axios, $cheerio, $logger, $formatMessage, movieName, $createImage } = ctx;
         const name = movieName
@@ -168,13 +168,13 @@ function default_1$1(ctx) {
         return {};
     });
 }
-var _default$1 = default_1$1;
+var _default = default_1;
 
 var movie = /*#__PURE__*/Object.defineProperty({
-	default: _default$1
+	default: _default
 }, '__esModule', {value: true});
 
-var __awaiter$2 = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -189,7 +189,7 @@ var __importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || func
 
 const actor_1 = __importDefault(actor);
 const movie_1 = __importDefault(movie);
-var main = (ctx) => __awaiter$2(void 0, void 0, void 0, function* () {
+var main = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     if (ctx.movieName) {
         return movie_1.default(ctx);
     }
