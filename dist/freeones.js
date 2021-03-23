@@ -116,7 +116,7 @@ var main = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     const href = firstResult.attr("href");
     let html;
     try {
-        html = (yield $axios.get(`https://freeones.com${href}/profile`)).data;
+        html = (yield $axios.get(`https://freeones.com${href}/bio`)).data;
     }
     catch (error) {
         $throw(error.message);
