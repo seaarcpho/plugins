@@ -63,6 +63,7 @@ class Measurements {
     }
 }
 var main = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     const { $createImage, args, $axios, $moment, $cheerio, $throw, $logger, $formatMessage, actorName, } = ctx;
     if (!actorName) {
         $throw("Uh oh. You shouldn't use the plugin for this type of event");
@@ -118,7 +119,7 @@ var main = (ctx) => __awaiter(void 0, void 0, void 0, function* () {
     if (!firstResult) {
         $throw(`${actorName} not found!`);
     }
-    const href = firstResult.attr("href");
+    const href = (_a = firstResult.attr("href")) === null || _a === void 0 ? void 0 : _a.replace("/feed", "");
     let html;
     try {
         const url = `https://freeones.com${href}/bio`;
