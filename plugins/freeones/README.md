@@ -1,4 +1,4 @@
-## freeones 0.10.0
+## freeones 0.10.1
 
 by boi123212321, john4valor, pizzajohnny, leadwolf
 
