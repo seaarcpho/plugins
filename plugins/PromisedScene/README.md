@@ -88,6 +88,7 @@ plugins:
       args:
         useTitleInSearch: false
         alwaysUseSingleResult: false
+        usePipedInputInSearch: false
         parseActor: true
         parseStudio: true
         parseDate: true
