@@ -148,7 +148,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
 
   let html: string;
   try {
-    html = (await $axios.get(`https://freeones.com${href}/profile`)).data;
+    html = (await $axios.get(`https://freeones.com${href}/bio`)).data;
   } catch (error) {
     $throw(error.message);
     return {}; // return for type compatibility
