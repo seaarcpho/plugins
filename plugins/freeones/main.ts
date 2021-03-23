@@ -153,7 +153,7 @@ module.exports = async (ctx: MyContext): Promise<ActorOutput> => {
     $throw(`${actorName} not found!`);
   }
 
-  const href = firstResult.attr("href").replace("/feed", "");
+  const href = firstResult.attr("href")?.replace("/feed", "");
 
   let html: string;
   try {
